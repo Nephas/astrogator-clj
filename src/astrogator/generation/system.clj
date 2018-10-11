@@ -53,7 +53,7 @@
 (defn generate-star [mass]
   (let [radius (a/mass-radius mass)
         luminosity (a/mass-luminosity mass)
-        temp (a/stefan-boltzmann luminosity radius)
+        temp (a/stefan-boltzmann-temp luminosity radius)
         class (a/spectral-class temp)
         color (a/COLOR class)]
     {:star    {:mass       mass

@@ -57,17 +57,16 @@
 
 (defn mass-luminosity [mass]
   (cond (< mass 0.43) (m/expt (* 0.23 mass) 2.3)
-        (< mass 2) (m/expt mass 4)
-        (< mass 20) (m/expt (* 1.5 mass) 3.5)
-        true (* 3200 mass)))
+        (< mass 2) (m/expt mass 4 )
+        (< mass 20) (m/expt (* 1.4 mass) 3.5)
+        true (* 32000 mass)))
 
 (defn mass-radius [mass]
-  (if (< mass 1)
+  (if (> mass 1)
     (m/expt mass 0.6)
     mass))
 
-
-(defn stefan-boltzmann [lum-sol radius-sol]
+(defn stefan-boltzmann-temp [lum-sol radius-sol]
   (let [lum-watt (* Lsol lum-sol)
         radius-m (* Rsol radius-sol)]
     (m/expt (/ lum-watt (* 4 Math/PI sigma (m/expt radius-m 2))) 0.25)))
