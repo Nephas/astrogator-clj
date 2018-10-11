@@ -84,9 +84,3 @@
 
 (defn v-orbit-AU|d [r-AU mass-sol]
   (/ (* 2 Math/PI r-AU) (t-orbit-d r-AU mass-sol)))
-
-;@staticmethod
-;def PlanetTemp (L, r_AU) :
-;r_m = Astro.AU_m * r_AU
-;return (L * Astro.Lsol / (16. * np.pi * Astro.sigma * r_m ** 2)) ** (0.25)
-;
