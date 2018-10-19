@@ -1,7 +1,5 @@
-(ns astrogator.physics.system
-  (:require [astrogator.physics.astro :as a]
-            [astrogator.physics.trafo :as t]
-            [astrogator.util.rand :as r]
+(ns astrogator.physics.move
+  (:require [astrogator.physics.trafo :as t]
             [astrogator.conf :as c]))
 
 ;===== SYSTEM MOVEMENT =====

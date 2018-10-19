@@ -1,7 +1,9 @@
 (ns astrogator.gui.camera
-  (:require [astrogator.physics.trafo :as t]))
+  (:require [astrogator.physics.trafo :as t]
+            [astrogator.util.log :as log]))
 
 (defn change-focus [state body]
+  (log/info (str "changing focus: " body))
   (-> state
       (assoc-in [:camera :refbody] (body :path))))
 

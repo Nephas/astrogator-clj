@@ -5,6 +5,7 @@
             [astrogator.physics.astro :as a]
             [astrogator.render.render :as render]
             [distributions.core :as d]
+            [astrogator.util.log :as log]
             [quil.core :as q]))
 
 (defn get-magnitude [luminosity] (- (* -2.5 (Math/log10 (max 0.01 luminosity))) 25))
@@ -21,6 +22,7 @@
      :color      (sys/get-system-color system)}))
 
 (defn generate-sector [size-pc number]
+  (log/info (str "generating sector: size-pc " size-pc ", number: " number))
   (let [size-AU (* a/pc-in-AU size-pc)]
     (for [x (range number)]
       (let [mass (r/rand 10)
@@ -29,6 +31,7 @@
         (generate-distant-system mass seed pos)))))
 
 (defn generate-clouds [size-pc number]
+  (log/info (str "generating clouds: size-pc " size-pc ", number: " number))
   (let [size-AU (* a/pc-in-AU size-pc)]
     (for [x (range number)]
       (let [radius-AU (* a/pc-in-AU (r/rand 2))

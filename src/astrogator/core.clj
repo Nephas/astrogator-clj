@@ -8,7 +8,8 @@
             [astrogator.input.mouse :as mouse]
             [astrogator.gui.camera :as cam]
             [astrogator.state :as state]
-            [astrogator.physics.system :as p]))
+            [astrogator.util.log :as log]
+            [astrogator.physics.move :as p]))
 
 (def state! (atom {}))
 
@@ -16,7 +17,8 @@
   (q/frame-rate c/frame-rate)
   (q/color-mode :rgb)
   (q/no-stroke)
-  (do (swap! state! (fn [state] (state/init-state)))
+  (do (log/info "initialising state")
+      (swap! state! (fn [state] (state/init-state)))
       @state!))
 
 (defn update-state [state]

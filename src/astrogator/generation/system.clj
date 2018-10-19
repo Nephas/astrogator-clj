@@ -64,6 +64,13 @@
                :color      (q/color (color 0) (color 1) (color 2))}
      :planets []}))
 
+(defn generate-planet-system [parent outer-radius inner-radius])
+
+(defn generate-planet [mass orbit-radius]
+  (let [radius (a/mass-radius mass)]
+    {:mass mass
+     :radius radius
+     :cylpos [orbit-radius 0]}))
 
 (defn get-system-color
   ([compA compB] (q/blend-color (get-system-color compA) (get-system-color compB) :dodge))

@@ -1,12 +1,17 @@
 (ns astrogator.render.render
   (:require [astrogator.render.system :as sys]
             [astrogator.render.sector :as sec]
-            [quil.core :as q]))
+            [quil.core :as q]
+            [astrogator.util.log :as log]))
 
 (defn get-scale [camera]
-  (if (> (camera :dist-zoom) 1)
-    :system
-    :sector))
+  (let [scale-before (camera :scale)
+        scale-after (if (> (camera :dist-zoom) 1)
+                      :system
+                      :sector)]
+    (do (when (not= scale-after scale-before)
+          (log/info (str "changed view-scale to: " scale-after)))
+        scale-after)))
 
 (defn zoom [dir state]
   (let [factor {:in  {:dist 2
