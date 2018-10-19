@@ -1,6 +1,6 @@
 (ns astrogator.conf)
 
-(def screen-size [1920 1024])
+(def screen-size [1024 768])
 
 (def frame-rate 30)
 

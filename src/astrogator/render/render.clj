@@ -26,7 +26,7 @@
 (defn render-universe [universe camera]
   (q/background 50 0 75)
   (if (= :system (camera :scale))
-    (sys/draw-stars (universe :viewsystem) camera)
+    (sys/draw-system (universe :viewsystem) camera)
     (sec/draw-sector (universe :sector) (universe :clouds) camera)))
 
 (defn vec-to-color [vec]

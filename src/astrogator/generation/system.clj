@@ -1,9 +1,11 @@
 (ns astrogator.generation.system
   (:require [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
+            [astrogator.generation.star :as s]
+            [astrogator.generation.planet :as p]
             [quil.core :as q]))
 
-(declare generate-system generate-subsystem generate-star get-system-luminosity)
+(declare generate-system generate-subsystem get-system-luminosity)
 
 (defn initiate-positions
   ([system]
@@ -23,7 +25,7 @@
          next-depth (dec max-depth)]
      (if (and binary (pos? next-depth))
        (generate-subsystem mass next-depth max-sc-orbit)
-       (generate-star mass))))
+       (s/generate-star mass max-sc-orbit))))
   ([mass seed] (do (r/set-seed! seed)
                    (generate-system mass 4 100)))
   ([distantsystem] (generate-system (distantsystem :mass) (distantsystem :seed))))
@@ -47,30 +49,7 @@
                :cylvel     (* 2 Math/PI (/ 1 torbit))}
      :compA   compA
      :compB   compB
-     :planets []}))
-
-
-(defn generate-star [mass]
-  (let [radius (a/mass-radius mass)
-        luminosity (a/mass-luminosity mass)
-        temp (a/stefan-boltzmann-temp luminosity radius)
-        class (a/spectral-class temp)
-        color (a/COLOR class)]
-    {:star    {:mass       mass
-               :radius     radius
-               :luminosity luminosity
-               :temp       temp
-               :class      class
-               :color      (q/color (color 0) (color 1) (color 2))}
-     :planets []}))
-
-(defn generate-planet-system [parent outer-radius inner-radius])
-
-(defn generate-planet [mass orbit-radius]
-  (let [radius (a/mass-radius mass)]
-    {:mass mass
-     :radius radius
-     :cylpos [orbit-radius 0]}))
+     :planets (p/generate-planet-system mass (* 3 radiusB) (* 0.9 max-sc-orbit))}))
 
 (defn get-system-color
   ([compA compB] (q/blend-color (get-system-color compA) (get-system-color compB) :dodge))
