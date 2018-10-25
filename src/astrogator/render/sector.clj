@@ -10,5 +10,5 @@
           (geo/cloud pos size (cloud :color))))
       (doseq [system systems]
         (let [pos (t/map-to-screen (system :sectorpos) camera)
-              size (* -1 (camera :obj-zoom) (system :magnitude))]
+              size (* -3/4 (camera :obj-zoom) (system :magnitude))]
           (geo/airy pos size (system :color))))))

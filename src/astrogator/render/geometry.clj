@@ -18,10 +18,14 @@
 
 (defn airy
   ([pos size color]
-   (q/fill color)
+   (q/with-stroke [color 96]
+                  (do (q/fill color 255)
+                      (q/stroke-weight (* 4 size))
+                      (circle pos size)))
    (q/with-stroke [color 128]
-                  (do (q/stroke-weight size)
-                      (circle pos size)))))
+                  (do (q/fill color 64)
+                      (q/stroke-weight (* 1/2 size))
+                      (circle pos (* 2 size))))))
 
 (defn cloud
   ([pos size color]
