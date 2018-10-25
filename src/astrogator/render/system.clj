@@ -1,5 +1,6 @@
 (ns astrogator.render.system
   (:require [quil.core :as q]
+            [astrogator.render.geometry :as geo]
             [astrogator.physics.trafo :as t]))
 
 (defn get-stars [system]
@@ -16,11 +17,9 @@
   (doseq [star (get-stars system)]
     (let [pos (t/map-to-screen (star :mappos) camera)
           size (* (camera :obj-zoom) (star :radius))]
-      (do (q/fill (star :color))
-          (q/ellipse (pos 0) (pos 1) size size))))
+      (geo/star pos size (star :color) 0.4)))
   (doseq [planet (get-planets system)]
     (let [pos (t/map-to-screen (planet :mappos) camera)
-          size 2]
-      (do (q/fill 255 255 255)
-          (q/ellipse (pos 0) (pos 1) size size)))))
+          size (* (camera :obj-zoom) 1)]
+      (geo/planet pos size (get-in planet [:cylpos 1]) (planet :color)))))
 

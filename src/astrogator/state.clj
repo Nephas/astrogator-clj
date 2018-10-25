@@ -8,7 +8,7 @@
                           :sector     (gensec/generate-sector 5 1000)
                           :clouds     (gensec/generate-clouds 5 50)}
                :camera   {:dist-zoom 5
-                          :obj-zoom  2
+                          :obj-zoom  1
                           :sectorpos [0 0]
                           :mappos    [0 0]
                           :scale     :system

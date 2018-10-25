@@ -15,6 +15,6 @@
 
 (defn handle-wheel [state event]
   (case event
-    (1) (r/zoom :in state)
-    (-1) (r/zoom :out state)
+    (1) (cam/zoom :in state)
+    (-1) (cam/zoom :out state)
     state))

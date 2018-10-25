@@ -17,6 +17,7 @@
   (q/frame-rate c/frame-rate)
   (q/color-mode :rgb)
   (q/no-stroke)
+  (q/ellipse-mode :radius)
   (do (log/info "initialising state")
       (swap! state! (fn [state] (state/init-state)))
       @state!))
