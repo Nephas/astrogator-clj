@@ -1,6 +1,6 @@
 (ns astrogator.render.geometry
   (:require [quil.core :as q]
-            [astrogator.util.log :as log]))
+            [astrogator.render.conf :as conf]))
 
 (defn circle
   ([pos size]
@@ -28,11 +28,12 @@
                       (circle pos (* 2 size))))))
 
 (defn cloud
-  ([pos size color]
-   (q/fill color 192)
-   (q/with-stroke [color 128]
-                  (do (q/stroke-weight (* size 2))
-                      (circle pos size)))))
+  ([pos size color zoom]
+   (let [mag (/ (- conf/system-thresh zoom) conf/system-thresh)]
+     (q/fill color (* mag 192))
+     (q/with-stroke [color (* mag 128)]
+                    (do (q/stroke-weight (* size 2))
+                        (circle pos size))))))
 
 (defn planet
   ([pos size phase]

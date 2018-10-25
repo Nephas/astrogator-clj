@@ -7,7 +7,7 @@
   (do (doseq [cloud clouds]
         (let [pos (t/map-to-screen (cloud :sectorpos) camera)
               size (* (cloud :radius) (camera :dist-zoom))]
-          (geo/cloud pos size (cloud :color))))
+          (geo/cloud pos size (cloud :color) (camera :dist-zoom))))
       (doseq [system systems]
         (let [pos (t/map-to-screen (system :sectorpos) camera)
               size (* -3/4 (camera :obj-zoom) (system :magnitude))]

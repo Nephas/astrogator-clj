@@ -1,6 +1,7 @@
 (ns astrogator.gui.camera
   (:require [astrogator.physics.trafo :as t]
-            [astrogator.util.log :as log]))
+            [astrogator.util.log :as log]
+            [astrogator.render.conf :as conf]))
 
 (defn change-focus [state body]
   (log/info (str "changing focus: " body))
@@ -17,7 +18,7 @@
 
 (defn get-scale [camera]
   (let [scale-before (camera :scale)
-        scale-after (if (> (camera :dist-zoom) 0.1)
+        scale-after (if (> (camera :dist-zoom) conf/system-thresh)
                       :system
                       :sector)]
     (do (when (not= scale-after scale-before)
