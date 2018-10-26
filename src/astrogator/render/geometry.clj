@@ -30,19 +30,31 @@
 
 (defn cloud
   ([pos size color zoom]
-   (let [mag (/ (- conf/system-thresh zoom) conf/system-thresh)
+   (let [mag (/ (- (conf/thresholds :system) zoom) (conf/thresholds :system))
          mag (* mag)]
      (q/fill color (* mag 192))
      (q/with-stroke [color (* mag 128)]
                     (do (q/stroke-weight (* size 2))
                         (circle pos size))))))
 
+(defn shadow [pos phase size length]
+  (q/with-translation pos
+                      (q/fill (u/vec-to-color conf/planet-shade-color))
+                      (q/rotate phase)
+                      (q/rect 0 (* -1 size) length (* 2 size))
+                      (q/rotate 0)))
+
+(defn half-circle
+  ([pos size phase-in color]
+   (q/fill color)
+   (q/no-stroke)
+   (let [phase (+ Math/PI phase-in)
+         rot (/ Math/PI 2)]
+     (q/arc (pos 0) (pos 1) size size (- phase rot) (+ phase rot) :pie))))
+
 (defn planet
-  ([pos size phase]
-   (let [rot (/ Math/PI 2)]
-     (q/arc (pos 0) (pos 1) size size (- phase rot) (+ phase rot) :pie)))
   ([pos size phase color]
    (q/no-stroke)
+   (shadow pos phase size (astrogator.conf/screen-size 0))
    (circle pos size (u/vec-to-color conf/planet-night-color))
-   (q/fill color)
-   (planet pos size (+ Math/PI phase))))
+   (half-circle pos size phase color)))

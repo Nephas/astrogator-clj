@@ -8,11 +8,13 @@
 (defn handle-click [state event]
   (let [screenpos [(event :x) (event :y)]
         camera (state :camera)
-        mappos (t/screen-to-map screenpos camera)]
+        mappos (t/screen-to-map screenpos camera)
+        viewsystem (get-in state [:universe :viewsystem])]
     (case (camera :scale)
       :sector (sec/change-viewsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
-      :system (cam/change-focus state (sys/get-closest-star (get-in state [:universe :viewsystem]) mappos))
-      :subsystem (cam/change-focus state (sys/get-closest-planet-or-star (get-in state [:universe :viewsystem]) mappos)))))
+      :system (cam/change-focus state (sys/get-closest-star viewsystem mappos))
+      :subsystem (cam/change-focus state (sys/get-closest-planet-or-star viewsystem mappos))
+      :body (cam/change-focus state (sys/get-closest-planet-or-star viewsystem mappos)))))
 
 (defn handle-wheel [state event]
   (case event

@@ -18,10 +18,9 @@
 
 (defn get-scale [camera]
   (let [scale-before (camera :scale)
-        zoom (camera :dist-zoom)
-        scale-after (cond (< zoom conf/system-thresh) :sector
-                          (< zoom conf/subsystem-thresh) :system
-                          true :subsystem)]
+        nearer-than? #(> (camera :dist-zoom) (conf/thresholds %))
+        scale-after (when-first [scale (filter #(nearer-than? %)
+                                               (keys conf/thresholds))] scale)]
     (do (when (not= scale-after scale-before)
           (log/info (str "changed view-scale to: " scale-after)))
         scale-after)))

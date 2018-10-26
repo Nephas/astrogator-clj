@@ -10,6 +10,7 @@
 (defn render-universe [universe camera]
   (q/background (u/vec-to-color conf/back-color))
   (case (camera :scale)
+    :body (sys/draw-refbody (universe :viewsystem) camera)
     :subsystem (sys/draw-subsystems (universe :viewsystem) camera)
     :system (sys/draw-system (universe :viewsystem) camera)
     :sector (sec/draw-sector (universe :sector) (universe :clouds) camera)))
