@@ -11,7 +11,8 @@
         mappos (t/screen-to-map screenpos camera)]
     (case (camera :scale)
       :sector (sec/change-viewsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
-      :system (cam/change-focus state (sys/get-closest-star (get-in state [:universe :viewsystem]) mappos)))))
+      :system (cam/change-focus state (sys/get-closest-star (get-in state [:universe :viewsystem]) mappos))
+      :subsystem (cam/change-focus state (sys/get-closest-planet-or-star (get-in state [:universe :viewsystem]) mappos)))))
 
 (defn handle-wheel [state event]
   (case event

@@ -18,4 +18,4 @@
   (let [radii (into []
                     (filter #(< % outer-radius)
                             (map #(a/titius-bode % inner-radius) (range 10))))]
-    (map #(generate-planet parent-mass (rand) %) radii)))
+    (into [] (map #(generate-planet parent-mass (rand) %) radii))))

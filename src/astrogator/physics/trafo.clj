@@ -32,6 +32,7 @@
   ([mappos offset zoom]
    (add screen-center (scalar zoom (add offset mappos))))
   ([mappos camera] (let [offset (case (camera :scale)
+                                  :subsystem (camera :mappos)
                                   :system (camera :mappos)
                                   :sector (camera :sectorpos))]
                      (map-to-screen mappos offset (camera :dist-zoom)))))
@@ -41,6 +42,7 @@
   ([screenpos offset zoom]
    (sub (scalar (inv zoom) (sub screenpos screen-center)) offset))
   ([screenpos camera] (let [offset (case (camera :scale)
+                                     :subsystem (camera :mappos)
                                      :system (camera :mappos)
                                      :sector (camera :sectorpos))]
                         (screen-to-map screenpos offset (camera :dist-zoom)))))

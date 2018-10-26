@@ -1,14 +1,31 @@
 (ns astrogator.gui.system
   (:require [astrogator.physics.trafo :as t]))
 
-(defn get-stars-with-path
+(defn recur-stars-with-path
   ([system path]
    (if (nil? (get system :star))
-     (flatten [(get-stars-with-path (system :compA) (conj path :compA))
-               (get-stars-with-path (system :compB) (conj path :compB))])
+     (flatten [(recur-stars-with-path (system :compA) (conj path :compA))
+               (recur-stars-with-path (system :compB) (conj path :compB))])
      [(assoc (system :star) :path (conj path :star))]))
-  ([system] (get-stars-with-path system [])))
+  ([system] (recur-stars-with-path system [])))
 
 (defn get-closest-star [system mappos]
-  (apply min-key #(t/dist mappos (% :mappos)) (get-stars-with-path system)))
+  (apply min-key #(t/dist mappos (% :mappos)) (recur-stars-with-path system)))
 
+(defn get-planets-with-path [planets base-path]
+  (let [indices (range (count planets))]
+    (into [] (map #(assoc %1 :path (conj base-path :planets %2)) planets indices))))
+
+(defn recur-planets-with-path
+  ([system path]
+   (if (nil? (get system :star))
+     (flatten [(recur-planets-with-path (system :compA) (conj path :compA))
+               (recur-planets-with-path (system :compB) (conj path :compB))
+               (get-planets-with-path (system :planets) path)])
+     (get-planets-with-path (system :planets) path)))
+  ([system] (recur-planets-with-path system [])))
+
+(defn get-closest-planet-or-star [system mappos]
+  (apply min-key #(t/dist mappos (% :mappos))
+         (concat (recur-planets-with-path system)
+                 (recur-stars-with-path system))))

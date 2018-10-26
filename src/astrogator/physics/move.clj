@@ -15,7 +15,7 @@
                  (-> planet
                      (assoc-in [:mappos] mappos)
                      (assoc-in [:cylpos] new-cylpos))))]
-    (map move planets)))
+    (into [] (map move planets))))
 
 (defn move-system
   ([system dt cylpos mappos]

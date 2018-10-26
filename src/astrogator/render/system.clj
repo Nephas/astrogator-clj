@@ -14,12 +14,21 @@
     (flatten [(get-planets (system :compA)) (get-planets (system :compB)) (system :planets)])))
 
 (defn draw-system [system camera]
+  (doseq [planet (get-planets system)]
+    (let [pos (t/map-to-screen (planet :mappos) camera)
+          size 0.5]
+      (geo/airy pos size (planet :color))))
   (doseq [star (get-stars system)]
     (let [pos (t/map-to-screen (star :mappos) camera)
-          size (* (camera :obj-zoom) (star :radius))]
+          size (* 5 (camera :obj-zoom) (star :radius))]
+      (geo/star pos size (star :color) 0.4))))
+
+(defn draw-subsystems [system camera]
+  (doseq [star (get-stars system)]
+    (let [pos (t/map-to-screen (star :mappos) camera)
+          size (* 5 (camera :obj-zoom) (star :radius))]
       (geo/star pos size (star :color) 0.4)))
   (doseq [planet (get-planets system)]
     (let [pos (t/map-to-screen (planet :mappos) camera)
           size (* (camera :obj-zoom) 1)]
       (geo/planet pos size (get-in planet [:cylpos 1]) (planet :color)))))
-
