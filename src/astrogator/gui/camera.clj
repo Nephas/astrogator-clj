@@ -8,12 +8,13 @@
   (-> state
       (assoc-in [:camera :refbody] (body :path))))
 
+(defn get-refbody [camera viewsystem]
+  (let [path (camera :refbody)]
+    (get-in viewsystem path)))
+
 (defn update-camera [state]
-  (let [camera (state :camera)
-        path (camera :refbody)
-        viewsystem (get-in state [:universe :viewsystem])
-        refpos (if (nil? path) [0 0]
-                               (get-in viewsystem (conj path :mappos)))]
+  (let [refbody (get-refbody (state :camera) (get-in state [:universe :viewsystem]))
+        refpos (get-in refbody [:mappos] [0 0])]
     (assoc-in state [:camera :mappos] (t/neg refpos))))
 
 (defn get-scale [camera]
