@@ -5,17 +5,26 @@
 (defn cyl-to-map [parent-mappos cylpos]
   (t/add parent-mappos (t/pol-to-cart cylpos)))
 
+(defn move-around-parent [body dt parent-mappos]
+  (let [phase (get-in body [:cylpos 1])
+        radius (get-in body [:cylpos 0])
+        new-phase (+ phase (* dt (body :cylvel)))
+        new-cylpos [radius new-phase]
+        mappos (cyl-to-map parent-mappos new-cylpos)]
+    (-> body
+        (assoc-in [:mappos] mappos)
+        (assoc-in [:cylpos] new-cylpos))))
+
+(defn move-moons [planet dt]
+  (let [move (fn [moons] (mapv #(move-around-parent % dt (planet :mappos)) moons))]
+    (update-in planet [:moons] move)))
+
 (defn move-planets [planets dt parent-mappos]
-  (let [move (fn [planet]
-               (let [phase (get-in planet [:cylpos 1])
-                     radius (get-in planet [:cylpos 0])
-                     new-phase (+ phase (* dt (planet :cylvel)))
-                     new-cylpos [radius new-phase]
-                     mappos (cyl-to-map parent-mappos new-cylpos)]
-                 (-> planet
-                     (assoc-in [:mappos] mappos)
-                     (assoc-in [:cylpos] new-cylpos))))]
-    (into [] (map move planets))))
+  (let [move-planet-moon-system (fn [planet]
+                                  (-> planet
+                                      (move-around-parent dt parent-mappos)
+                                      (move-moons dt)))]
+    (mapv move-planet-moon-system planets)))
 
 (defn move-system
   ([system dt cylpos mappos]

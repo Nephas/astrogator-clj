@@ -8,12 +8,11 @@
 
 (def inv #(/ 1 %))
 
-(def add #(into [] (map + %1 %2)))
+(def add #(mapv + %1 %2))
 
-(def sub #(into [] (map - %1 %2)))
+(def sub #(mapv - %1 %2))
 
-(defn scalar [num v]
-  (into [] (map #(* num %) v)))
+(defn scalar [num v] (mapv #(* num %) v))
 
 (def neg #(scalar -1 %))
 

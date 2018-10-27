@@ -14,7 +14,7 @@
 
 (defn get-planets-with-path [planets base-path]
   (let [indices (range (count planets))]
-    (into [] (map #(assoc %1 :path (conj base-path :planets %2)) planets indices))))
+    (mapv #(assoc %1 :path (conj base-path :planets %2)) planets indices)))
 
 (defn recur-planets-with-path
   ([system path]
