@@ -3,10 +3,10 @@
 
 (defn recur-stars-with-path
   ([system path]
-   (if (nil? (get system :star))
+   (if (nil? (get system :body))
      (flatten [(recur-stars-with-path (system :compA) (conj path :compA))
                (recur-stars-with-path (system :compB) (conj path :compB))])
-     [(assoc (system :star) :path (conj path :star))]))
+     [(assoc (system :body) :path (conj path :body))]))
   ([system] (recur-stars-with-path system [])))
 
 (defn get-closest-star [system mappos]
@@ -18,7 +18,7 @@
 
 (defn recur-planets-with-path
   ([system path]
-   (if (nil? (get system :star))
+   (if (nil? (get system :body))
      (flatten [(recur-planets-with-path (system :compA) (conj path :compA))
                (recur-planets-with-path (system :compB) (conj path :compB))
                (get-planets-with-path (system :planets) path)])

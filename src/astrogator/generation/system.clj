@@ -16,8 +16,8 @@
          (assoc-in [:system :phase] (rand Math/PI))
          (assoc-in [:system :mappos] [0 0]))
      (-> system
-         (assoc-in [:star :cylpos] [0 0])
-         (assoc-in [:star :mappos] [0 0])))))
+         (assoc-in [:body :cylpos] [0 0])
+         (assoc-in [:body :mappos] [0 0])))))
 
 (defn generate-system
   ([mass max-depth max-sc-orbit]
@@ -53,13 +53,13 @@
 
 (defn get-system-color
   ([compA compB] (q/blend-color (get-system-color compA) (get-system-color compB) :dodge))
-  ([system] (if (some? (system :star)) (get-in system [:star :color])
+  ([system] (if (some? (system :body)) (get-in system [:body :color])
                                        (get-system-color (system :compA) (system :compB)))))
 
 (defn get-system-luminosity
   ([compA compB] (apply + (filter #(not= nil %) [(get-in compA [:system :luminosity])
-                                                 (get-in compA [:star :luminosity])
+                                                 (get-in compA [:body :luminosity])
                                                  (get-in compB [:system :luminosity])
-                                                 (get-in compB [:star :luminosity])])))
-  ([system] (if (some? (system :star)) (get-in system [:star :luminosity])
+                                                 (get-in compB [:body :luminosity])])))
+  ([system] (if (some? (system :body)) (get-in system [:body :luminosity])
                                        (get-system-luminosity (system :compA) (system :compB)))))

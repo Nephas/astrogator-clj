@@ -9,7 +9,8 @@
         temp (a/stefan-boltzmann-temp luminosity radius)
         class (a/spectral-class temp)
         color (a/COLOR class)]
-    {:star    {:mass       mass
+    {:body    {:type       :star
+               :mass       mass
                :radius     radius
                :luminosity luminosity
                :temp       temp

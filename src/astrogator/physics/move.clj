@@ -34,8 +34,8 @@
            (assoc-in [:system :mappos] mappos)))
      (-> system
          (update-in [:planets] move-planets dt mappos)
-         (assoc-in [:star :cylpos] cylpos)
-         (assoc-in [:star :mappos] mappos))))
+         (assoc-in [:body :cylpos] cylpos)
+         (assoc-in [:body :mappos] mappos))))
   ([system dt] (move-system system dt [0 0] [0 0])))
 
 (defn move-viewsystem [state]
