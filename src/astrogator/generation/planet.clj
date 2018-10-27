@@ -6,12 +6,13 @@
 (defn generate-planet [parent-mass mass orbit-radius]
   (let [radius (a/mass-radius mass)
         torbit (a/t-orbit-d orbit-radius parent-mass)]
-    {:mass   mass
+    {:type :planet
+     :mass mass
      :radius radius
      :torbit torbit,
      :cylvel (* 2 Math/PI (/ 1 torbit)),
      :cylpos [orbit-radius 0]
-     :color  (q/color 128 128 128)
+     :color (q/color 128 128 128)
      :mappos [0 0]}))
 
 (defn generate-planet-system [parent-mass inner-radius outer-radius]
