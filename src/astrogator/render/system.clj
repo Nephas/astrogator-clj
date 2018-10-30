@@ -26,7 +26,7 @@
 (defn draw-subsystems [system camera]
   (doseq [planet (get-planets system)]
     (let [pos (t/map-to-screen (planet :mappos) camera)
-          size (* (planet :radius) (camera :obj-zoom))]
+          size (* 0.1 (planet :radius) (camera :obj-zoom))]
       (geo/half-circle pos size (get-in planet [:cylpos 1]) (planet :color))))
   (doseq [star (get-bodies system)]
     (b/star star camera)))
@@ -34,10 +34,10 @@
 (defn draw-planet [refbody camera]
   (doseq [moon (refbody :moons)]
     (let [pos (t/map-to-screen (moon :mappos) camera)
-          size (* (moon :radius) (camera :obj-zoom))]
+          size (* 0.1 (moon :radius) (camera :obj-zoom))]
       (b/planet pos size (get-in refbody [:cylpos 1]) (moon :color))))
   (let [pos (t/map-to-screen (refbody :mappos) camera)
-        size (* (refbody :radius) (camera :obj-zoom))]
+        size (* 0.1 (refbody :radius) (camera :obj-zoom))]
     (b/planet pos size (get-in refbody [:cylpos 1]) (refbody :color))))
 
 (defn draw-refbody [system camera]

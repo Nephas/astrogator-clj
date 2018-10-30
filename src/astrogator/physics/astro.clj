@@ -1,5 +1,6 @@
 (ns astrogator.physics.astro
-  (:require [clojure.math.numeric-tower :as m]))
+  (:require [clojure.math.numeric-tower :as m]
+            [astrogator.physics.units :as u]))
 
 
 (def G-in-AU³|d²|Msol 0.000296329)                          ; AU^3 d^-2 Mo^-1
@@ -15,6 +16,7 @@
 (def rho 1000)                                              ; kg m^-3
 (def Me 6e24)                                               ; kg
 (def Re 6370000)                                            ; m
+(def Rsol-in-Re (/ Rsol Re))
 (def AU|d-in-km|s 1736.1)                                   ; AU/d to km/s 150000000/(86400)
 (def AU|d²-in-m|s² 20.0938786)                              ; AU/d^2 to m/s^2
 
@@ -57,7 +59,7 @@
 
 (defn mass-luminosity [mass]
   (cond (< mass 0.43) (m/expt (* 0.23 mass) 2.3)
-        (< mass 2) (m/expt mass 4 )
+        (< mass 2) (m/expt mass 4)
         (< mass 20) (m/expt (* 1.4 mass) 3.5)
         true (* 32000 mass)))
 
@@ -68,18 +70,21 @@
 
 (defn stefan-boltzmann-temp [lum-sol radius-sol]
   (let [lum-watt (* Lsol lum-sol)
-        radius-m (* Rsol radius-sol)]
+        radius-m (u/conv radius-sol :Rsol :m)]
     (m/expt (/ lum-watt (* 4 Math/PI sigma (m/expt radius-m 2))) 0.25)))
 
 (defn hill-sphere [a m M]
   (* 0.9 a (m/expt (/ m (* 3 M)) 1/3)))
 
-(defn planet-radius [mass-e]
-  (let [mass-kg (* Me mass-e)]
-    (* (/ 1 Re) (m/expt (/ (* 3 mass-kg) (* 4 Math/PI rho)) 1/3))))
+(defn planet-radius [mass-Me]
+  (let [mass-kg (u/conv mass-Me :Me :kg)
+        rho-kg|m³ (if (< mass-Me 10)
+                    5000
+                    1000)]
+    (* (/ 1 Re) (m/expt (/ (* 3 mass-kg) (* 4 Math/PI rho-kg|m³)) 1/3))))
 
-(defn t-orbit-d [r-AU mass-sol]
-  (* 365 (m/sqrt (/ (m/expt r-AU 3) mass-sol))))
+(defn t-orbit-d [r-AU mass-Msol]
+  (* 365 (m/sqrt (/ (m/expt r-AU 3) mass-Msol))))
 
-(defn v-orbit-AU|d [r-AU mass-sol]
-  (/ (* 2 Math/PI r-AU) (t-orbit-d r-AU mass-sol)))
+(defn v-orbit-AU|d [r-AU mass-Msol]
+  (/ (* 2 Math/PI r-AU) (t-orbit-d r-AU mass-Msol)))
