@@ -4,13 +4,13 @@
             [astrogator.util.rand :as r]
             [astrogator.physics.units :as unit]))
 
-(defn generate-moon [parent-mass-Me orbit-radius]
-  (let [mass-Me (r/rand-range 0.05 0.5)
-        radius-Re (a/planet-radius mass-Me)
-        torbit (a/t-orbit-d orbit-radius (unit/conv parent-mass-Me :Me :Msol))]
+(defn generate-moon [parent-mass orbit-radius]
+  (let [mass (r/rand-range 0.05 0.5)
+        radius (a/planet-radius mass :Me)
+        torbit (a/t-orbit orbit-radius :AU parent-mass :Me)]
     {:type   :moon
-     :mass   mass-Me
-     :radius radius-Re
+     :mass   mass
+     :radius radius
      :torbit torbit
      :cylvel (* 2 Math/PI (/ 1 torbit))
      :cylpos [orbit-radius (* 2 Math/PI (r/rand))]

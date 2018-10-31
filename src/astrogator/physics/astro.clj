@@ -3,24 +3,8 @@
             [astrogator.physics.units :as u]))
 
 
-(def G-in-AU³|d²|Msol 0.000296329)                          ; AU^3 d^-2 Mo^-1
-(def Msol-in-Me 333000)                                     ; Mogelfaktor
-(def Me-in-Msol (/ 1 Msol-in-Me))
-(def pc-in-AU 206264.8)                                     ; pc in AU
-(def AU-in-pc (/ 1 pc-in-AU))
-(def AU-in-m 149597900000)
-(def sigma 5.67e-08)                                        ; W m^-2 K^-4
-(def Rsol 695000000)                                        ; m
-(def Lsol 3.846e26)                                         ; Watt
-(def Msol 1.988e30)                                         ; kg
-(def rho 1000)                                              ; kg m^-3
-(def Me 6e24)                                               ; kg
-(def Re 6370000)                                            ; m
-(def Rsol-in-Re (/ Rsol Re))
-(def AU|d-in-km|s 1736.1)                                   ; AU/d to km/s 150000000/(86400)
-(def AU|d²-in-m|s² 20.0938786)                              ; AU/d^2 to m/s^2
-
-(def goldilocks-temp [273 373])
+(def G "[m3/kg's2]" 6.674E-11)
+(def sigma "[W/m2'K4]" 5.67e-08)
 
 (def COLOR {:O [144 166 255]
             :B [162 188 255]
@@ -53,38 +37,40 @@
                 true 2.3)]
     (m/expt mass a)))
 
-(defn titius-bode
+(defn titius-bode "[rin]"
   ([i] (titius-bode i 0.4))
   ([i rin] (+ rin (* rin (m/expt 2 i)))))
 
-(defn mass-luminosity [mass]
+(defn mass-luminosity "[Lsol]" [mass]
   (cond (< mass 0.43) (m/expt (* 0.23 mass) 2.3)
         (< mass 2) (m/expt mass 4)
         (< mass 20) (m/expt (* 1.4 mass) 3.5)
         true (* 32000 mass)))
 
-(defn mass-radius [mass]
+(defn mass-radius "[Rsol]" [mass]
   (if (> mass 1)
     (m/expt mass 0.6)
     mass))
 
-(defn stefan-boltzmann-temp [lum-sol radius-sol]
-  (let [lum-watt (* Lsol lum-sol)
-        radius-m (u/conv radius-sol :Rsol :m)]
-    (m/expt (/ lum-watt (* 4 Math/PI sigma (m/expt radius-m 2))) 0.25)))
+(defn stefan-boltzmann "[K]" [L $L R $R]
+  (let [L (u/conv L $L :W)
+        R (u/conv R $R :m)]
+    (m/expt (/ L (* 4 Math/PI sigma (m/expt R 2))) 0.25)))
 
-(defn hill-sphere [a m M]
+(defn hill-sphere "[a]" [a m M]
   (* 0.9 a (m/expt (/ m (* 3 M)) 1/3)))
 
-(defn planet-radius [mass-Me]
-  (let [mass-kg (u/conv mass-Me :Me :kg)
-        rho-kg|m³ (if (< mass-Me 10)
-                    5000
-                    1000)]
-    (* (/ 1 Re) (m/expt (/ (* 3 mass-kg) (* 4 Math/PI rho-kg|m³)) 1/3))))
+(defn planet-radius "[Re]" [m $m]
+  (let [rho (if (< (u/conv m $m :Me) 10)
+              5500
+              1000)
+        m (u/conv m $m :kg)]
+    (u/conv (m/expt (/ m (* 4/3 Math/PI rho)) 1/3) :m :Re)))
 
-(defn t-orbit-d [r-AU mass-Msol]
-  (* 365 (m/sqrt (/ (m/expt r-AU 3) mass-Msol))))
+(defn t-orbit "[d]" [r $r m $m]
+  (let [r (u/conv r $r :AU)
+        m (u/conv m $m :M*)]
+    (u/conv (m/sqrt (/ (m/expt r 3) m)) :yr :d)))
 
-(defn v-orbit-AU|d [r-AU mass-Msol]
-  (/ (* 2 Math/PI r-AU) (t-orbit-d r-AU mass-Msol)))
+(defn v-orbit "[km/s]" [r $r m $m]
+  (/ (* 2 Math/PI (u/conv r $r :km)) (u/conv (t-orbit r $r m $m) :d :s)))

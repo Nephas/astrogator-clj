@@ -7,7 +7,7 @@
 (defn generate-star [mass max-sc-orbit]
   (let [radius (a/mass-radius mass)
         luminosity (a/mass-luminosity mass)
-        temp (a/stefan-boltzmann-temp luminosity radius)
+        temp (a/stefan-boltzmann luminosity :L* radius :R*)
         class (a/spectral-class temp)
         color (a/COLOR class)]
     {:body    {:type       :star

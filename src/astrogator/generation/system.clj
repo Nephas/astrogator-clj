@@ -40,7 +40,7 @@
         sc-orbitB (a/hill-sphere radiusB massB mass)
         compA (generate-system massA next-depth sc-orbitA)
         compB (generate-system massB next-depth sc-orbitB)
-        torbit (a/t-orbit-d (+ radiusA radiusB) mass)]
+        torbit (a/t-orbit (+ radiusA radiusB) :AU mass :M*)]
     {:system  {:mass       mass
                :luminosity (get-system-luminosity compA compB)
                :radiusA    radiusA
