@@ -27,21 +27,21 @@
        (generate-subsystem mass next-depth max-sc-orbit)
        (s/generate-star mass max-sc-orbit))))
   ([mass seed] (do (r/set-seed! seed)
-                   (generate-system mass 4 100)))
+                   (generate-system mass 3 (* 50 mass))))
   ([distantsystem] (generate-system (distantsystem :mass) (distantsystem :seed))))
 
 (defn generate-subsystem [mass next-depth max-sc-orbit]
-  (let [ratio (+ 0.5 (r/rand 0.4))
-        massA (* mass ratio)
+  (let [massA (* mass (r/rand-range 0.5 0.9))
         massB (- mass massA)
-        radiusB (* (+ 0.2 (r/rand 0.6)) max-sc-orbit)
+        radiusB (* max-sc-orbit (r/rand-range 0.2 0.6))
         radiusA (* radiusB (/ massB massA))
-        sc-orbitA (a/hill-sphere radiusA massA mass)
-        sc-orbitB (a/hill-sphere radiusB massB mass)
-        compA (generate-system massA next-depth sc-orbitA)
-        compB (generate-system massB next-depth sc-orbitB)
-        torbit (a/t-orbit (+ radiusA radiusB) :AU mass :M*)]
-    {:system  {:mass       mass
+        sc-orbitA (a/hill-sphere (+ radiusA radiusB) massA massB)
+        sc-orbitB (a/hill-sphere (+ radiusA radiusB) massB massA)
+        compA (generate-system massA next-depth (* 0.9 sc-orbitA))
+        compB (generate-system massB next-depth (* 0.9 sc-orbitB))
+        torbit (a/t-orbit (+ radiusA radiusB) :AU mass :Msol)]
+    (do (println radiusB max-sc-orbit)
+      {:system  {:mass       mass
                :luminosity (get-system-luminosity compA compB)
                :radiusA    radiusA
                :radiusB    radiusB
@@ -49,7 +49,7 @@
                :cylvel     (* 2 Math/PI (/ 1 torbit))}
      :compA   compA
      :compB   compB
-     :planets (p/generate-planet-system mass (* 3 radiusB) (* 0.9 max-sc-orbit))}))
+     :planets (p/generate-planet-system mass (* 1.5 radiusB) (* 0.9 max-sc-orbit))})))
 
 (defn get-system-color
   ([compA compB] (q/blend-color (get-system-color compA) (get-system-color compB) :dodge))

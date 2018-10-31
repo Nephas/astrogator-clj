@@ -69,7 +69,7 @@
 
 (defn t-orbit "[d]" [r $r m $m]
   (let [r (u/conv r $r :AU)
-        m (u/conv m $m :M*)]
+        m (u/conv m $m :Msol)]
     (u/conv (m/sqrt (/ (m/expt r 3) m)) :yr :d)))
 
 (defn v-orbit "[km/s]" [r $r m $m]

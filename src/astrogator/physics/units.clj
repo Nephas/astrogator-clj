@@ -2,27 +2,27 @@
   (:require [clojure.string :as s]))
 
 (def units
-  {:distance    {:m  1
-                 :km 1000
-                 :Re 6370000
-                 :Rj 7.1E7
-                 :R* 6.96E8
-                 :AU 149597900000
-                 :ly 9.5E15
-                 :pc 3.1E16}
+  {:distance    {:m    1
+                 :km   1000
+                 :Re   6370000
+                 :Rj   7.1E7
+                 :Rsol 6.96E8
+                 :AU   149597900000
+                 :ly   9.5E15
+                 :pc   3.1E16}
 
-   :mass        {:kg 1
-                 :t  1000
-                 :Me 6E24
-                 :Mj 1.9E27
-                 :M* 2E30}
+   :mass        {:kg   1
+                 :t    1000
+                 :Me   6E24
+                 :Mj   1.9E27
+                 :Msol 2E30}
 
    :time        {:s  1
                  :d  86400
                  :yr (* 86400 365.25)}
 
-   :power       {:W  1
-                 :L* 3.846e26}
+   :power       {:W    1
+                 :Lsol 3.846e26}
 
    :temperature {:K 1}})
 

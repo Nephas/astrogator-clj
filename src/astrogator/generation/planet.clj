@@ -9,7 +9,7 @@
 (defn generate-planet [parent-mass orbit-radius]
   (let [mass (r/rand-range 0.5 100)
         radius-Re (a/planet-radius mass :Me)
-        torbit (a/t-orbit orbit-radius :AU parent-mass :M*)
+        torbit (a/t-orbit orbit-radius :AU parent-mass :Msol)
         moon-min-orbit (* 10 (unit/conv radius-Re :Re :AU))]
     {:type   :planet
      :mass   mass
@@ -22,7 +22,7 @@
      :moons  (m/generate-moon-system mass moon-min-orbit (* 100 moon-min-orbit))}))
 
 (defn generate-planet-system [parent-mass inner-radius outer-radius]
-  (let [n-planets (r/rand-int-range 5 10)
+  (let [n-planets (r/rand-int-range 3 10)
         radii (filterv #(< % outer-radius)
                        (map #(a/titius-bode % inner-radius)
                             (range n-planets)))]
