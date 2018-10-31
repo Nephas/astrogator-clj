@@ -1,4 +1,5 @@
-(ns astrogator.physics.units)
+(ns astrogator.physics.units
+  (:require [clojure.string :as s]))
 
 (def units
   {:distance {:m    1
@@ -16,16 +17,35 @@
               :Msol 2E30}
    :time     {:s  1
               :d  86400
-              :yr (* 86400 365.25)}
-   :velocity {:m/s  1
-              :km/s 1000
-              :AU/d 149597900000/86400}})
+              :yr (* 86400 365.25)}})
 
-(defn conv [size source-unit target-unit]
-  (let [contains-both-units #(and (contains? (second %) source-unit)
-                                  (contains? (second %) target-unit))
-        measurement (first (first (filter contains-both-units (seq units))))
-        factor (/ ((units measurement) source-unit)
-                  ((units measurement) target-unit))]
-    (if (nil? measurement) nil
-                           (float (* factor size)))))
+(def flat-units (apply merge (vals units)))
+
+(def key-to-str #(subs (str %) 1))
+
+(defn expand-pow [exp-unit]
+  (let [exp (s/split (s/replace-first exp-unit #"[0-9]" "&$0") #"&")
+        base (first exp)
+        pow (if (nil? (second exp)) 1 (Integer/parseInt (second exp)))]
+    (mapv (fn [x] (keyword base)) (range pow))))
+
+(defn parse-units [unit-key]
+  (let [sep-units (map #(s/split % #"'") (s/split (key-to-str unit-key) #"/"))
+        numerators (flatten (map expand-pow (first sep-units)))
+        denominators (flatten (map expand-pow (second sep-units)))]
+    [numerators denominators]))
+
+(defn map-factors [[numerators denominators]]
+  (/ (reduce * (map #(float (flat-units %)) numerators))
+     (reduce * (map #(float (flat-units %)) denominators))))
+
+(defn conv
+  ([size source-unit target-unit]
+   (try (let [source-factor (map-factors (parse-units source-unit))
+         target-factor (map-factors (parse-units target-unit))]
+     (float (* size (/ source-factor
+                       target-factor))))
+        (catch Exception e
+          (print "could not convert units" source-unit "->" target-unit))))
+  ([source-unit target-unit]
+  (conv 1 source-unit target-unit)))
