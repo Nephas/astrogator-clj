@@ -1,8 +1,6 @@
 (ns astrogator.generation.star
-  (:require [quil.core :as q]
-            [astrogator.physics.astro :as a]
+  (:require [astrogator.physics.astro :as a]
             [astrogator.generation.planet :as p]
-            [astrogator.util.util :as u]
             [astrogator.physics.units :as unit]))
 
 (defn generate-star [mass max-sc-orbit]
@@ -18,5 +16,5 @@
                :luminosity luminosity
                :temp       temp
                :class      class
-               :color      (u/vec-to-color color)}
+               :color      color}
      :planets (p/generate-planet-system mass min-sc-orbit (* 0.9 max-sc-orbit))}))

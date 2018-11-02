@@ -1,6 +1,5 @@
 (ns astrogator.generation.sector
   (:require [astrogator.util.rand :as r]
-            [astrogator.util.util :as util]
             [astrogator.physics.trafo :as t]
             [astrogator.generation.system :as sys]
             [astrogator.physics.units :as u]
@@ -37,5 +36,4 @@
             pos (t/scalar size-AU [(d/sample (d/uniform -1 1)) (d/sample (d/normal 0 1))])]
         {:radius    radius-AU
          :sectorpos pos
-         :color     (util/vec-to-color
-                      [(r/rand-int-range 60 100) 40 (r/rand-int-range 60 100)])}))))
+         :color     [(r/rand-int-range 60 100) 40 (r/rand-int-range 60 100)]}))))

@@ -2,8 +2,7 @@
   (:require [astrogator.physics.astro :as a]
             [astrogator.physics.units :as unit]
             [astrogator.util.rand :as r]
-            [astrogator.generation.moon :as m]
-            [astrogator.util.util :as u]))
+            [astrogator.generation.moon :as m]))
 
 (defn generate-planet [parent-mass orbit-radius]
   (let [mass (r/rand-range 0.5 100)
@@ -16,7 +15,7 @@
      :torbit torbit,
      :cylvel (* 2 Math/PI (/ 1 torbit))
      :cylpos [orbit-radius (* 2 Math/PI (r/rand))]
-     :color  (u/vec-to-color [128 196 128])
+     :color  [128 196 128]
      :mappos [0 0]
      :moons  (m/generate-moon-system mass moon-min-orbit (* 100 moon-min-orbit))}))
 

@@ -3,12 +3,12 @@
             [astrogator.render.sector :as sec]
             [astrogator.render.conf :as conf]
             [quil.core :as q]
-            [astrogator.util.util :as u]))
+            [astrogator.util.color :as col]))
 
 
 
 (defn render-universe [universe camera]
-  (q/background (u/vec-to-color conf/back-color))
+  (q/background (col/vec-to-color conf/back-color))
   (case (camera :scale)
     :body (sys/draw-refbody (universe :viewsystem) camera)
     :subsystem (sys/draw-subsystems (universe :viewsystem) camera)

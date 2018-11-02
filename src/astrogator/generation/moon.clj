@@ -1,6 +1,5 @@
 (ns astrogator.generation.moon
   (:require [astrogator.physics.astro :as a]
-            [astrogator.util.util :as u]
             [astrogator.util.rand :as r]
             [astrogator.physics.units :as unit]))
 
@@ -14,7 +13,7 @@
      :torbit torbit
      :cylvel (* 2 Math/PI (/ 1 torbit))
      :cylpos [orbit-radius (* 2 Math/PI (r/rand))]
-     :color  (u/vec-to-color [128 128 128])
+     :color  [128 128 128]
      :mappos [0 0]}))
 
 (defn generate-moon-system [parent-mass inner-radius outer-radius]

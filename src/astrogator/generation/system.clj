@@ -1,9 +1,9 @@
 (ns astrogator.generation.system
   (:require [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
+            [astrogator.util.color :as col]
             [astrogator.generation.star :as s]
-            [astrogator.generation.planet :as p]
-            [quil.core :as q]))
+            [astrogator.generation.planet :as p]))
 
 (declare generate-system generate-subsystem get-system-luminosity)
 
@@ -52,7 +52,7 @@
      :planets (p/generate-planet-system mass (* 1.5 radiusB) (* 0.9 max-sc-orbit))})))
 
 (defn get-system-color
-  ([compA compB] (q/blend-color (get-system-color compA) (get-system-color compB) :dodge))
+  ([compA compB] (col/blend-vec-color (get-system-color compA) (get-system-color compB)))
   ([system] (if (some? (system :body)) (get-in system [:body :color])
                                        (get-system-color (system :compA) (system :compB)))))
 
