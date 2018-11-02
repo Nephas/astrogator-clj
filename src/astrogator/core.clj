@@ -18,9 +18,13 @@
   (q/color-mode :rgb)
   (q/no-stroke)
   (q/ellipse-mode :radius)
-  (do (log/info "initialising state")
-      (swap! state! (fn [state] (state/init-state)))
-      @state!))
+  (log/info "initialising state")
+  (let [init-state (p/move-viewsystem (state/init-state))]
+    (do (log/info "caching renderings")
+        (render/cache-all (init-state :universe) (init-state :camera))
+        (log/info "setting state atom")
+        (swap! state! (fn [state] init-state))
+        @state!)))
 
 (defn update-state [state]
   (let [state (-> state

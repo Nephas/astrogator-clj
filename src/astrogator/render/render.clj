@@ -14,3 +14,8 @@
     :subsystem (sys/draw-subsystems (universe :viewsystem) camera)
     :system (sys/draw-system (universe :viewsystem) camera)
     :sector (sec/draw-sector (universe :sector) (universe :clouds) camera)))
+
+(defn cache-all [universe camera]
+  (do (sys/draw-subsystems (universe :viewsystem) camera)
+      (sys/draw-system (universe :viewsystem) camera)
+      (sec/draw-sector (universe :sector) (universe :clouds) camera)))

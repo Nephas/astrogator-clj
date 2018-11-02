@@ -40,7 +40,6 @@
         compA (generate-system massA next-depth (* 0.9 sc-orbitA))
         compB (generate-system massB next-depth (* 0.9 sc-orbitB))
         torbit (a/t-orbit (+ radiusA radiusB) :AU mass :Msol)]
-    (do (println radiusB max-sc-orbit)
       {:system  {:mass       mass
                :luminosity (get-system-luminosity compA compB)
                :radiusA    radiusA
@@ -49,7 +48,7 @@
                :cylvel     (* 2 Math/PI (/ 1 torbit))}
      :compA   compA
      :compB   compB
-     :planets (p/generate-planet-system mass (* 1.5 radiusB) (* 0.9 max-sc-orbit))})))
+     :planets (p/generate-planet-system mass (* 1.5 radiusB) (* 0.9 max-sc-orbit))}))
 
 (defn get-system-color
   ([compA compB] (col/blend-vec-color (get-system-color compA) (get-system-color compB)))

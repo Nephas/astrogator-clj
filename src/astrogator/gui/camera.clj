@@ -4,7 +4,7 @@
             [astrogator.render.conf :as conf]))
 
 (defn change-focus [state body]
-  (log/info (str "changing focus: " body))
+  (log/info (str "changing focus: " (body :path)))
   (-> state
       (assoc-in [:camera :refbody] (body :path))))
 
