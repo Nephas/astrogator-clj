@@ -3,7 +3,6 @@
             [astrogator.physics.units :as unit]
             [astrogator.util.rand :as r]
             [astrogator.generation.moon :as m]
-            [quil.core :as q]
             [astrogator.util.util :as u]))
 
 (defn generate-planet [parent-mass orbit-radius]
@@ -15,7 +14,7 @@
      :mass   mass
      :radius radius-Re
      :torbit torbit,
-     :cylvel (* 2 Math/PI (/ 1 torbit)),
+     :cylvel (* 2 Math/PI (/ 1 torbit))
      :cylpos [orbit-radius (* 2 Math/PI (r/rand))]
      :color  (u/vec-to-color [128 196 128])
      :mappos [0 0]

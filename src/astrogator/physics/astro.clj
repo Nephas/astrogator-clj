@@ -3,6 +3,12 @@
             [astrogator.physics.units :as u]))
 
 
+(def const {:G      6.674E-11
+            :$G     :m3/kg's2
+
+            :sigma  5.67e-08
+            :$sigma :W/m2'K4})
+
 (def G "[m3/kg's2]" 6.674E-11)
 (def sigma "[W/m2'K4]" 5.67e-08)
 
