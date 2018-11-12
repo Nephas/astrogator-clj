@@ -3,6 +3,7 @@
             [astrogator.util.rand :as r]
             [astrogator.util.color :as col]
             [astrogator.generation.star :as s]
+            [astrogator.generation.belt :as b]
             [astrogator.generation.planet :as p]))
 
 (declare generate-system generate-subsystem get-system-luminosity)
@@ -40,15 +41,15 @@
         compA (generate-system massA next-depth (* 0.9 sc-orbitA))
         compB (generate-system massB next-depth (* 0.9 sc-orbitB))
         torbit (a/t-orbit (+ radiusA radiusB) :AU mass :Msol)]
-      {:system  {:mass       mass
-               :luminosity (get-system-luminosity compA compB)
-               :radiusA    radiusA
-               :radiusB    radiusB
-               :torbit     torbit
-               :cylvel     (* 2 Math/PI (/ 1 torbit))}
-     :compA   compA
-     :compB   compB
-     :planets (p/generate-planet-system mass (* 1.5 radiusB) (* 0.9 max-sc-orbit))}))
+    (conj {:system {:mass       mass
+                    :luminosity (get-system-luminosity compA compB)
+                    :radiusA    radiusA
+                    :radiusB    radiusB
+                    :torbit     torbit
+                    :cylvel     (* 2 Math/PI (/ 1 torbit))}
+           :compA  compA
+           :compB  compB}
+          (p/generate-planet-system mass (* 1.5 radiusB) (* 0.9 max-sc-orbit)))))
 
 (defn get-system-color
   ([compA compB] (col/blend-vec-color (get-system-color compA) (get-system-color compB)))

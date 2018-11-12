@@ -1,7 +1,6 @@
 (ns astrogator.generation.moon
   (:require [astrogator.physics.astro :as a]
-            [astrogator.util.rand :as r]
-            [astrogator.physics.units :as unit]))
+            [astrogator.util.rand :as r]))
 
 (defn generate-moon [parent-mass orbit-radius]
   (let [mass (r/rand-range 0.05 0.5)

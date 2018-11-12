@@ -2,7 +2,8 @@
   (:require [astrogator.physics.astro :as a]
             [astrogator.physics.units :as unit]
             [astrogator.util.rand :as r]
-            [astrogator.generation.moon :as m]))
+            [astrogator.generation.moon :as m]
+            [astrogator.generation.belt :as b]))
 
 (defn generate-planet [parent-mass orbit-radius]
   (let [mass (r/rand-range 0.5 100)
@@ -19,9 +20,23 @@
      :mappos [0 0]
      :moons  (m/generate-moon-system mass moon-min-orbit (* 100 moon-min-orbit))}))
 
+(defn randomize-system-structure [planet-probability n-planets]
+  (let [rand-pairs (map (fn [i] (if (< (r/rand) planet-probability) [i nil] [nil i]))
+                        (range n-planets))]
+    {:planet-indices (filterv #(not (nil? %)) (map #(first %) rand-pairs))
+     :belt-indices   (filterv #(not (nil? %)) (map #(last %) rand-pairs))}))
+
 (defn generate-planet-system [parent-mass inner-radius outer-radius]
   (let [n-planets (r/rand-int-range 3 10)
-        radii (filterv #(< % outer-radius)
-                       (map #(a/titius-bode % inner-radius)
-                            (range n-planets)))]
-    (mapv #(generate-planet parent-mass %) radii)))
+        indices (randomize-system-structure 0.8 n-planets)
+        planet-radii (filterv #(< % outer-radius)
+                              (map #(a/titius-bode % inner-radius)
+                                   (indices :planet-indices)))
+        belt-radii (filterv #(< % outer-radius)
+                            (map #(a/titius-bode % inner-radius)
+                                 (indices :belt-indices)))]
+    {:planets   (mapv #(generate-planet parent-mass %) planet-radii)
+     :particles (apply concat
+                       (mapv #(b/generate-asteroid-belt parent-mass %1 %1) belt-radii))}))
+
+

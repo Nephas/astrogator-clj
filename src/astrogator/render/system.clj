@@ -3,8 +3,7 @@
             [astrogator.render.geometry :as geo]
             [astrogator.render.body :as b]
             [astrogator.physics.trafo :as t]
-            [astrogator.gui.camera :as cam]
-            [astrogator.util.log :as log]))
+            [astrogator.gui.camera :as cam]))
 
 (defn get-bodies [system]
   (if (nil? (system :body))
@@ -16,7 +15,18 @@
     (flatten [(get-planets (system :compA)) (get-planets (system :compB)) (system :planets)])
     (system :planets)))
 
+(defn get-particles [system]
+  (if (nil? (system :body))
+    (flatten [(get-particles (system :compA)) (get-particles (system :compB)) (system :particles)])
+    (system :particles)))
+
+(defn draw-asteroids [particles camera]
+  (doseq [particle particles]
+    (let [pos (t/map-to-screen (particle :mappos) camera)]
+      (geo/circle pos 1 [128 128 128]))))
+
 (defn draw-system [system camera]
+  (draw-asteroids (get-particles system) camera)
   (doseq [planet (get-planets system)]
     (let [pos (t/map-to-screen (planet :mappos) camera)]
       (geo/airy pos 1 (planet :color))))
@@ -24,6 +34,7 @@
     (b/star star camera)))
 
 (defn draw-subsystems [system camera]
+  (draw-asteroids (get-particles system) camera)
   (doseq [planet (get-planets system)]
     (let [pos (t/map-to-screen (planet :mappos) camera)
           size (* 0.1 (planet :radius) (camera :obj-zoom))]

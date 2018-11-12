@@ -26,6 +26,9 @@
                                       (move-moons dt)))]
     (mapv move-planet-moon-system planets)))
 
+(defn move-particles [particles dt parent-mappos]
+    (mapv #(move-around-parent % dt parent-mappos) particles))
+
 (defn move-system
   ([system dt cylpos mappos]
    (if (some? (system :system))
@@ -39,10 +42,12 @@
            (update-in [:compA] move-system dt cylposA (cyl-to-map mappos cylposA))
            (update-in [:compB] move-system dt cylposB (cyl-to-map mappos cylposB))
            (update-in [:planets] move-planets dt mappos)
+           (update-in [:particles] move-particles dt mappos)
            (assoc-in [:system :phase] phiA)
            (assoc-in [:system :mappos] mappos)))
      (-> system
          (update-in [:planets] move-planets dt mappos)
+         (update-in [:particles] move-particles dt mappos)
          (assoc-in [:body :cylpos] cylpos)
          (assoc-in [:body :mappos] mappos))))
   ([system dt] (move-system system dt [0 0] [0 0])))

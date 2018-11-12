@@ -1,6 +1,5 @@
 (ns astrogator.state
-  (:require [astrogator.generation.system :as gensys]
-            [astrogator.generation.sector :as gensec]
+  (:require [astrogator.generation.sector :as gensec]
             [astrogator.gui.sector :as sec]))
 
 (defn init-state []

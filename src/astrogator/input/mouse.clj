@@ -1,6 +1,5 @@
 (ns astrogator.input.mouse
-  (:require [astrogator.render.render :as r]
-            [astrogator.physics.trafo :as t]
+  (:require [astrogator.physics.trafo :as t]
             [astrogator.gui.sector :as sec]
             [astrogator.gui.camera :as cam]
             [astrogator.gui.system :as sys]))
@@ -18,6 +17,6 @@
 
 (defn handle-wheel [state event]
   (case event
-    (1) (cam/zoom :in state)
+    ( 1) (cam/zoom :in state)
     (-1) (cam/zoom :out state)
     state))
