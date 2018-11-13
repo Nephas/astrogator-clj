@@ -23,8 +23,8 @@
 (defn randomize-system-structure [planet-probability n-planets]
   (let [rand-pairs (map (fn [i] (if (< (r/rand) planet-probability) [i nil] [nil i]))
                         (range n-planets))]
-    {:planet-indices (filterv #(not (nil? %)) (map #(first %) rand-pairs))
-     :belt-indices   (filterv #(not (nil? %)) (map #(last %) rand-pairs))}))
+    {:planet-indices (filterv #(not= nil %) (map #(first %) rand-pairs))
+     :belt-indices   (filterv #(not= nil %) (map #(last %) rand-pairs))}))
 
 (defn generate-planet-system [parent-mass inner-radius outer-radius]
   (let [n-planets (r/rand-int-range 3 10)

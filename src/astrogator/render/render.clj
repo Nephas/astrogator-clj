@@ -11,11 +11,10 @@
   (q/background (col/vec-to-color conf/back-color))
   (case (camera :scale)
     :body (sys/draw-refbody (universe :viewsystem) camera)
-    :subsystem (sys/draw-subsystems (universe :viewsystem) camera)
+    :subsystem (sys/draw-system (universe :viewsystem) camera)
     :system (sys/draw-system (universe :viewsystem) camera)
     :sector (sec/draw-sector (universe :sector) (universe :clouds) camera)))
 
 (defn cache-all [universe camera]
-  (do (sys/draw-subsystems (universe :viewsystem) camera)
-      (sys/draw-system (universe :viewsystem) camera)
+  (do (sys/draw-system (universe :viewsystem) camera)
       (sec/draw-sector (universe :sector) (universe :clouds) camera)))

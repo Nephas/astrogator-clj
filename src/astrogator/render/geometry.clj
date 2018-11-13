@@ -1,8 +1,6 @@
 (ns astrogator.render.geometry
   (:require [quil.core :as q]
-            [astrogator.render.conf :as conf]
-            [astrogator.util.color :as col]
-            [astrogator.util.log :as log]))
+            [astrogator.util.color :as col]))
 
 (defn circle
   ([pos size]

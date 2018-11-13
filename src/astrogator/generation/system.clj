@@ -3,7 +3,6 @@
             [astrogator.util.rand :as r]
             [astrogator.util.color :as col]
             [astrogator.generation.star :as s]
-            [astrogator.generation.belt :as b]
             [astrogator.generation.planet :as p]))
 
 (declare generate-system generate-subsystem get-system-luminosity)
