@@ -37,7 +37,8 @@
       (b/distant-star pos size (star :color)))))
 
 (defn draw-system [system camera]
-  (f/draw-field system camera)
+  (f/draw-gravity-field system camera)
+  (f/draw-radiation-field system camera)
   (draw-asteroids (get-all system :particles) camera)
   (draw-planets (get-all system :planets) camera)
   (draw-stars (get-bodies system) camera))

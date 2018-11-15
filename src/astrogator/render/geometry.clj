@@ -1,6 +1,10 @@
 (ns astrogator.render.geometry
   (:require [quil.core :as q]
-            [astrogator.util.color :as col]))
+            [astrogator.util.color :as col]
+            [astrogator.physics.trafo :as t]))
+
+(defn arrow [pos vec]
+  (q/line pos (t/add pos vec)))
 
 (defn circle
   ([pos size]
