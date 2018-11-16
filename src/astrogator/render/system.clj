@@ -4,18 +4,9 @@
             [astrogator.render.field :as f]
             [astrogator.physics.trafo :as t]
             [astrogator.gui.camera :as cam]
+            [astrogator.util.selectors :as s]
             [quil.core :as q]
             [astrogator.util.color :as col]))
-
-(defn get-all [system key]
-  (if (nil? (system :body))
-    (concat (get-all (system :compA) key) (get-all (system :compB) key) (system key))
-    (system key)))
-
-(defn get-bodies [system]
-  (if (nil? (system :body))
-    (concat (get-bodies (system :compA)) (get-bodies (system :compB)))
-    [(system :body)]))
 
 (defn draw-asteroids [particles camera]
   (q/no-stroke)
@@ -38,13 +29,12 @@
 
 (defn draw-system [system camera]
   (f/draw-gravity-field system camera)
-  (f/draw-radiation-field system camera)
-  (draw-asteroids (get-all system :particles) camera)
-  (draw-planets (get-all system :planets) camera)
-  (draw-stars (get-bodies system) camera))
+  (draw-asteroids (s/get-all system :particles) camera)
+  (draw-planets (s/get-all system :planets) camera)
+  (draw-stars (s/get-bodies system) camera))
 
 (defn draw-refbody [system camera]
-  (let [refbody (cam/get-refbody camera system)]
+  (let [refbody (s/get-refbody camera system)]
     (case (refbody :type)
       :planet (b/draw-planet refbody camera)
       :star (b/draw-star refbody camera))))

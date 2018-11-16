@@ -61,7 +61,7 @@
 (defn stefan-boltzmann "[K]" [L $L R $R]
   (let [L (u/conv L $L :W)
         R (u/conv R $R :m)]
-    (m/expt (/ L (* 4 Math/PI sigma (m/expt R 2))) 0.25)))
+    (m/expt (/ L (* 4 Math/PI sigma (m/expt R 2))) 1/4)))
 
 (defn hill-sphere "[a]" [a m M]
   (* 0.9 a (m/expt (/ m (* 3 M)) 1/3)))

@@ -1,6 +1,7 @@
 (ns astrogator.gui.camera
   (:require [astrogator.physics.trafo :as t]
             [astrogator.util.log :as log]
+            [astrogator.util.selectors :as s]
             [astrogator.render.conf :as conf]))
 
 (defn change-focus [state body]
@@ -8,12 +9,8 @@
   (-> state
       (assoc-in [:camera :refbody] (body :path))))
 
-(defn get-refbody [camera viewsystem]
-  (let [path (camera :refbody)]
-    (get-in viewsystem path)))
-
 (defn update-camera [state]
-  (let [refbody (get-refbody (state :camera) (get-in state [:universe :viewsystem]))
+  (let [refbody (s/get-refbody state)
         refpos (get-in refbody [:mappos] [0 0])]
     (assoc-in state [:camera :mappos] (t/neg refpos))))
 

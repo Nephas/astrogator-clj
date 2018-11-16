@@ -9,7 +9,8 @@
             [astrogator.gui.camera :as cam]
             [astrogator.state :as state]
             [astrogator.util.log :as log]
-            [astrogator.physics.move :as p]))
+            [astrogator.physics.move :as p]
+            [astrogator.physics.thermal :as t]))
 
 (def state! (atom {}))
 
@@ -29,12 +30,14 @@
 (defn update-state [state]
   (let [state (-> state
                   (p/move-viewsystem)
+                  (t/update-thermal)
                   (cam/update-camera))]
     (do (swap! state! (fn [x] state))
         state)))
 
 (defn draw-state [state]
-  (render/render-universe (state :universe) (state :camera)))
+  (do (render/render-universe (state :universe) (state :camera))
+      (render/render-gui state)))
 
 (defn -main [& args]
   (q/defsketch astrogator

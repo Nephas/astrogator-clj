@@ -2,10 +2,17 @@
   (:require [astrogator.render.system :as sys]
             [astrogator.render.sector :as sec]
             [astrogator.render.conf :as conf]
+            [astrogator.util.selectors :as s]
             [quil.core :as q]
             [astrogator.util.color :as col]))
 
 
+(defn format-map [keymap]
+  (apply str (map #(str (first %1) ": " (second %1) "\n") keymap)))
+
+(defn render-gui [state]
+  (col/fill [192 192 192])
+  (q/text (format-map (s/get-refbody state)) 50 50))
 
 (defn render-universe [universe camera]
   (q/background (col/vec-to-color conf/back-color))

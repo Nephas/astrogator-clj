@@ -24,9 +24,9 @@
     (q/stroke 96 64 96)
     (draw-grid grid-arrows)))
 
-(defn draw-radiation-field [system camera]
-  (let [arrow (fn [pos] (g/flux-at-pos (t/screen-to-map pos camera) system))
-        grid (get-grid (first conf/screen-size) (last conf/screen-size) 30)
-        grid-arrows (map #(list %1 (arrow %1)) (apply concat grid))]
-    (q/stroke 96 96 64)
-    (draw-grid grid-arrows)))
+;(defn draw-radiation-field [system camera]
+;  (let [arrow (fn [pos] (g/flux-at-pos (t/screen-to-map pos camera) system))
+;        grid (get-grid (first conf/screen-size) (last conf/screen-size) 30)
+;        grid-arrows (map #(list %1 (arrow %1)) (apply concat grid))]
+;    (q/stroke 96 96 64)
+;    (draw-grid grid-arrows)))
