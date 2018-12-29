@@ -9,16 +9,18 @@
   (let [mass (r/rand-range 0.5 100)
         radius-Re (a/planet-radius mass :Me)
         torbit (a/t-orbit orbit-radius :AU parent-mass :Msol)
-        moon-min-orbit (* 10 (unit/conv radius-Re :Re :AU))]
+        moon-min-orbit (* 10 (unit/conv radius-Re :Re :AU))
+        rhill (a/hill-sphere orbit-radius (unit/conv mass :Me :Msol) parent-mass)]
     {:type   :planet
      :mass   mass
      :radius radius-Re
-     :torbit torbit,
+     :rhill  rhill
+     :torbit torbit
      :cylvel (* 2 Math/PI (/ 1 torbit))
      :cylpos [orbit-radius (* 2 Math/PI (r/rand))]
      :color  [128 196 128]
      :mappos [0 0]
-     :moons  (m/generate-moon-system mass moon-min-orbit (* 100 moon-min-orbit))}))
+     :moons  (m/generate-moon-system mass moon-min-orbit rhill)}))
 
 (defn randomize-system-structure [planet-probability n-planets]
   (let [rand-pairs (map (fn [i] (if (< (r/rand) planet-probability) [i nil] [nil i]))

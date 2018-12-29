@@ -25,7 +25,7 @@
          next-depth (dec max-depth)]
      (if (and binary (pos? next-depth))
        (generate-subsystem mass next-depth max-sc-orbit)
-       (s/generate-star mass max-sc-orbit))))
+       (s/generate-star mass (* 0.8 max-sc-orbit)))))
   ([mass seed] (do (r/set-seed! seed)
                    (generate-system mass 3 (* 50 mass))))
   ([distantsystem] (generate-system (distantsystem :mass) (distantsystem :seed))))
@@ -37,10 +37,11 @@
         radiusA (* radiusB (/ massB massA))
         sc-orbitA (a/hill-sphere (+ radiusA radiusB) massA massB)
         sc-orbitB (a/hill-sphere (+ radiusA radiusB) massB massA)
-        compA (generate-system massA next-depth (* 0.9 sc-orbitA))
-        compB (generate-system massB next-depth (* 0.9 sc-orbitB))
+        compA (generate-system massA next-depth (* 0.8 sc-orbitA))
+        compB (generate-system massB next-depth (* 0.8 sc-orbitB))
         torbit (a/t-orbit (+ radiusA radiusB) :AU mass :Msol)]
     (conj {:system {:mass       mass
+                    :rhill      max-sc-orbit
                     :luminosity (get-system-luminosity compA compB)
                     :radiusA    radiusA
                     :radiusB    radiusB
@@ -48,7 +49,7 @@
                     :cylvel     (* 2 Math/PI (/ 1 torbit))}
            :compA  compA
            :compB  compB}
-          (p/generate-planet-system mass (* 1.5 radiusB) (* 0.9 max-sc-orbit)))))
+          (p/generate-planet-system mass (* 1.5 radiusB) (* 0.8 max-sc-orbit)))))
 
 (defn get-system-color
   ([compA compB] (col/blend-vec-color (get-system-color compA) (get-system-color compB)))

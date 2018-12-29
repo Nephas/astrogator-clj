@@ -1,9 +1,9 @@
 (ns astrogator.render.render
   (:require [astrogator.render.system :as sys]
+            [quil.core :as q]
             [astrogator.render.sector :as sec]
             [astrogator.render.conf :as conf]
             [astrogator.util.selectors :as s]
-            [quil.core :as q]
             [astrogator.util.color :as col]))
 
 

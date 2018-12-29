@@ -13,6 +13,15 @@
    (col/fill color)
    (circle pos size)))
 
+(defn ring
+  ([pos size]
+   (q/ellipse (pos 0) (pos 1) size size))
+  ([pos size color]
+   (col/fill [0 0 0] 0)
+   (q/with-stroke [(col/vec-to-color color) 128]
+                  (do (q/stroke-weight 2)
+                      (ring pos size)))))
+
 (defn airy
   ([pos size color]
    (q/with-stroke [(col/vec-to-color color) 96]

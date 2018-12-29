@@ -17,5 +17,6 @@
                   :luminosity luminosity
                   :temp       temp
                   :class      class
-                  :color      color}}
-          (p/generate-planet-system mass min-sc-orbit (* 0.9 max-sc-orbit)))))
+                  :color      color
+                  :rhill      max-sc-orbit}}
+          (p/generate-planet-system mass min-sc-orbit max-sc-orbit))))

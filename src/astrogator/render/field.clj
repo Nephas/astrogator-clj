@@ -17,9 +17,17 @@
   (doseq [entry grid-arrows]
     (geo/arrow (first entry) (last entry))))
 
+(defn draw-soi
+  ([body camera color]
+   (let [pos (t/map-to-screen (body :mappos) camera)
+         soi (* (body :rhill) (camera :dist-zoom))]
+     (geo/ring pos soi color)))
+  ([body camera]
+   (draw-soi body camera [128 128 128])))
+
 (defn draw-gravity-field [system camera]
   (let [arrow (fn [pos] (g/acc-at-pos (t/screen-to-map pos camera) system))
-        grid (get-grid (first conf/screen-size) (last conf/screen-size) 30)
+        grid (get-grid (first conf/screen-size) (last conf/screen-size) 60)
         grid-arrows (map #(list %1 (arrow %1)) (apply concat grid))]
     (q/stroke 96 64 96)
     (draw-grid grid-arrows)))

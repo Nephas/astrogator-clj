@@ -3,6 +3,7 @@
             [astrogator.render.geometry :as geo]
             [astrogator.render.conf :as conf]
             [astrogator.util.color :as col]
+            [astrogator.render.field :as f]
             [astrogator.physics.trafo :as t]))
 
 (defn cast-shadow [pos phase size length]
@@ -25,7 +26,8 @@
       (planet-with-night pos size (get-in refbody [:cylpos 1]) (moon :color))))
   (let [pos (t/map-to-screen (refbody :mappos) camera)
         size (* 0.1 (refbody :radius) (camera :obj-zoom))]
-    (planet-with-night pos size (get-in refbody [:cylpos 1]) (refbody :color))))
+    (do (f/draw-soi refbody camera)
+        (planet-with-night pos size (get-in refbody [:cylpos 1]) (refbody :color)))))
 
 (defn draw-star
   ([pos size color]

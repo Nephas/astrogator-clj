@@ -3,10 +3,10 @@
             [astrogator.render.body :as b]
             [astrogator.render.field :as f]
             [astrogator.physics.trafo :as t]
-            [astrogator.gui.camera :as cam]
             [astrogator.util.selectors :as s]
             [quil.core :as q]
-            [astrogator.util.color :as col]))
+            [astrogator.util.color :as col]
+            [astrogator.util.log :as log]))
 
 (defn draw-asteroids [particles camera]
   (q/no-stroke)
@@ -15,20 +15,28 @@
     (let [pos (t/map-to-screen (particle :mappos) camera)]
       (geo/circle pos 1))))
 
+
 (defn draw-planets [planets camera]
   (doseq [planet planets]
     (let [pos (t/map-to-screen (planet :mappos) camera)
           size (* 0.1 (planet :radius) (camera :obj-zoom))]
-      (b/distant-planet pos size (get-in planet [:cylpos 1]) (planet :color)))))
+      (do (f/draw-soi planet camera)
+          (b/distant-planet pos size (get-in planet [:cylpos 1]) (planet :color))))))
 
 (defn draw-stars [stars camera]
   (doseq [star stars]
     (let [pos (t/map-to-screen (star :mappos) camera)
           size (* 5 (camera :obj-zoom) (star :radius))]
-      (b/distant-star pos size (star :color)))))
+      (do (f/draw-soi star camera)
+          (b/distant-star pos size (star :color))))))
+
+(defn draw-systems [systems camera]
+  (doseq [system systems]
+      (f/draw-soi system camera)))
 
 (defn draw-system [system camera]
-  (f/draw-gravity-field system camera)
+  ;(f/draw-gravity-field system camera)
+  (draw-systems (s/get-subsystems system) camera)
   (draw-asteroids (s/get-all system :particles) camera)
   (draw-planets (s/get-all system :planets) camera)
   (draw-stars (s/get-bodies system) camera))

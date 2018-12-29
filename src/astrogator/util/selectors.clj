@@ -18,3 +18,8 @@
   (if (nil? (system :body))
     (concat (get-all (system :compA) key) (get-all (system :compB) key) (system key))
     (system key)))
+
+(defn get-subsystems [system]
+  (if (nil? (system :body))
+    (concat (get-subsystems (system :compA)) (get-subsystems (system :compB)) [(system :system)])
+    []))

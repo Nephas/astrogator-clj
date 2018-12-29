@@ -16,7 +16,7 @@
      :mappos [0 0]}))
 
 (defn generate-moon-system [parent-mass inner-radius outer-radius]
-  (let [n-moons (r/rand-int-range 0 5)
+  (let [n-moons (r/rand-int-range 0 10)
         radii (filterv #(< % outer-radius)
                        (map #(a/titius-bode % inner-radius)
                             (range n-moons)))]
