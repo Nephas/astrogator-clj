@@ -29,7 +29,7 @@
      :belt-indices   (filterv #(not= nil %) (map #(last %) rand-pairs))}))
 
 (defn generate-planet-system [parent-mass inner-radius outer-radius]
-  (let [n-planets (r/rand-int-range 3 10)
+  (let [n-planets (r/rand-int-range 5 20)
         indices (randomize-system-structure 0.8 n-planets)
         planet-radii (filterv #(< % outer-radius)
                               (map #(a/titius-bode % inner-radius)

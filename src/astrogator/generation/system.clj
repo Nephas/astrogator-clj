@@ -3,9 +3,16 @@
             [astrogator.util.rand :as r]
             [astrogator.util.color :as col]
             [astrogator.generation.star :as s]
-            [astrogator.generation.planet :as p]))
+            [astrogator.generation.planet :as p]
+            [astrogator.physics.trafo :as t]))
 
 (declare generate-system generate-subsystem get-system-luminosity)
+
+(defn place-playership [system pos]
+  (let [ship {:type   :player
+              :mapvel [0.1 -0.1]
+              :mappos (t/pol-to-cart pos)}]
+    (assoc-in system [:ships] [ship])))
 
 (defn initiate-positions
   ([system]
@@ -25,20 +32,20 @@
          next-depth (dec max-depth)]
      (if (and binary (pos? next-depth))
        (generate-subsystem mass next-depth max-sc-orbit)
-       (s/generate-star mass (* 0.8 max-sc-orbit)))))
+       (s/generate-star mass (* 0.75 max-sc-orbit)))))
   ([mass seed] (do (r/set-seed! seed)
-                   (generate-system mass 3 (* 50 mass))))
+                   (generate-system mass 3 (* 100 mass))))
   ([distantsystem] (generate-system (distantsystem :mass) (distantsystem :seed))))
 
 (defn generate-subsystem [mass next-depth max-sc-orbit]
   (let [massA (* mass (r/rand-range 0.5 0.9))
         massB (- mass massA)
-        radiusB (* max-sc-orbit (r/rand-range 0.2 0.6))
+        radiusB (* 1.5 max-sc-orbit (r/rand-range 0.2 0.6))
         radiusA (* radiusB (/ massB massA))
         sc-orbitA (a/hill-sphere (+ radiusA radiusB) massA massB)
         sc-orbitB (a/hill-sphere (+ radiusA radiusB) massB massA)
-        compA (generate-system massA next-depth (* 0.8 sc-orbitA))
-        compB (generate-system massB next-depth (* 0.8 sc-orbitB))
+        compA (generate-system massA next-depth (* 0.75 sc-orbitA))
+        compB (generate-system massB next-depth (* 0.75 sc-orbitB))
         torbit (a/t-orbit (+ radiusA radiusB) :AU mass :Msol)]
     (conj {:system {:mass       mass
                     :rhill      max-sc-orbit

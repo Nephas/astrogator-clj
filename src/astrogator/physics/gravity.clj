@@ -6,7 +6,7 @@
 
 (defn acc-at-pos [pos system]
   (let [bodies (s/get-bodies system)
-        inv-dist #(/ 1000 (+ 10 (m/expt (t/dist %1 %2) 3)))
+        inv-dist #(/ 1 (+ 10 (m/expt (t/dist %1 %2) 3)))
         body-acc (fn [body] (let [bodypos (body :mappos)]
                               (t/scalar (* (body :mass) (inv-dist pos bodypos))
                                         (t/sub bodypos pos))))]

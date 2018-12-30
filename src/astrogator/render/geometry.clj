@@ -6,6 +6,15 @@
 (defn arrow [pos vec]
   (q/line pos (t/add pos vec)))
 
+(defn ship
+  ([pos size]
+   (let [x (pos 0)
+         y (pos 1)]
+     (q/triangle (- x size) (- y size) (+ x size) (- y size) x (+ y size))))
+  ([pos size color]
+   (col/fill color)
+   (ship pos size)))
+
 (defn circle
   ([pos size]
    (q/ellipse (pos 0) (pos 1) size size))
@@ -18,7 +27,7 @@
    (q/ellipse (pos 0) (pos 1) size size))
   ([pos size color]
    (col/fill [0 0 0] 0)
-   (q/with-stroke [(col/vec-to-color color) 128]
+   (q/with-stroke [(col/vec-to-color color) 64]
                   (do (q/stroke-weight 2)
                       (ring pos size)))))
 

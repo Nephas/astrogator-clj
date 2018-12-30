@@ -11,5 +11,7 @@
   (-> state
       (assoc-in [:camera :sectorpos] (t/neg (system :sectorpos)))
       (assoc-in [:camera :refbody] nil)
-      (assoc-in [:universe :viewsystem] (sys/initiate-positions
-                                          (sys/generate-system system)))))
+      (assoc-in [:universe :viewsystem] (-> system
+                                            (sys/generate-system)
+                                            (sys/initiate-positions)
+                                            (sys/place-playership [10 10])))))

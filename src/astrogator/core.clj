@@ -9,7 +9,7 @@
             [astrogator.gui.camera :as cam]
             [astrogator.state :as state]
             [astrogator.util.log :as log]
-            [astrogator.physics.move :as p]
+            [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal :as t]))
 
 (def state! (atom {}))
