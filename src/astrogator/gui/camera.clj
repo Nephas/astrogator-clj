@@ -9,6 +9,11 @@
   (-> state
       (assoc-in [:camera :refbody] (body :path))))
 
+(defn change-target [state body]
+  (log/info (str "select target: " (body :path)))
+  (-> state
+      (assoc-in [:camera :target] (body :path))))
+
 (defn update-camera [state]
   (let [refbody (s/get-refbody state)
         refpos (get-in refbody [:mappos] [0 0])]

@@ -10,7 +10,8 @@
             [astrogator.state :as state]
             [astrogator.util.log :as log]
             [astrogator.physics.move.system :as p]
-            [astrogator.physics.thermal :as t]))
+            [astrogator.physics.thermal :as t]
+            [astrogator.render.gui :as gui]))
 
 (def state! (atom {}))
 
@@ -37,7 +38,7 @@
 
 (defn draw-state [state]
   (do (render/render-universe (state :universe) (state :camera))
-      (render/render-gui state)))
+      (gui/render-gui state)))
 
 (defn -main [& args]
   (q/defsketch astrogator
