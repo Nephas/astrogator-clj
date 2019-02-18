@@ -15,24 +15,24 @@
                                        (q/rect 0 (* -1 size) length (* 2 size)))))
 
 (defn moon-with-shade
-  ([pos size phase color]
+  ([pos size phase]
    (q/no-stroke)
    (cast-shadow pos phase size (astrogator.conf/screen-size 0))
-   (geo/circle pos size [0 0 128])
-   (geo/half-circle pos size (+ Math/PI phase) conf/planet-night-color)))
+   (geo/circle pos size conf/moon-surface-color)
+   (geo/half-circle pos size phase conf/planet-night-color)))
 
 (defn draw-planet [refbody camera]
   (doseq [moon (refbody :moons)]
     (let [pos (t/map-to-screen (moon :mappos) camera)
           size (* 0.1 (moon :radius) (camera :obj-zoom))
-          phase (get-in refbody [:cylpos 1])]
-      (moon-with-shade pos size phase (moon :color))))
+          phase (+ Math/PI (get-in refbody [:cylpos 1]))]
+      (moon-with-shade pos size phase)))
   (let [pos (t/map-to-screen (refbody :mappos) camera)
         size (* 0.1 (refbody :radius) (camera :obj-zoom))
         phase (+ Math/PI (get-in refbody [:cylpos 1]))]
     (do (f/draw-soi refbody camera)
         (cast-shadow pos phase size (astrogator.conf/screen-size 0))
-        (geo/circle pos size [64 64 96])
+        (geo/circle pos size [0 0 0.4])
         (p/draw-surface (vals (refbody :surface)) (* 0.58 size))
         (geo/half-circle pos size phase conf/planet-night-color))))
 

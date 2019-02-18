@@ -4,6 +4,7 @@
             [quil.core :as q]
             [astrogator.physics.trafo :as t]
             [astrogator.render.geometry :as geo]
+            [astrogator.render.conf :as r]
             [astrogator.util.log :as log]
             [astrogator.util.string :as str]
             [astrogator.conf :as conf]))
@@ -32,10 +33,10 @@
   (if (nil? body)
     state
     (let [pos (t/map-to-screen (body :mappos) (state :camera))]
-      (renderer pos [255 255 255]))))
+      (renderer pos r/gui-primary))))
 
 (defn render-gui [state]
-  (col/fill [192 192 192])
+  (col/fill r/gui-secondary)
   (q/text (format-map (state :time)) 50 50)
   (q/text (format-map (s/get-target state)) 50 100)
   (q/text (format-map (s/get-playership state)) 50 (- (conf/screen-size 1) 300))

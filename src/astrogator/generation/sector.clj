@@ -36,4 +36,4 @@
             pos (t/scalar size-AU [(d/sample (d/uniform -1 1)) (d/sample (d/normal 0 1))])]
         {:radius    radius-AU
          :sectorpos pos
-         :color     [(r/rand-int-range 60 100) 40 (r/rand-int-range 60 100)]}))))
+         :color     [(r/rand-range 0.7 0.9) 0.4 0.4]}))))

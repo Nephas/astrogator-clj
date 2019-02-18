@@ -1,10 +1,16 @@
 (ns astrogator.render.conf)
 
-(def back-color [50 0 75])
+(def back-color [0.7 0.2 0.2])
 
-(def planet-shade-color [33 0 66])
+(def particle-color [0.6 0.5 0.7])
 
-(def planet-night-color [25 0 50])
+(def planet-shade-color [0.7 0.1 0.1])
+(def planet-night-color [0.7 0.1 0.1])
+
+(def moon-surface-color [0 0 0.5])
+
+(def gui-secondary [0.1 0.6 1])
+(def gui-primary [0.0 0.6 1])
 
 (def airy-threshold 3)
 

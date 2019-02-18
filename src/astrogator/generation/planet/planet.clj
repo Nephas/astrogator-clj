@@ -19,9 +19,9 @@
      :torbit  torbit
      :cylvel  (* 2 Math/PI (/ 1 torbit))
      :cylpos  [orbit-radius (* 2 Math/PI (r/rand))]
-     :color   [128 196 128]
+     :color   [0.6 0.3 0.6]
      :mappos  [0 0]
-     :surface {}                                              ;(s/cellular-map 4 0.45 4 8 0.2 0.4 0 0.4)
+     :surface {}
      :moons   (m/generate-moon-system mass moon-min-orbit rhill)}))
 
 (defn randomize-system-structure [planet-probability n-planets]

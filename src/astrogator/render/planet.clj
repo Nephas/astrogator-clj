@@ -18,9 +18,9 @@
         temp (:temperature tile)
         frozen (:glacier tile)
         land (not (:ocean tile))]
-    (cond frozen [200 200 255]
-          land [(* 255 height) (* 255 height) 64]
-          true [64 64 (+  128 (* 128 height))])))
+    (cond frozen [(+ 0.2 temp) 0.1 (+ 0.8 height)]
+          land [0.1 0.6 (+ 0.25 height)]
+          true [0.6 0.6 (max 0.5 (+ 0.4 height))])))
 
 (defn draw-surface
   ([tiles zoom]

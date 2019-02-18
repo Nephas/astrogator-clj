@@ -1,8 +1,8 @@
 (ns astrogator.render.field
   (:require [astrogator.render.geometry :as geo]
-            [astrogator.util.color :as col]
             [astrogator.conf :as conf]
             [quil.core :as q]
+            [astrogator.render.conf :as r]
             [astrogator.physics.trafo :as t]
             [astrogator.physics.gravity :as g]
             [astrogator.util.log :as log]))
@@ -23,7 +23,7 @@
          soi (* (body :rhill) (camera :dist-zoom))]
      (geo/ring pos soi color)))
   ([body camera]
-   (draw-soi body camera [128 128 128])))
+   (draw-soi body camera r/gui-secondary)))
 
 (defn draw-gravity-field [system camera]
   (let [arrow (fn [pos] (g/gravacc-at-pos (t/screen-to-map pos camera) system))

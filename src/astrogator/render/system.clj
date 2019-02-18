@@ -7,11 +7,11 @@
             [astrogator.util.selectors :as s]
             [quil.core :as q]
             [astrogator.util.color :as col]
-            [astrogator.util.log :as log]))
+            [astrogator.render.conf :as conf]))
 
 (defn draw-asteroids [particles camera]
   (q/no-stroke)
-  (col/fill [128 128 128])
+  (col/fill conf/particle-color)
   (doseq [particle particles]
     (let [pos (t/map-to-screen (particle :mappos) camera)]
       (geo/circle pos 1))))
@@ -38,7 +38,7 @@
 
 (defn draw-systems [systems camera]
   (doseq [system systems]
-    (f/draw-soi system camera [96 96 96])))
+    (f/draw-soi system camera conf/gui-secondary)))
 
 (defn draw-system [system camera]
   ;(f/draw-gravity-field system camera)

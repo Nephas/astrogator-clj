@@ -17,7 +17,7 @@
 
 (defn setup []
   (q/frame-rate c/frame-rate)
-  (q/color-mode :rgb)
+  (q/color-mode :hsb 1.0 1.0 1.0 255)
   (q/text-font (q/create-font "Consolas" 14 true))
   (q/no-stroke)
   (q/ellipse-mode :radius)
