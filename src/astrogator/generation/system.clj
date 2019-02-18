@@ -3,15 +3,14 @@
             [astrogator.util.rand :as r]
             [astrogator.util.color :as col]
             [astrogator.generation.star :as s]
-            [astrogator.generation.planet :as p]
+            [astrogator.generation.planet.planet :as p]
+            [astrogator.generation.player :as pl]
             [astrogator.physics.trafo :as t]))
 
 (declare generate-system generate-subsystem get-system-luminosity)
 
 (defn place-playership [system pos]
-  (let [ship {:type   :player
-              :mapvel [0.1 -0.1]
-              :mappos (t/pol-to-cart pos)}]
+  (let [ship (assoc-in (pl/generate-playership) [:mappos] pos)]
     (assoc-in system [:ships] [ship])))
 
 (defn initiate-positions

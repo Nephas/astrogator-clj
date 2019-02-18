@@ -4,7 +4,9 @@
             [quil.core :as q]
             [astrogator.physics.trafo :as t]
             [astrogator.render.geometry :as geo]
-            [astrogator.util.log :as log]))
+            [astrogator.util.log :as log]
+            [astrogator.util.string :as str]
+            [astrogator.conf :as conf]))
 
 (declare render-gui render-target-cursor)
 
@@ -24,7 +26,7 @@
                        (q/rect (- (pos 0) offset) (- (pos 1) offset) size size)))))
 
 (defn format-map [keymap]
-  (apply str (map #(str (first %1) ": " (second %1) "\n") keymap)))
+  (apply str (map #(format "%-12s%s\n" (str (first %1)) (str/fmt-numeric (second %1))) keymap)))
 
 (defn render-at-body [state body renderer]
   (if (nil? body)
@@ -34,6 +36,8 @@
 
 (defn render-gui [state]
   (col/fill [192 192 192])
-  (q/text (format-map (s/get-target state)) 50 50)
+  (q/text (format-map (state :time)) 50 50)
+  (q/text (format-map (s/get-target state)) 50 100)
+  (q/text (format-map (s/get-playership state)) 50 (- (conf/screen-size 1) 300))
   (render-at-body state (s/get-refbody state) crosshair)
   (render-at-body state (s/get-target state) cursor))

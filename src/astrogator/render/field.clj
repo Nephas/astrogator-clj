@@ -26,7 +26,7 @@
    (draw-soi body camera [128 128 128])))
 
 (defn draw-gravity-field [system camera]
-  (let [arrow (fn [pos] (g/acc-at-pos (t/screen-to-map pos camera) system))
+  (let [arrow (fn [pos] (g/gravacc-at-pos (t/screen-to-map pos camera) system))
         grid (get-grid (first conf/screen-size) (last conf/screen-size) 60)
         grid-arrows (map #(list %1 (arrow %1)) (apply concat grid))]
     (q/stroke 96 64 96)

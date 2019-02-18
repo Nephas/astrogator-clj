@@ -13,11 +13,12 @@
             [astrogator.physics.thermal :as t]
             [astrogator.render.gui :as gui]))
 
-(def state! (atom {}))
+(def store (atom {}))
 
 (defn setup []
   (q/frame-rate c/frame-rate)
   (q/color-mode :rgb)
+  (q/text-font (q/create-font "Consolas" 14 true))
   (q/no-stroke)
   (q/ellipse-mode :radius)
   (log/info "initialising state")
@@ -25,15 +26,16 @@
     (do (log/info "caching renderings")
         (render/cache-all (init-state :universe) (init-state :camera))
         (log/info "setting state atom")
-        (swap! state! (fn [state] init-state))
-        @state!)))
+        (swap! store (fn [_] init-state))
+        @store)))
 
 (defn update-state [state]
   (let [state (-> state
                   (p/move-viewsystem)
                   (t/update-thermal)
-                  (cam/update-camera))]
-    (do (swap! state! (fn [x] state))
+                  (cam/update-camera)
+                  (cam/update-playership))]
+    (do (swap! store (fn [_] state))
         state)))
 
 (defn draw-state [state]
@@ -52,5 +54,6 @@
                :key-pressed key/handle-key
                :mouse-clicked mouse/handle-click
                :mouse-wheel mouse/handle-wheel
+               :mouse-moved mouse/handle-move
 
                :middleware [m/fun-mode]))

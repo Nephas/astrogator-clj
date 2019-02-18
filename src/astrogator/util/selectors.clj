@@ -4,7 +4,7 @@
   (get-in state [:universe :viewsystem]))
 
 (defn get-body-by-path [path viewsystem]
-    (if (nil? path) nil (get-in viewsystem path)))
+  (if (nil? path) nil (get-in viewsystem path)))
 
 (defn get-refbody
   ([camera viewsystem]
@@ -15,6 +15,11 @@
   ([camera viewsystem]
    (get-body-by-path (camera :target) viewsystem))
   ([state] (get-target (state :camera) (get-viewsystem state))))
+
+(def playership-path [:universe :viewsystem :ships 0])
+
+(defn get-playership [state]
+  (get-in state playership-path))
 
 (defn get-bodies [system]
   (if (nil? (system :body))

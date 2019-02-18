@@ -1,6 +1,6 @@
 (ns astrogator.generation.star
   (:require [astrogator.physics.astro :as a]
-            [astrogator.generation.planet :as p]
+            [astrogator.generation.planet.planet :as p]
             [astrogator.physics.units :as unit]
             [astrogator.generation.belt :as b]))
 

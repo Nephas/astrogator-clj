@@ -4,30 +4,37 @@
             [astrogator.render.conf :as conf]
             [astrogator.util.color :as col]
             [astrogator.render.field :as f]
+            [astrogator.render.planet :as p]
             [astrogator.physics.trafo :as t]))
 
 (defn cast-shadow [pos phase size length]
   (col/fill conf/planet-shade-color 196)
+  (q/no-stroke)
   (q/with-translation pos
-                      (q/with-rotation [phase]
+                      (q/with-rotation [(+ Math/PI phase)]
                                        (q/rect 0 (* -1 size) length (* 2 size)))))
 
-(defn planet-with-night
+(defn moon-with-shade
   ([pos size phase color]
    (q/no-stroke)
    (cast-shadow pos phase size (astrogator.conf/screen-size 0))
-   (geo/circle pos size conf/planet-night-color)
-   (geo/half-circle pos size phase color)))
+   (geo/circle pos size [0 0 128])
+   (geo/half-circle pos size (+ Math/PI phase) conf/planet-night-color)))
 
 (defn draw-planet [refbody camera]
   (doseq [moon (refbody :moons)]
     (let [pos (t/map-to-screen (moon :mappos) camera)
-          size (* 0.1 (moon :radius) (camera :obj-zoom))]
-      (planet-with-night pos size (get-in refbody [:cylpos 1]) (moon :color))))
+          size (* 0.1 (moon :radius) (camera :obj-zoom))
+          phase (get-in refbody [:cylpos 1])]
+      (moon-with-shade pos size phase (moon :color))))
   (let [pos (t/map-to-screen (refbody :mappos) camera)
-        size (* 0.1 (refbody :radius) (camera :obj-zoom))]
+        size (* 0.1 (refbody :radius) (camera :obj-zoom))
+        phase (+ Math/PI (get-in refbody [:cylpos 1]))]
     (do (f/draw-soi refbody camera)
-        (planet-with-night pos size (get-in refbody [:cylpos 1]) (refbody :color)))))
+        (cast-shadow pos phase size (astrogator.conf/screen-size 0))
+        (geo/circle pos size [64 64 96])
+        (p/draw-surface (vals (refbody :surface)) (* 0.58 size))
+        (geo/half-circle pos size phase conf/planet-night-color))))
 
 (defn draw-star
   ([pos size color]

@@ -6,6 +6,11 @@
             (* r (Math/sin phi))])
   ([[r phi]] (pol-to-cart r phi)))
 
+(defn cart-to-pol
+  ([x y] [(Math/sqrt (+ (* x x) (* y y)))
+          (Math/atan2 y x)])
+  ([[x y]] (cart-to-pol y x)))
+
 (def inv #(/ 1 %))
 
 (def add #(mapv + %1 %2))
@@ -14,6 +19,9 @@
 
 (defn scalar [num v] (mapv #(* num %) v))
 
+(defn vec2d? [x]
+  (and (vector? x) (= 2 (count x)) (reduce #(and %1 %2) (map number? x))))
+
 (def neg #(scalar -1 %))
 
 (def screen-center (scalar 1/2 c/screen-size))
@@ -21,6 +29,9 @@
 (defn norm [v]
   (let [sqr #(* % %)]
     (Math/sqrt (+ (sqr (v 0)) (sqr (v 1))))))
+
+(defn normalize [v]
+  (scalar (inv (norm v)) v))
 
 (defn dist [v1 v2]
   (let [dv (sub v1 v2)]

@@ -12,7 +12,8 @@
                           :mappos    [0 0]
                           :scale     :system
                           :refbody   nil}
-               :time     {:dps 10}}]
+               :time     {:day 0
+                          :dps 10}}]
     (-> state
         (sec/change-viewsystem
           (first (get-in state [:universe :sector]))))))

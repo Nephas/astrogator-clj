@@ -1,8 +1,9 @@
-(ns astrogator.generation.planet
+(ns astrogator.generation.planet.planet
   (:require [astrogator.physics.astro :as a]
             [astrogator.physics.units :as unit]
             [astrogator.util.rand :as r]
             [astrogator.generation.moon :as m]
+            [astrogator.generation.planet.surface :as s]
             [astrogator.generation.belt :as b]))
 
 (defn generate-planet [parent-mass orbit-radius]
@@ -11,16 +12,17 @@
         torbit (a/t-orbit orbit-radius :AU parent-mass :Msol)
         moon-min-orbit (* 10 (unit/conv radius-Re :Re :AU))
         rhill (a/hill-sphere orbit-radius (unit/conv mass :Me :Msol) parent-mass)]
-    {:type   :planet
-     :mass   mass
-     :radius radius-Re
-     :rhill  rhill
-     :torbit torbit
-     :cylvel (* 2 Math/PI (/ 1 torbit))
-     :cylpos [orbit-radius (* 2 Math/PI (r/rand))]
-     :color  [128 196 128]
-     :mappos [0 0]
-     :moons  (m/generate-moon-system mass moon-min-orbit rhill)}))
+    {:type    :planet
+     :mass    mass
+     :radius  radius-Re
+     :rhill   rhill
+     :torbit  torbit
+     :cylvel  (* 2 Math/PI (/ 1 torbit))
+     :cylpos  [orbit-radius (* 2 Math/PI (r/rand))]
+     :color   [128 196 128]
+     :mappos  [0 0]
+     :surface {}                                              ;(s/cellular-map 4 0.45 4 8 0.2 0.4 0 0.4)
+     :moons   (m/generate-moon-system mass moon-min-orbit rhill)}))
 
 (defn randomize-system-structure [planet-probability n-planets]
   (let [rand-pairs (map (fn [i] (if (< (r/rand) planet-probability) [i nil] [nil i]))

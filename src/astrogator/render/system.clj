@@ -2,6 +2,7 @@
   (:require [astrogator.render.geometry :as geo]
             [astrogator.render.body :as b]
             [astrogator.render.field :as f]
+            [astrogator.render.ship :as sh]
             [astrogator.physics.trafo :as t]
             [astrogator.util.selectors :as s]
             [quil.core :as q]
@@ -16,11 +17,10 @@
       (geo/circle pos 1))))
 
 (defn draw-ships [ships camera]
-  (q/no-stroke)
   (col/fill [128 128 128])
   (doseq [ship ships]
     (let [pos (t/map-to-screen (ship :mappos) camera)]
-      (geo/ship pos 5))))
+      (sh/render-ship ship pos))))
 
 (defn draw-planets [planets camera]
   (doseq [planet planets]
@@ -38,7 +38,7 @@
 
 (defn draw-systems [systems camera]
   (doseq [system systems]
-      (f/draw-soi system camera [96 96 96])))
+    (f/draw-soi system camera [96 96 96])))
 
 (defn draw-system [system camera]
   ;(f/draw-gravity-field system camera)

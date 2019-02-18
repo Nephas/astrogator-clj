@@ -3,17 +3,11 @@
             [astrogator.util.color :as col]
             [astrogator.physics.trafo :as t]))
 
-(defn arrow [pos vec]
-  (q/line pos (t/add pos vec)))
-
-(defn ship
-  ([pos size]
-   (let [x (pos 0)
-         y (pos 1)]
-     (q/triangle (- x size) (- y size) (+ x size) (- y size) x (+ y size))))
-  ([pos size color]
-   (col/fill color)
-   (ship pos size)))
+(defn arrow
+  ([pos vec]
+   (do (q/stroke-weight 1)
+       (q/line pos (t/add pos vec))))
+  ([pos vec scale] (arrow pos (t/scalar scale vec))))
 
 (defn circle
   ([pos size]
