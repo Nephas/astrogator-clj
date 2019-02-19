@@ -13,20 +13,23 @@
             wedge #(q/with-rotation [%] (draw-hex-wedge radius))]
         (doall (map wedge (list 0 (rad 2/3) (rad 4/3)))))))
 
-(defn true-colors [tile]
+(defn true-colors [tile colors]
   (let [height (:height tile)
         temp (:temperature tile)
-        frozen (:glacier tile)
-        land (not (:ocean tile))]
-    (cond frozen [(+ 0.2 temp) 0.1 (+ 0.8 height)]
-          land [0.1 0.6 (+ 0.25 height)]
-          true [0.6 0.6 (max 0.5 (+ 0.4 height))])))
+        ice (:glacier tile)
+        land (not (:ocean tile))
+        ice-color (assoc (colors :glacier) 2 (+ 0.8 height))
+        land-color (assoc (colors :rock) 2 (+ 0.25 height))
+        ocean-color (assoc (colors :ocean) 2 (max 0.5 (+ 0.4 height)))]
+    (cond ice ice-color
+          land land-color
+          true ocean-color)))
 
 (defn draw-surface
-  ([tiles zoom]
+  ([tiles colors zoom]
    (q/stroke-weight 1)
    (let [scale (* 0.1 zoom)
          view-tiles (filter #(:view %) tiles)
-         colors (mapv true-colors view-tiles)
+         colors (mapv #(true-colors % colors) view-tiles)
          positions (mapv #(h/cube-to-center-pix (:pos %) scale) view-tiles)]
      (doall (map (fn [pos col] (q/with-translation pos (draw-hex scale col))) positions colors)))))

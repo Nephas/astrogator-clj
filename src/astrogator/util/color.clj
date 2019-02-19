@@ -1,12 +1,14 @@
 (ns astrogator.util.color
   (:require [quil.core :as q]))
 
-(defn vec-to-color [vec]
-    (q/color (vec 0) (vec 1) (vec 2)))
+(defn color-to-vec [col]
+  [(q/hue col) (q/saturation col) (q/brightness col)])
 
-(defn blend-vec-color [col1 col2]
-  (mapv #(/ (+ %1 %2) 2) col1 col2))
+(defn blend-vec-color
+  ([col1 col2] (color-to-vec (q/blend-color (apply q/color col1) (apply q/color col2) :blend)))
+  ([col1 col2 col3] (color-to-vec (q/blend-color (apply q/color col1)
+                      (q/blend-color (apply q/color col2) (apply q/color col3) :multiply) :screen))))
 
 (defn fill
-  ([vec] (q/fill (vec-to-color vec)))
-  ([vec alpha] (q/fill (vec-to-color vec) alpha)))
+  ([vec] (q/fill (apply q/color vec)))
+  ([vec alpha] (q/fill (apply q/color vec) alpha)))

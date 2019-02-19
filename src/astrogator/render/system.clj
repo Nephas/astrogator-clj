@@ -22,12 +22,18 @@
     (let [pos (t/map-to-screen (ship :mappos) camera)]
       (sh/render-ship ship pos))))
 
+(defn get-distant-color [planet]
+  (let [rock (get-in planet [:color :rock])
+        ice (get-in planet [:color :glacier])
+        ocean (get-in planet [:color :ocean])]
+    (col/blend-vec-color ocean ice rock)))
+
 (defn draw-planets [planets camera]
   (doseq [planet planets]
     (let [pos (t/map-to-screen (planet :mappos) camera)
           size (* 0.1 (planet :radius) (camera :obj-zoom))]
-      (do (f/draw-soi planet camera (planet :color))
-          (b/distant-planet pos size (get-in planet [:cylpos 1]) (planet :color))))))
+      (do (f/draw-soi planet camera (get-distant-color planet))
+          (b/distant-planet pos size (get-in planet [:cylpos 1]) (get-distant-color planet))))))
 
 (defn draw-stars [stars camera]
   (doseq [star stars]

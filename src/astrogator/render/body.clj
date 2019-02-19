@@ -33,13 +33,13 @@
     (do (f/draw-soi refbody camera)
         (cast-shadow pos phase size (astrogator.conf/screen-size 0))
         (geo/circle pos size [0 0 0.4])
-        (p/draw-surface (vals (refbody :surface)) (* 0.58 size))
+        (p/draw-surface (vals (refbody :surface)) (refbody :color) (* 0.58 size))
         (geo/half-circle pos size phase conf/planet-night-color))))
 
 (defn draw-star
   ([pos size color]
    (col/fill color)
-   (q/with-stroke [(col/vec-to-color color) 128]
+   (q/with-stroke [(apply q/color color) 128]
                   (do (q/stroke-weight (* size 0.4))
                       (geo/circle pos size))))
   ([star camera]
@@ -53,7 +53,7 @@
    (let [mag (/ (- (conf/thresholds :system) zoom) (conf/thresholds :system))
          mag (* mag)]
      (col/fill color (* mag 192))
-     (q/with-stroke [(col/vec-to-color color) (* mag 128)]
+     (q/with-stroke [(apply q/color color) (* mag 128)]
                     (do (q/stroke-weight (* size 2))
                         (geo/circle pos size))))))
 

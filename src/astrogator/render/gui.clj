@@ -12,14 +12,14 @@
 (declare render-gui render-target-cursor)
 
 (defn crosshair [pos color]
-  (q/with-stroke [(col/vec-to-color color) 128]
+  (q/with-stroke [(apply q/color color) 128]
                  (do (q/stroke-weight 2)
                      (let [orientations (map #(t/scalar 20 %) '([0 1] [0 -1] [1 0] [-1 0]))]
                        (dorun (map #(q/line (t/add pos (t/scalar 1/2 %))
                                             (t/add pos %)) orientations))))))
 
 (defn cursor [pos color]
-  (q/with-stroke [(col/vec-to-color color) 128]
+  (q/with-stroke [(apply q/color color) 128]
                  (do (col/fill [0 0 0] 0)
                      (q/stroke-weight 2)
                      (let [size 10
@@ -35,10 +35,15 @@
     (let [pos (t/map-to-screen (body :mappos) (state :camera))]
       (renderer pos r/gui-primary))))
 
+(defn clean-for-format [keymap]
+  (apply dissoc keymap [:surface :moons])
+  ;keymap
+  )
+
 (defn render-gui [state]
   (col/fill r/gui-secondary)
   (q/text (format-map (state :time)) 50 50)
-  (q/text (format-map (s/get-target state)) 50 100)
+  (q/text (format-map (clean-for-format (s/get-target state))) 50 100)
   (q/text (format-map (s/get-playership state)) 50 (- (conf/screen-size 1) 300))
   (render-at-body state (s/get-refbody state) crosshair)
   (render-at-body state (s/get-target state) cursor))

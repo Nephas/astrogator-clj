@@ -11,7 +11,10 @@
         radius-Re (a/planet-radius mass :Me)
         torbit (a/t-orbit orbit-radius :AU parent-mass :Msol)
         moon-min-orbit (* 10 (unit/conv radius-Re :Re :AU))
-        rhill (a/hill-sphere orbit-radius (unit/conv mass :Me :Msol) parent-mass)]
+        rhill (a/hill-sphere orbit-radius (unit/conv mass :Me :Msol) parent-mass)
+        colors {:rock    [(r/rand-range 0.0 0.25) 0.6 0.6]
+                :ocean   [(r/rand-range 0.5 0.75) 0.6 0.6]
+                :glacier [(r/rand-range 0.5 0.75) 0.2 0.8]}]
     {:type    :planet
      :mass    mass
      :radius  radius-Re
@@ -19,7 +22,7 @@
      :torbit  torbit
      :cylvel  (* 2 Math/PI (/ 1 torbit))
      :cylpos  [orbit-radius (* 2 Math/PI (r/rand))]
-     :color   [0.6 0.3 0.6]
+     :color   colors
      :mappos  [0 0]
      :surface {}
      :moons   (m/generate-moon-system mass moon-min-orbit rhill)}))

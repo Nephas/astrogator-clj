@@ -6,6 +6,7 @@
             [astrogator.render.conf :as conf]
             [astrogator.util.rand :as r]))
 
+;TODO move planetary generation pars to planet
 (defn extract-planet-surface [state path]
   (do (r/set-seed! (hash path))
       (assoc-in state (concat [:universe :viewsystem] path [:surface])

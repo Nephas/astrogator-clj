@@ -9,8 +9,8 @@
 
 (def moon-surface-color [0 0 0.5])
 
-(def gui-secondary [0.1 0.6 1])
-(def gui-primary [0.0 0.6 1])
+(def gui-secondary [0.1 0.5 1])
+(def gui-primary [0.0 0.5 1])
 
 (def airy-threshold 3)
 

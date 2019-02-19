@@ -21,17 +21,17 @@
    (q/ellipse (pos 0) (pos 1) size size))
   ([pos size color]
    (col/fill [0 0 0] 0)
-   (q/with-stroke [(col/vec-to-color color) 64]
+   (q/with-stroke [(apply q/color color) 64]
                   (do (q/stroke-weight 2)
                       (ring pos size)))))
 
 (defn airy
   ([pos size color]
-   (q/with-stroke [(col/vec-to-color color) 96]
+   (q/with-stroke [(apply q/color color) 96]
                   (do (col/fill color 255)
                       (q/stroke-weight (* 4 size))
                       (circle pos size)))
-   (q/with-stroke [(col/vec-to-color color) 128]
+   (q/with-stroke [(apply q/color color) 128]
                   (do (col/fill color 64)
                       (q/stroke-weight (* 1/2 size))
                       (circle pos (* 2 size))))))

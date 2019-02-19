@@ -20,7 +20,7 @@
                                             (q/triangle (- size) (- size) (* 2 size) 0 (- size) size))))))
 
 (defn render-ship [ship pos]
-  (q/with-stroke [(col/vec-to-color [1 1 1]) 128]
+  (q/with-stroke [(apply q/color [1 1 1]) 128]
                  (let [mapvel (ship :mapvel)]
                    (do (geo/arrow pos (t/normalize mapvel) (* 10 (+ 5 (Math/log10 (t/norm mapvel)))))
                        (geo/arrow pos (t/normalize (ship :mapacc)) 20)
