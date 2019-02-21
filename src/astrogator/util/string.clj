@@ -15,5 +15,6 @@
 (defn fmt-numeric [x]
   (try (cond (t/vec2d? x) (fmt-vec x)
              (float? x) (fmt-round x)
+             (rational? x) (fmt-round (float x))
              true (str x))
        (catch Exception e (log/info (str "Format Exception: " x)))))

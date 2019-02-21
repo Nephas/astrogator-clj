@@ -4,7 +4,7 @@
             [astrogator.physics.units :as unit]
             [astrogator.generation.belt :as b]))
 
-(defn generate-star [mass max-sc-orbit]
+(defn generate-star [mass max-sc-orbit planets?]
   (let [radius (a/mass-radius mass)
         min-sc-orbit (* 100 (unit/conv radius :Rsol :AU))
         luminosity (a/mass-luminosity mass)
@@ -19,4 +19,4 @@
                   :class      class
                   :color      color
                   :rhill      max-sc-orbit}}
-          (p/generate-planet-system mass min-sc-orbit max-sc-orbit))))
+          (if planets? (p/generate-planet-system mass min-sc-orbit max-sc-orbit)))))

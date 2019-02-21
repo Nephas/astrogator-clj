@@ -38,3 +38,6 @@
 (defn rand-int-range [min max]
   (let [diff (- max min)]
     (+ min (rand-int diff))))
+
+(defn rand-bool []
+  (zero? (rand-int 2)))

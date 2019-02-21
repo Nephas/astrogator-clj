@@ -10,29 +10,39 @@
 
 (defn generate-distant-system
   [mass seed pos]
-  (let [system (sys/generate-system mass seed)
-        luminosity (sys/get-system-luminosity system)]
+  (let [system (sys/generate-system mass seed false)
+        luminosity (sys/get-system-luminosity system)
+        color (sys/get-system-color system)]
     {:sectorpos  pos
      :seed       seed
      :mass       mass
      :luminosity luminosity
-     :magnitude  (get-magnitude luminosity)
-     :color      (sys/get-system-color system)}))
+     :color      color
+     :magnitude  (get-magnitude luminosity)}))
+
+(defn sort-by-brightness [system-list]
+  (sort-by #(% :magnitude) system-list))
+
+(defn log-progress [iteration number]
+  (when (zero? (mod iteration (/ number 10)))
+    (log/info (str "- generating systems: " iteration "/" number))))
 
 (defn generate-sector "size [pc]" [size number]
-  (log/info (str "generating sector: size [pc] " size ", number: " number))
-  (let [size-AU (u/conv size :pc :AU)]
-    (for [x (range number)]
-      (let [mass (r/rand 10)
-            seed (r/rand-int 100000000)
-            pos (t/scalar size-AU [(d/sample (d/normal 0 1)) (d/sample (d/normal 0 1))])]
-        (generate-distant-system mass seed pos)))))
+  (do (log/info (str "generating sector: size [pc] " size ", number: " number))
+      (sort-by-brightness
+        (let [size-AU (u/conv size :pc :AU)]
+          (for [iteration (range number)]
+            (do (log-progress iteration number)
+                (let [seed (r/rand-int 100000000)
+                      mass (+ 0.1 (d/sample (d/exponential 1)))
+                      pos (t/scalar size-AU [(d/sample (d/normal 0 1)) (d/sample (d/normal 0 1))])]
+                  (generate-distant-system mass seed pos))))))))
 
 (defn generate-clouds "size [pc]" [size number]
-  (log/info (str "generating clouds: size [pc] " size ", number: " number))
+  (log/info (str "- generating clouds: size [pc] " size ", number: " number))
   (let [size-AU (u/conv size :pc :AU)]
     (for [x (range number)]
-      (let [radius-AU (u/conv (r/rand) :pc :AU)
+      (let [radius-AU (u/conv (* 0.1 size (r/rand)) :pc :AU)
             pos (t/scalar size-AU [(d/sample (d/uniform -1 1)) (d/sample (d/normal 0 1))])]
         {:radius    radius-AU
          :sectorpos pos

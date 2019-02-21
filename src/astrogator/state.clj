@@ -4,8 +4,8 @@
 
 (defn init-state []
   (let [state {:universe {:viewsystem nil
-                          :sector     (gensec/generate-sector 5 2000)
-                          :clouds     (gensec/generate-clouds 5 50)}
+                          :sector     (gensec/generate-sector 50 20000)
+                          :clouds     (gensec/generate-clouds 50 50)}
                :camera   {:mouse     {:screenpos [0 0]
                                       :mappos    [0 0]}
                           :dist-zoom 5

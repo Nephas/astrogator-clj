@@ -4,7 +4,9 @@
             [astrogator.util.selectors :as s]
             [astrogator.generation.planet.surface :as surf]
             [astrogator.render.conf :as conf]
-            [astrogator.util.rand :as r]))
+            [astrogator.util.rand :as r]
+            [quil.core :as q]
+            [astrogator.conf :as c]))
 
 ;TODO move planetary generation pars to planet
 (defn extract-planet-surface [state path]
@@ -53,3 +55,7 @@
         (update-in [:camera :dist-zoom] #(* % ((factor dir) :dist)))
         (update-in [:camera :obj-zoom] #(* % ((factor dir) :obj)))
         (assoc-in [:camera :scale] (get-scale (state :camera))))))
+
+(defn on-screen? [[screen-x screen-y]]
+  (and (< 0 screen-x (c/screen-size 0))
+       (< 0 screen-y (c/screen-size 1))))

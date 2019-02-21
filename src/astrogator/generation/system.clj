@@ -4,8 +4,7 @@
             [astrogator.util.color :as col]
             [astrogator.generation.star :as s]
             [astrogator.generation.planet.planet :as p]
-            [astrogator.generation.player :as pl]
-            [astrogator.physics.trafo :as t]))
+            [astrogator.generation.player :as pl]))
 
 (declare generate-system generate-subsystem get-system-luminosity)
 
@@ -26,36 +25,38 @@
          (assoc-in [:body :mappos] [0 0])))))
 
 (defn generate-system
-  ([mass max-depth max-sc-orbit]
-   (let [binary (zero? (r/rand-int 2))
-         next-depth (dec max-depth)]
+  ([mass max-depth max-sc-orbit planets?]
+   (let [binary (r/rand-bool)
+         next-depth (dec max-depth)
+         sc-orbit (* 0.75 max-sc-orbit)]
      (if (and binary (pos? next-depth))
-       (generate-subsystem mass next-depth max-sc-orbit)
-       (s/generate-star mass (* 0.75 max-sc-orbit)))))
-  ([mass seed] (do (r/set-seed! seed)
-                   (generate-system mass 3 (* 100 mass))))
-  ([distantsystem] (generate-system (distantsystem :mass) (distantsystem :seed))))
+       (generate-subsystem mass next-depth sc-orbit planets?)
+       (s/generate-star mass sc-orbit planets?))))
+  ([mass seed planets?] (do (r/set-seed! seed) (generate-system mass 3 (* 100 mass) planets?)))
+  ([mass seed] (generate-system mass seed false))
+  ([distantsystem] (generate-system (distantsystem :mass) (distantsystem :seed) true)))
 
-(defn generate-subsystem [mass next-depth max-sc-orbit]
+(defn generate-subsystem [mass next-depth sc-orbit planets?]
   (let [massA (* mass (r/rand-range 0.5 0.9))
         massB (- mass massA)
-        radiusB (* 1.5 max-sc-orbit (r/rand-range 0.2 0.6))
+        radiusB (* 1.5 sc-orbit (r/rand-range 0.2 0.6))
         radiusA (* radiusB (/ massB massA))
-        sc-orbitA (a/hill-sphere (+ radiusA radiusB) massA massB)
-        sc-orbitB (a/hill-sphere (+ radiusA radiusB) massB massA)
-        compA (generate-system massA next-depth (* 0.75 sc-orbitA))
-        compB (generate-system massB next-depth (* 0.75 sc-orbitB))
-        torbit (a/t-orbit (+ radiusA radiusB) :AU mass :Msol)]
+        dist (+ radiusA radiusB)
+        sc-orbitA (a/hill-sphere dist massA massB)
+        sc-orbitB (a/hill-sphere dist massB massA)
+        compA (generate-system massA next-depth sc-orbitA planets?)
+        compB (generate-system massB next-depth sc-orbitB planets?)
+        torbit (a/t-orbit dist :AU mass :Msol)]
     (conj {:system {:mass       mass
-                    :rhill      max-sc-orbit
-                    :luminosity (get-system-luminosity compA compB)
+                    :rhill      sc-orbit
                     :radiusA    radiusA
                     :radiusB    radiusB
                     :torbit     torbit
+                    :luminosity (get-system-luminosity compA compB)
                     :cylvel     (* 2 Math/PI (/ 1 torbit))}
            :compA  compA
            :compB  compB}
-          (p/generate-planet-system mass (* 1.5 radiusB) (* 0.8 max-sc-orbit)))))
+          (if planets? (p/generate-planet-system mass (* 1.5 radiusB) sc-orbit)))))
 
 (defn get-system-color
   ([compA compB] (col/blend-vec-color (get-system-color compA) (get-system-color compB)))

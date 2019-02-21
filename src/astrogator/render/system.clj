@@ -26,7 +26,7 @@
   (let [rock (get-in planet [:color :rock])
         ice (get-in planet [:color :glacier])
         ocean (get-in planet [:color :ocean])]
-    (col/blend-vec-color ocean ice rock)))
+    (col/blend-vec-color rock ocean ice)))
 
 (defn draw-planets [planets camera]
   (doseq [planet planets]
