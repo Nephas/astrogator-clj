@@ -35,10 +35,13 @@
       (renderer pos r/gui-primary))))
 
 (defn animate-target-gui [keymap animation]
-  (let [lines (format-map (apply dissoc keymap [:surface :moons :color]))]
-    (concat (take (animation :target) lines)
-            (if (< (animation :target) (count lines))
-              [(apply str (repeat (rand/rand-int 12) "+"))]))))
+  (let [counter (int (/ (animation :target) 2))
+        lines (format-map (apply dissoc keymap [:surface :moons :color]))]
+    (take counter lines)))
+
+(defn frame [lines]
+  (let [border (str (apply str (repeat 16 "=")) "\n")]
+    (concat [border] lines [border])))
 
 (defn loading-screen
   ([] (q/background 0 0 0)
@@ -47,8 +50,8 @@
 
 (defn render-gui [state]
   (col/fill r/gui-secondary)
-  (q/text (apply str (format-map (state :time))) 50 50)
-  (q/text (apply str (animate-target-gui (s/get-target state) (state :animation))) 50 150)
-  (q/text (apply str (format-map (s/get-playership state))) 50 (- (conf/screen-size 1) 300))
+  (q/text (apply str (frame (format-map (state :time)))) 50 50)
+  (q/text (apply str (frame (animate-target-gui (s/get-target state) (state :animation)))) 50 200)
+  (q/text (apply str (frame (format-map (s/get-playership state)))) 50 (- (conf/screen-size 1) 300))
   (render-at-body state (s/get-refbody state) crosshair)
   (render-at-body state (s/get-target state) cursor))
