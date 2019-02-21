@@ -5,7 +5,6 @@
             [astrogator.generation.planet.surface :as surf]
             [astrogator.render.conf :as conf]
             [astrogator.util.rand :as r]
-            [quil.core :as q]
             [astrogator.conf :as c]))
 
 ;TODO move planetary generation pars to planet
@@ -23,7 +22,8 @@
 (defn change-target [state body]
   (log/info (str "select target: " (body :path)))
   (-> state
-      (assoc-in [:camera :target] (body :path))))
+      (assoc-in [:camera :target] (body :path))
+      (assoc-in [:animation :target] 0)))
 
 (defn update-camera [state]
   (let [refbody (s/get-refbody state)

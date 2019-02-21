@@ -19,7 +19,7 @@
         viewsystem (get-in state [:universe :viewsystem])]
     (case (camera :scale)
       :sector (sec/change-viewsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
-      :system (cam/change-focus state (sys/get-closest-star viewsystem mappos))
+      :system (cam/change-focus state (sys/get-closest-planet-or-star viewsystem mappos))
       :subsystem (cam/change-focus state (sys/get-closest-planet-or-star viewsystem mappos))
       :body (cam/change-focus state (sys/get-closest-planet-or-star viewsystem mappos)))))
 
@@ -28,7 +28,7 @@
         viewsystem (get-in state [:universe :viewsystem])]
     (case (camera :scale)
       :sector state
-      :system (cam/change-target state (sys/get-closest-star viewsystem mappos))
+      :system (cam/change-target state (sys/get-closest-planet-or-star viewsystem mappos))
       :subsystem (cam/change-target state (sys/get-closest-planet-or-star viewsystem mappos))
       :body (cam/change-target state (sys/get-closest-planet-or-star viewsystem mappos)))))
 

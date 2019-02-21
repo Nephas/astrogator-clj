@@ -7,6 +7,7 @@
             [astrogator.input.keyboard :as key]
             [astrogator.input.mouse :as mouse]
             [astrogator.gui.camera :as cam]
+            [astrogator.gui.animation :as ani]
             [astrogator.state :as state]
             [astrogator.util.log :as log]
             [astrogator.physics.move.system :as p]
@@ -34,7 +35,8 @@
                   (p/move-viewsystem)
                   (t/update-thermal)
                   (cam/update-camera)
-                  (cam/update-playership))]
+                  (cam/update-playership)
+                  (ani/update-animations))]
     (do (swap! store (fn [_] state))
         state)))
 
