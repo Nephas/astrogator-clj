@@ -4,7 +4,8 @@
             [astrogator.generation.system :as sys]
             [astrogator.physics.units :as u]
             [distributions.core :as d]
-            [astrogator.util.log :as log]))
+            [astrogator.util.log :as log]
+            [astrogator.render.gui :as gui]))
 
 (defn get-magnitude [luminosity] (- (* -2.5 (Math/log10 (max 0.01 luminosity))) 25))
 
@@ -25,7 +26,8 @@
 
 (defn log-progress [iteration number]
   (when (zero? (mod iteration (/ number 10)))
-    (log/info (str "- generating systems: " iteration "/" number))))
+    (log/info (str "- generating systems: " iteration "/" number))
+    (gui/loading-screen (int (* 10 (/ iteration number))))))
 
 (defn generate-sector "size [pc]" [size number]
   (do (log/info (str "generating sector: size [pc] " size ", number: " number))

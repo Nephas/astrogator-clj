@@ -12,7 +12,8 @@
             [astrogator.util.log :as log]
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal :as t]
-            [astrogator.render.gui :as gui]))
+            [astrogator.render.gui :as gui]
+            [astrogator.render.geometry :as geo]))
 
 (def store (atom {}))
 
@@ -22,6 +23,7 @@
   (q/text-font (q/create-font "Consolas" 14 true))
   (q/no-stroke)
   (q/ellipse-mode :radius)
+  (gui/loading-screen)
   (log/info "initialising state")
   (let [init-state (p/move-viewsystem (state/init-state))]
     (do (log/info "caching renderings")

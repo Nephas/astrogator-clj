@@ -40,6 +40,11 @@
             (if (< (animation :target) (count lines))
               [(apply str (repeat (rand/rand-int 12) "+"))]))))
 
+(defn loading-screen
+  ([] (q/background 0 0 0)
+   (q/text "Loading" 100 100))
+  ([number] (q/text (str "Loading " (apply str (repeat number ". "))) 100 100)))
+
 (defn render-gui [state]
   (col/fill r/gui-secondary)
   (q/text (apply str (format-map (state :time))) 50 50)
