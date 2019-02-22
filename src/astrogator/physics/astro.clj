@@ -90,3 +90,5 @@
 
 (defn v-orbit "[km/s]" [r $r m $m]
   (/ (* 2 Math/PI (u/conv r $r :km)) (u/conv (t-orbit r $r m $m) :d :s)))
+
+(defn get-magnitude [luminosity] (- (* -2.5 (Math/log10 (max 0.01 luminosity))) 25))

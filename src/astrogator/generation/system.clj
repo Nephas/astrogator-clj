@@ -33,8 +33,7 @@
        (generate-subsystem mass next-depth sc-orbit planets?)
        (s/generate-star mass sc-orbit planets?))))
   ([mass seed planets?] (do (r/set-seed! seed) (generate-system mass 3 (* 100 mass) planets?)))
-  ([mass seed] (generate-system mass seed false))
-  ([distantsystem] (generate-system (distantsystem :mass) (distantsystem :seed) true)))
+  ([mass seed] (generate-system mass seed false)))
 
 (defn generate-subsystem [mass next-depth sc-orbit planets?]
   (let [massA (* mass (r/rand-range 0.5 0.9))

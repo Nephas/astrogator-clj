@@ -10,9 +10,9 @@
         (let [pos (t/map-to-screen (cloud :sectorpos) camera)
               size (* (cloud :radius) (camera :dist-zoom))]
           (b/cloud pos size (cloud :color) (camera :dist-zoom))))
-      (let [on-screen (fn [system] (c/on-screen? (t/map-to-screen (system :sectorpos) camera)))
+      (let [on-screen (fn [distantsystem] (c/on-screen? (t/map-to-screen (:sectorpos distantsystem) camera)))
             visible-systems (take 1000 (filter on-screen systems))]
-        (doseq [system visible-systems]
-          (let [pos (t/map-to-screen (system :sectorpos) camera)
-                size (* -1 (camera :obj-zoom) (system :magnitude))]
-            (geo/airy pos size (system :color)))))))
+        (doseq [distantsystem visible-systems]
+          (let [pos (t/map-to-screen (:sectorpos distantsystem) camera)
+                size (* -1 (camera :obj-zoom) (:magnitude distantsystem))]
+            (geo/airy pos size (:color distantsystem)))))))
