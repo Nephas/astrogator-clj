@@ -41,3 +41,6 @@
 
 (defn rand-bool []
   (zero? (rand-int 2)))
+
+(defn new-seed []
+  (rand-int-range 1000000 100000000))

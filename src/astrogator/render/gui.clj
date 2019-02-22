@@ -31,7 +31,7 @@
 (defn render-at-body [state body renderer]
   (if (nil? body)
     state
-    (let [pos (t/map-to-screen (body :mappos) (state :camera))]
+    (let [pos (t/map-to-screen (:mappos body) (state :camera))]
       (renderer pos r/gui-primary))))
 
 (defn animate-target-gui [keymap animation]

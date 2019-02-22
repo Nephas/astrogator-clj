@@ -22,18 +22,18 @@
    (geo/half-circle pos size phase conf/planet-night-color)))
 
 (defn draw-planet [refbody camera]
-  (doseq [moon (refbody :moons)]
-    (let [pos (t/map-to-screen (moon :mappos) camera)
-          size (* 0.1 (moon :radius) (camera :obj-zoom))
+  (doseq [moon (:moons refbody)]
+    (let [pos (t/map-to-screen (:mappos moon) camera)
+          size (* 0.1 (:radius moon) (camera :obj-zoom))
           phase (+ Math/PI (get-in refbody [:cylpos 1]))]
       (moon-with-shade pos size phase)))
-  (let [pos (t/map-to-screen (refbody :mappos) camera)
-        size (* 0.1 (refbody :radius) (camera :obj-zoom))
+  (let [pos (t/map-to-screen (:mappos refbody) camera)
+        size (* 0.1 (:radius refbody) (camera :obj-zoom))
         phase (+ Math/PI (get-in refbody [:cylpos 1]))]
     (do (f/draw-soi refbody camera)
         (cast-shadow pos phase size (astrogator.conf/screen-size 0))
         (geo/circle pos size [0 0 0.4])
-        (p/draw-surface (vals (refbody :surface)) (refbody :color) (* 0.58 size))
+        (p/draw-surface (vals (:surface refbody)) (:color refbody) (* 0.58 size))
         (geo/half-circle pos size phase conf/planet-night-color))))
 
 (defn draw-star
@@ -43,9 +43,9 @@
                   (do (q/stroke-weight (* size 0.4))
                       (geo/circle pos size))))
   ([star camera]
-   (let [pos (t/map-to-screen (star :mappos) camera)
-         size (* 5 (camera :obj-zoom) (star :radius))
-         color (star :color)]
+   (let [pos (t/map-to-screen (:mappos star) camera)
+         size (* 5 (camera :obj-zoom) (:radius star))
+         color (:color star)]
      (draw-star pos size color))))
 
 (defn cloud

@@ -1,16 +1,12 @@
-(ns astrogator.generation.system
+(ns astrogator.generation.system.system
   (:require [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
             [astrogator.util.color :as col]
             [astrogator.generation.star :as s]
-            [astrogator.generation.planet.planet :as p]
+            [astrogator.generation.system.planetary :as ps]
             [astrogator.generation.player :as pl]))
 
 (declare generate-system generate-subsystem get-system-luminosity)
-
-(defn place-playership [system pos]
-  (let [ship (assoc-in (pl/generate-playership) [:mappos] pos)]
-    (assoc-in system [:ships] [ship])))
 
 (defn initiate-positions
   ([system]
@@ -55,7 +51,7 @@
                     :cylvel     (* 2 Math/PI (/ 1 torbit))}
            :compA  compA
            :compB  compB}
-          (if planets? (p/generate-planet-system mass (* 1.5 radiusB) sc-orbit)))))
+          (if planets? (ps/generate-planet-system mass (* 1.5 radiusB) sc-orbit)))))
 
 (defn get-system-color
   ([compA compB] (col/blend-vec-color (get-system-color compA) (get-system-color compB)))

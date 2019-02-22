@@ -1,12 +1,10 @@
-(ns astrogator.generation.distantsystem
-  (:require [astrogator.generation.system :as sys]
+(ns astrogator.generation.system.distantsystem
+  (:require [astrogator.generation.system.system :as sys]
+            [astrogator.generation.expandable :as exp]
             [astrogator.physics.astro :as a]))
 
-(defprotocol Seed "This is an abstract representation of an Object which can be expanded using 'expand'."
-  (expand [this]))
-
 (defrecord DistantSystem [sectorpos seed mass luminosity color magnitude]
-  Seed (expand [this] (sys/initiate-positions
+  exp/Seed (expand [this] (sys/initiate-positions
                         (sys/generate-system (:mass this) (:seed this) true))))
 
 (defn generate-distant-system [mass seed sectorpos]

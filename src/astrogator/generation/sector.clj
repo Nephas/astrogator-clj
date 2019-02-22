@@ -1,7 +1,7 @@
 (ns astrogator.generation.sector
   (:require [astrogator.util.rand :as r]
             [astrogator.physics.trafo :as t]
-            [astrogator.generation.distantsystem :as ds]
+            [astrogator.generation.system.distantsystem :as ds]
             [astrogator.physics.units :as u]
             [distributions.core :as d]
             [astrogator.util.log :as log]
@@ -21,7 +21,7 @@
         (let [size-AU (u/conv size :pc :AU)]
           (for [iteration (range number)]
             (do (log-progress iteration number)
-                (let [seed (r/rand-int 100000000)
+                (let [seed (r/new-seed)
                       mass (+ 0.1 (d/sample (d/exponential 1)))
                       pos (t/scalar size-AU [(d/sample (d/normal 0 1)) (d/sample (d/normal 0 1))])]
                   (ds/generate-distant-system mass seed pos))))))))

@@ -19,8 +19,8 @@
 
 (defn draw-soi
   ([body camera color]
-   (let [pos (t/map-to-screen (body :mappos) camera)
-         soi (* (body :rhill) (camera :dist-zoom))]
+   (let [pos (t/map-to-screen (:mappos body) camera)
+         soi (* (:rhill body) (camera :dist-zoom))]
      (geo/ring pos soi color)))
   ([body camera]
    (draw-soi body camera r/gui-secondary)))

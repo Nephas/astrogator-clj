@@ -12,8 +12,7 @@
             [astrogator.util.log :as log]
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal :as t]
-            [astrogator.render.gui :as gui]
-            [astrogator.render.geometry :as geo]))
+            [astrogator.render.gui :as gui]))
 
 (def store (atom {}))
 

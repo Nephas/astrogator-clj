@@ -3,47 +3,27 @@
             [astrogator.physics.units :as unit]
             [astrogator.util.rand :as r]
             [astrogator.generation.moon :as m]
-            [astrogator.generation.planet.surface :as s]
-            [astrogator.generation.belt :as b]))
+            [astrogator.generation.planet.surface :as surf]
+            [astrogator.util.rand :as rand]
+            [astrogator.generation.expandable :as exp]))
 
-(defn generate-planet [parent-mass orbit-radius]
+;TODO move planetary generation pars to planet
+(defrecord Planet [type mass radius seed rhill torbit cylvel cylpos mappos color]
+  exp/Seed (expand [this]
+         (do (rand/set-seed! (:seed this))
+             (-> this
+                 (assoc :surface (surf/cellular-map 16 0.45 4 8 0.2 0.4 0 0.4))
+                 (assoc :moons (m/generate-moon-system (:mass this) (* 0.01 (:rhill this)) (:rhill this)))))))
+
+(defn generate-planet [parent-mass seed orbit-radius]
   (let [mass (r/rand-range 0.5 100)
-        radius-Re (a/planet-radius mass :Me)
+        radius (a/planet-radius mass :Me)
         torbit (a/t-orbit orbit-radius :AU parent-mass :Msol)
-        moon-min-orbit (* 10 (unit/conv radius-Re :Re :AU))
         rhill (a/hill-sphere orbit-radius (unit/conv mass :Me :Msol) parent-mass)
-        colors {:rock    [(r/rand-range 0.0 0.25) 0.6 0.6]
-                :ocean   [(r/rand-range 0.5 0.75) 0.6 0.6]
-                :glacier [(r/rand-range 0.5 0.75) 0.2 0.8]}]
-    {:type    :planet
-     :mass    mass
-     :radius  radius-Re
-     :rhill   rhill
-     :torbit  torbit
-     :cylvel  (* 2 Math/PI (/ 1 torbit))
-     :cylpos  [orbit-radius (* 2 Math/PI (r/rand))]
-     :color   colors
-     :mappos  [0 0]
-     :surface {}
-     :moons   (m/generate-moon-system mass moon-min-orbit rhill)}))
-
-(defn randomize-system-structure [planet-probability n-planets]
-  (let [rand-pairs (map (fn [i] (if (< (r/rand) planet-probability) [i nil] [nil i]))
-                        (range n-planets))]
-    {:planet-indices (filterv #(not= nil %) (map #(first %) rand-pairs))
-     :belt-indices   (filterv #(not= nil %) (map #(last %) rand-pairs))}))
-
-(defn generate-planet-system [parent-mass inner-radius outer-radius]
-  (let [n-planets (r/rand-int-range 5 20)
-        indices (randomize-system-structure 0.8 n-planets)
-        planet-radii (filterv #(< % outer-radius)
-                              (map #(a/titius-bode % inner-radius)
-                                   (indices :planet-indices)))
-        belt-radii (filterv #(< % outer-radius)
-                            (map #(a/titius-bode % inner-radius)
-                                 (indices :belt-indices)))]
-    {:planets   (mapv #(generate-planet parent-mass %) planet-radii)
-     :particles (apply concat
-                       (mapv #(b/generate-asteroid-belt parent-mass %1 %1) belt-radii))}))
-
-
+        color {:rock    [(r/rand-range 0.0 0.25) 0.6 0.6]
+               :ocean   [(r/rand-range 0.5 0.75) 0.6 0.6]
+               :glacier [(r/rand-range 0.5 0.75) 0.2 0.8]}
+        cylvel (* 2 Math/PI (/ 1 torbit))
+        cylpos [orbit-radius (* 2 Math/PI (r/rand))]
+        mappos [0 0]]
+    (->Planet :planet mass radius seed rhill torbit cylvel cylpos mappos color)))

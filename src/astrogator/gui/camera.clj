@@ -2,27 +2,21 @@
   (:require [astrogator.physics.trafo :as t]
             [astrogator.util.log :as log]
             [astrogator.util.selectors :as s]
-            [astrogator.generation.planet.surface :as surf]
             [astrogator.render.conf :as conf]
-            [astrogator.util.rand :as r]
-            [astrogator.conf :as c]))
-
-;TODO move planetary generation pars to planet
-(defn extract-planet-surface [state path]
-  (do (r/set-seed! (hash path))
-      (assoc-in state (concat [:universe :viewsystem] path [:surface])
-                (surf/cellular-map 16 0.45 4 8 0.2 0.4 0 0.4))))
+            [astrogator.conf :as c]
+            [astrogator.generation.expandable :as exp]))
 
 (defn change-focus [state body]
-  (log/info (str "changing focus: " (body :path)))
-  (-> state
-      (assoc-in [:camera :refbody] (body :path))
-      (extract-planet-surface (body :path))))
+  (let [full-path (into [] (concat [:universe :viewsystem] (:path body)))]
+    (log/info (str "changing focus: " full-path))
+    (-> state
+        (assoc-in [:camera :refbody] (:path body))
+        (update-in full-path exp/expand-if-possible))))
 
 (defn change-target [state body]
-  (log/info (str "select target: " (body :path)))
+  (log/info (str "select target: " (:path body)))
   (-> state
-      (assoc-in [:camera :target] (body :path))
+      (assoc-in [:camera :target] (:path body))
       (assoc-in [:animation :target] 0)))
 
 (defn update-camera [state]

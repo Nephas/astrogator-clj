@@ -10,18 +10,18 @@
 (defn move-around-parent [body dt parent-mappos]
   (let [phase (get-in body [:cylpos 1])
         radius (get-in body [:cylpos 0])
-        new-phase (+ phase (* dt (body :cylvel)))
+        new-phase (+ phase (* dt (:cylvel body)))
         new-cylpos [radius new-phase]
         mappos (cyl-to-map parent-mappos new-cylpos)
-        mapvel (t/scalar (/ 1 dt) (t/sub mappos (body :mappos)))]
+        mapvel (t/scalar (/ 1 dt) (t/sub mappos (:mappos body)))]
     (-> body
         (assoc-in [:mappos] mappos)
         (assoc-in [:mapvel] mapvel)
         (assoc-in [:cylpos] new-cylpos))))
 
 (defn enter-orbit [ship parent-path parent-body]
-  (let [cylpos (t/cart-to-pol (t/sub (parent-body :mappos) (ship :mappos)))
-        torbit (a/t-orbit (cylpos 0) :AU (parent-body :mass) :Me)]
+  (let [cylpos (t/cart-to-pol (t/sub (:mappos parent-body) (ship :mappos)))
+        torbit (a/t-orbit (cylpos 0) :AU (:mass parent-body) :Me)]
     (-> ship
         (assoc-in [:ai-mode] :orbit)
         (assoc-in [:cylpos] cylpos)

@@ -9,11 +9,12 @@
             [astrogator.util.color :as col]
             [astrogator.render.conf :as conf]))
 
+;TODO extract draw protocol
 (defn draw-asteroids [particles camera]
   (q/no-stroke)
   (col/fill conf/particle-color)
   (doseq [particle particles]
-    (let [pos (t/map-to-screen (particle :mappos) camera)]
+    (let [pos (t/map-to-screen (:mappos particle) camera)]
       (geo/circle pos 1))))
 
 (defn draw-ships [ships camera]
@@ -30,17 +31,17 @@
 
 (defn draw-planets [planets camera]
   (doseq [planet planets]
-    (let [pos (t/map-to-screen (planet :mappos) camera)
-          size (* 0.1 (planet :radius) (camera :obj-zoom))]
+    (let [pos (t/map-to-screen (:mappos planet) camera)
+          size (* 0.1 (:radius planet) (camera :obj-zoom))]
       (do (f/draw-soi planet camera (get-distant-color planet))
           (b/distant-planet pos size (get-in planet [:cylpos 1]) (get-distant-color planet))))))
 
 (defn draw-stars [stars camera]
   (doseq [star stars]
-    (let [pos (t/map-to-screen (star :mappos) camera)
-          size (* 5 (camera :obj-zoom) (star :radius))]
-      (do (f/draw-soi star camera (star :color))
-          (b/distant-star pos size (star :color))))))
+    (let [pos (t/map-to-screen (:mappos star) camera)
+          size (* 5 (camera :obj-zoom) (:radius star))]
+      (do (f/draw-soi star camera (:color star))
+          (b/distant-star pos size (:color star))))))
 
 (defn draw-systems [systems camera]
   (doseq [system systems]
@@ -56,6 +57,6 @@
 
 (defn draw-refbody [system camera]
   (let [refbody (s/get-refbody camera system)]
-    (case (refbody :type)
+    (case (:type refbody)
       :planet (b/draw-planet refbody camera)
       :star (b/draw-star refbody camera))))

@@ -2,9 +2,9 @@
   (:require [astrogator.physics.move.ship :as s]
             [astrogator.physics.move.orbit :as o]))
 
-
+;TODO extract move protocol
 (defn move-moons [planet dt]
-  (let [move (fn [moons] (mapv #(o/move-around-parent % dt (planet :mappos)) moons))]
+  (let [move (fn [moons] (mapv #(o/move-around-parent % dt (:mappos planet)) moons))]
     (update-in planet [:moons] move)))
 
 (defn move-planets [planets dt parent-mappos]

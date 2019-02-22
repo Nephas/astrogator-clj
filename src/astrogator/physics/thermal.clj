@@ -6,8 +6,8 @@
     [astrogator.physics.astro :as a]))
 
 (defn update-temp [planet bodies]
-  (let [radius (u/conv (planet :radius) :Re :m)
-        flux (u/conv (r/flux-strength-at-pos (planet :mappos) bodies) :Lsol/AU2 :W/m2)
+  (let [radius (u/conv (:radius planet) :Re :m)
+        flux (u/conv (r/flux-strength-at-pos (:mappos planet) bodies) :Lsol/AU2 :W/m2)
         total-flux (* flux (* Math/PI radius radius))
         temp (a/stefan-boltzmann total-flux :W radius :m)]
     (assoc-in planet [:temp] temp)))

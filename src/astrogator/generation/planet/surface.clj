@@ -1,6 +1,6 @@
 (ns astrogator.generation.planet.surface
   (:require [astrogator.util.util :as u]
-            [astrogator.generation.planet.map :as m]
+            [astrogator.generation.planet.tilemap :as m]
             [astrogator.util.rand :as r]))
 
 (defn evolve-tile [tile tile-map update-key update-procedure]
