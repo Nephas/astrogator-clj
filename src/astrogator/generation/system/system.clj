@@ -3,8 +3,7 @@
             [astrogator.util.rand :as r]
             [astrogator.util.color :as col]
             [astrogator.generation.star :as s]
-            [astrogator.generation.system.planetary :as ps]
-            [astrogator.generation.player :as pl]))
+            [astrogator.generation.system.planetary :as ps]))
 
 (declare generate-system generate-subsystem get-system-luminosity)
 

@@ -1,15 +1,16 @@
 (ns astrogator.physics.move.orbit
   (:require [astrogator.physics.trafo :as t]
-            [astrogator.util.log :as log]
             [astrogator.util.selectors :as s]
             [astrogator.physics.astro :as a]))
+
+(defprotocol Orbit
+  (orbit [this dt parent-mappos]))
 
 (defn cyl-to-map [parent-mappos cylpos]
   (t/add parent-mappos (t/pol-to-cart cylpos)))
 
 (defn move-around-parent [body dt parent-mappos]
-  (let [phase (get-in body [:cylpos 1])
-        radius (get-in body [:cylpos 0])
+  (let [[radius phase] (:cylpos body)
         new-phase (+ phase (* dt (:cylvel body)))
         new-cylpos [radius new-phase]
         mappos (cyl-to-map parent-mappos new-cylpos)

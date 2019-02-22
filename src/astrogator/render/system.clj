@@ -50,7 +50,7 @@
 (defn draw-system [system camera]
   ;(f/draw-gravity-field system camera)
   (draw-systems (s/get-subsystems system) camera)
-  (draw-asteroids (s/get-all system :particles) camera)
+  (draw-asteroids (s/get-all system :asteroids) camera)
   (draw-planets (s/get-all system :planets) camera)
   (draw-ships (s/get-all system :ships) camera)
   (draw-stars (s/get-bodies system) camera))

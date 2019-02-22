@@ -2,18 +2,20 @@
   (:require [astrogator.physics.astro :as a]
             [astrogator.physics.units :as unit]
             [astrogator.util.rand :as r]
-            [astrogator.generation.moon :as m]
+            [astrogator.generation.system.lunar :as l]
             [astrogator.generation.planet.surface :as surf]
             [astrogator.util.rand :as rand]
+            [astrogator.physics.move.orbit :as orb]
             [astrogator.generation.expandable :as exp]))
 
 ;TODO move planetary generation pars to planet
 (defrecord Planet [type mass radius seed rhill torbit cylvel cylpos mappos color]
+  orb/Orbit (orbit [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   exp/Seed (expand [this]
          (do (rand/set-seed! (:seed this))
              (-> this
                  (assoc :surface (surf/cellular-map 16 0.45 4 8 0.2 0.4 0 0.4))
-                 (assoc :moons (m/generate-moon-system (:mass this) (* 0.01 (:rhill this)) (:rhill this)))))))
+                 (assoc :moons (l/generate-moon-system (:mass this) (* 0.01 (:rhill this)) (:rhill this)))))))
 
 (defn generate-planet [parent-mass seed orbit-radius]
   (let [mass (r/rand-range 0.5 100)

@@ -1,9 +1,11 @@
 (ns astrogator.generation.star
   (:require [astrogator.physics.astro :as a]
             [astrogator.physics.units :as unit]
-            [astrogator.generation.system.planetary :as ps]))
+            [astrogator.generation.system.planetary :as ps]
+            [astrogator.physics.move.orbit :as orb]))
 
-(defrecord Star [type mass radius rhill luminosity temp class color])
+(defrecord Star [type mass radius rhill luminosity temp class color]
+  orb/Orbit (orbit [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos)))
 
 (defn generate-star [mass max-sc-orbit planets?]
   (let [radius (a/mass-radius mass)
