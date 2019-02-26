@@ -6,7 +6,8 @@
             [astrogator.render.conf :as r]
             [astrogator.util.rand :as rand]
             [astrogator.util.string :as str]
-            [astrogator.conf :as conf]))
+            [astrogator.conf :as conf]
+            [astrogator.util.log :as log]))
 
 (declare render-gui render-target-cursor)
 
@@ -44,9 +45,10 @@
     (concat [border] lines [border])))
 
 (defn loading-screen
-  ([] (q/background 0 0 0)
-   (q/text "Loading" 100 100))
-  ([number] (q/text (str "Loading " (apply str (repeat number ". "))) 100 100)))
+  ([screen] (q/with-graphics @screen (do (q/background 0 0 0)
+                                         (q/text "Loading" 100 100)
+                                         (q/redraw))))
+  ([number screen] (q/text (str "Loading " (apply str (repeat number ". "))) 100 100)))
 
 (defn render-gui [state]
   (col/fill r/gui-secondary)

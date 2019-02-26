@@ -59,4 +59,5 @@
   (let [refbody (s/get-refbody camera system)]
     (case (:type refbody)
       :planet (b/draw-planet refbody camera)
-      :star (b/draw-star refbody camera))))
+      :star (b/draw-star refbody camera)
+      nil)))

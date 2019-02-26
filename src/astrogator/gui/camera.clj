@@ -41,13 +41,20 @@
         scale-after)))
 
 (defn zoom [dir state]
-  (let [factor {:in  {:dist 2
-                      :obj  5/4}
-                :out {:dist 1/2
-                      :obj  4/5}}]
+  (let [factor {:in  {:dist  2
+                      :obj   5/4
+                      :limit 1E+8}
+                :out {:dist  1/2
+                      :obj   4/5
+                      :limit 1E-5}}
+        calc-zoom (fn [zoom type] (float (* zoom (get-in factor [dir type]))))
+        new-dist-zoom (calc-zoom (get-in state [:camera :dist-zoom]) :dist)
+        zoom? (not (or (and (= dir :in) (> new-dist-zoom (get-in factor [:in :limit])))
+                       (and (= dir :out) (< new-dist-zoom (get-in factor [:out :limit])))))]
+
     (-> state
-        (update-in [:camera :dist-zoom] #(* % ((factor dir) :dist)))
-        (update-in [:camera :obj-zoom] #(* % ((factor dir) :obj)))
+        (update-in [:camera :dist-zoom] (if zoom? #(calc-zoom % :dist) identity))
+        (update-in [:camera :obj-zoom] (if zoom? #(calc-zoom % :obj) identity))
         (assoc-in [:camera :scale] (get-scale (state :camera))))))
 
 (defn on-screen? [[screen-x screen-y]]

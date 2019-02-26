@@ -12,8 +12,7 @@
 
 (defn log-progress [iteration number]
   (when (zero? (mod iteration (/ number 10)))
-    (log/info (str "- generating systems: " iteration "/" number))
-    (gui/loading-screen (int (* 10 (/ iteration number))))))
+    (log/info (str "- generating systems: " iteration "/" number))))
 
 (defn generate-sector "size [pc]" [size number]
   (do (log/info (str "generating sector: size [pc] " size ", number: " number))
