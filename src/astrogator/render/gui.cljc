@@ -64,6 +64,6 @@
   (col/fill r/gui-secondary)
   (render-framed-keymap (state :time) [50 50])
   (render-animated-target-gui (s/get-target state) [50 200] (state :animation))
-  (render-framed-keymap (s/get-playership state) [50 (- (conf/screen-size 1) 300)])
+  (render-framed-keymap (s/get-playership state) [50 (- (q/height) 300)])
   (render-at-body state (s/get-refbody state) crosshair)
   (render-at-body state (s/get-target state) cursor))

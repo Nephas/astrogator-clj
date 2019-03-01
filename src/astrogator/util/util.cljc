@@ -1,4 +1,5 @@
-(ns astrogator.util.util)
+(ns astrogator.util.util
+  (:require [quil.core :as q]))
 
 (defn update-values [m f & args]
   (into {} (for [[k v] m] [k (apply f v args)])))

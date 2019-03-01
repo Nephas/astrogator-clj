@@ -1,9 +1,10 @@
 (ns astrogator.gui.camera
-  (:require [astrogator.physics.trafo :as t]
+  (:require [quil.core :as q]
+            [astrogator.physics.trafo :as t]
             [astrogator.util.log :as log]
+            [astrogator.util.env :as env]
             [astrogator.util.selectors :as s]
             [astrogator.render.conf :as conf]
-            [astrogator.conf :as c]
             [astrogator.generation.expandable :as exp]))
 
 (defn change-focus [state body]
@@ -59,5 +60,5 @@
         (assoc-in [:camera :scale] (get-scale (state :camera))))))
 
 (defn on-screen? [[screen-x screen-y]]
-  (and (< 0 screen-x (c/screen-size 0))
-       (< 0 screen-y (c/screen-size 1))))
+  (and (< 0 screen-x (q/width) )
+       (< 0 screen-y (q/height))))

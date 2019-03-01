@@ -1,5 +1,6 @@
 (ns astrogator.physics.trafo
-  (:require [astrogator.conf :as c]))
+  (:require [astrogator.conf :as c]
+            [astrogator.util.env :as env]))
 
 (defn pol-to-cart
   ([r phi] [(* r (Math/cos phi))
@@ -24,8 +25,6 @@
 
 (def neg #(scalar -1 %))
 
-(def screen-center (scalar 0.5 c/screen-size))
-
 (defn norm [v]
   (let [sqr #(* % %)]
     (Math/sqrt (+ (sqr (v 0)) (sqr (v 1))))))
@@ -40,7 +39,7 @@
 (defn map-to-screen
   "screenpos = screen-center + zoom * (offset + mappos)"
   ([mappos offset zoom]
-   (add screen-center (scalar zoom (add offset mappos))))
+   (add (env/screen-center) (scalar zoom (add offset mappos))))
   ([mappos camera] (let [offset (case (camera :scale)
                                   :body (camera :mappos)
                                   :subsystem (camera :mappos)
@@ -51,7 +50,7 @@
 (defn screen-to-map
   "mappos = 1/zoom * (screenpos - screen-center) - offset"
   ([screenpos offset zoom]
-   (sub (scalar (inv zoom) (sub screenpos screen-center)) offset))
+   (sub (scalar (inv zoom) (sub screenpos (env/screen-center))) offset))
   ([screenpos camera] (let [offset (case (camera :scale)
                                      :body (camera :mappos)
                                      :subsystem (camera :mappos)

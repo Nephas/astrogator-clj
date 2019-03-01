@@ -1,0 +1,19 @@
+body {
+  background-color: darkslategray;
+  font-family: "Ubuntu Light", helvetica, sans-serif;
+}
+h1 {
+  color: white;
+}
+ul {
+  color: white;
+}
+
+#canvas-container {
+   width: 100%;
+   text-align:center;
+}
+
+canvas {
+   display: inline;
+}

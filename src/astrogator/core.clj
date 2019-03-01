@@ -10,7 +10,9 @@
             [astrogator.state :as s]
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal :as t]
-            [astrogator.render.gui :as gui]))
+            [astrogator.render.gui :as gui]
+            [astrogator.util.log :as log]
+            [astrogator.util.env :as env]))
 
 (def store (atom s/init-state))
 (def screen (atom nil))
@@ -42,7 +44,7 @@
 (defn -main [& args]
   (q/defsketch astrogator
                :title "Astrogator"
-               :size c/screen-size
+               :size [1280 960]
                :setup setup
 
                :update update-state

@@ -46,7 +46,7 @@
 
 (q/defsketch -main
              :title "Astrogator"
-             :size c/screen-size
+             :size [1280 800]
              :setup setup
 
              :host "canvas"

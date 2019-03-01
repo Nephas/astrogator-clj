@@ -1,5 +1,6 @@
 (ns astrogator.util.hex
-  (:require [quil.core :as q]))
+  (:require [quil.core :as q]
+            [astrogator.util.env :as env]))
 
 (defn cube-dist [pos1 pos2]
   (let [diff (mapv - pos1 pos2)
@@ -18,6 +19,6 @@
   (mapv #(* % scale) (cube-to-cart [x y z])))
 
 (defn cube-to-center-pix [[x y z] scale]
-  (let [screen-center (mapv #(* 0.5 %) [(q/width) (q/height)])
+  (let [screen-center (mapv #(* 0.5 %) (env/screen-size))
         offset #(mapv + screen-center %)]
     (offset (cube-to-pix [x y z] scale))))
