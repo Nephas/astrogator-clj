@@ -25,7 +25,7 @@
                :time      {:day 0
                            :dps 10}}]
     (-> state
-        (sec/change-viewsystem (rand/rand-nth (get-in state [:universe :sector])))
+        (sec/change-viewsystem (rand/rand-coll (get-in state [:universe :sector])))
         (p/move-viewsystem))))
 
 (defn load-universe [store screen]

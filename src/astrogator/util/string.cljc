@@ -13,8 +13,12 @@
           (if (int? y) y (fmt-round y))))
 
 (defn fmt-numeric [x]
-  (try (cond (t/vec2d? x) (fmt-vec x)
-             (float? x) (fmt-round x)
-             (rational? x) (fmt-round (float x))
-             true (str x))
-       (catch Exception e (log/info (str "Format Exception: " x)))))
+  (cond (t/vec2d? x) (fmt-vec x)
+        (float? x) (fmt-round x)
+        ;(rational? x) (fmt-round (float x))
+        true (str x)))
+
+(defn parse-number
+  "Reads a number from a string. Returns nil if not a number."
+  [s] (if (re-find #"^-?\d+\.?\d*$" s)
+        (read-string s)))

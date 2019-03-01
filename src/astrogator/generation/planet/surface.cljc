@@ -14,7 +14,7 @@
     (evolve-tile tile tile-map :seed update-procedure)))
 
 (defn init-seeds [tile-map prob]
-  (let [seed (fn [] (< (r/rand 1) prob))]
+  (let [seed (fn [] (< (r/uniform 1) prob))]
     (u/update-values tile-map #(assoc-in % [:seed] (seed)))))
 
 (defn shape-step [tile-map]
@@ -41,7 +41,7 @@
 
 
 (defn noise-evolve-tile [tile scatter]
-  (let [factor (r/rand-range (- 1 scatter) (+ 1 scatter))]
+  (let [factor (r/uniform (- 1 scatter) (+ 1 scatter))]
     (update-in tile [:height] #(* factor %))))
 
 (defn noisify-height [tile-map scatter]

@@ -28,7 +28,7 @@
   (let [shippos ((s/get-playership state) :mappos)
         mousepos (get-in state [:camera :mouse :mappos])
         diff (t/sub mousepos shippos)
-        pointing (+ (* 1/2 Math/PI) (- ((t/cart-to-pol diff) 1)))]
+        pointing (+ (* 0.5 Math/PI) (- ((t/cart-to-pol diff) 1)))]
     (assoc-in state (conj s/playership-path :pointing) pointing)))
 
 (defn get-scale [camera]
@@ -42,10 +42,10 @@
 
 (defn zoom [dir state]
   (let [factor {:in  {:dist  2
-                      :obj   5/4
+                      :obj   (/ 5 4)
                       :limit 1E+8}
-                :out {:dist  1/2
-                      :obj   4/5
+                :out {:dist  0.5
+                      :obj   (/ 4 5)
                       :limit 1E-5}}
         calc-zoom (fn [zoom type] (float (* zoom (get-in factor [dir type]))))
         new-dist-zoom (calc-zoom (get-in state [:camera :dist-zoom]) :dist)

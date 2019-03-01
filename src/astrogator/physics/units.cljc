@@ -1,5 +1,6 @@
 (ns astrogator.physics.units
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s]
+            [astrogator.util.string :as u]))
 
 (def units
   {:distance     {:m    1
@@ -40,7 +41,7 @@
 (defn expand-pow [exp-unit]
   (let [exp (s/split (s/replace-first exp-unit #"[0-9]" "&$0") #"&")
         base (first exp)
-        pow (if (nil? (second exp)) 1 (Integer/parseInt (second exp)))]
+        pow (if (nil? (second exp)) 1 (u/parse-number (second exp)))]
     (mapv (fn [x] (keyword base)) (range pow))))
 
 (defn parse-units [unit-key]
@@ -58,14 +59,12 @@
 
 (defn conv
   ([size source-unit target-unit]
-   (try (if (and (contains? flat-units source-unit) (contains? flat-units target-unit))
-          (let [f-source (flat-units source-unit)
-                f-target (flat-units target-unit)]
-            (conv-factors size f-source f-target))
-          (let [f-source (map-factors (parse-units source-unit))
-                f-target (map-factors (parse-units target-unit))]
-            (conv-factors size f-source f-target)))
-        (catch Exception e
-          (print "could not convert units" source-unit "->" target-unit))))
+   (if (and (contains? flat-units source-unit) (contains? flat-units target-unit))
+     (let [f-source (flat-units source-unit)
+           f-target (flat-units target-unit)]
+       (conv-factors size f-source f-target))
+     (let [f-source (map-factors (parse-units source-unit))
+           f-target (map-factors (parse-units target-unit))]
+       (conv-factors size f-source f-target))))
   ([source-unit target-unit]
    (conv 1 source-unit target-unit)))

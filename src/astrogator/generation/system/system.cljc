@@ -31,9 +31,9 @@
   ([mass seed] (generate-system mass seed false)))
 
 (defn generate-subsystem [mass next-depth sc-orbit planets?]
-  (let [massA (* mass (r/rand-range 0.5 0.9))
+  (let [massA (* mass (r/uniform 0.5 0.9))
         massB (- mass massA)
-        radiusB (* 1.5 sc-orbit (r/rand-range 0.2 0.6))
+        radiusB (* 1.5 sc-orbit (r/uniform 0.2 0.6))
         radiusA (* radiusB (/ massB massA))
         dist (+ radiusA radiusB)
         sc-orbitA (a/hill-sphere dist massA massB)

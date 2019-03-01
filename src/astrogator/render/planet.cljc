@@ -3,15 +3,15 @@
             [astrogator.util.hex :as h]))
 
 (defn draw-hex-wedge [base]
-  (let [height (* 1/2 (Math/sqrt 3) base)]
-    (q/quad 0 0 height (* 1/2 base) height (* -1/2 base) 0 (- base))))
+  (let [height (* 0.5 (Math/sqrt 3) base)]
+    (q/quad 0 0 height (* 0.5 base) height (* -0.5 base) 0 (- base))))
 
 (defn draw-hex [radius color]
   (do (apply q/fill color)
       (apply q/stroke color)
       (let [rad #(* Math/PI %)
             wedge #(q/with-rotation [%] (draw-hex-wedge radius))]
-        (doall (map wedge (list 0 (rad 2/3) (rad 4/3)))))))
+        (doall (map wedge (list 0 (rad (/ 2 3)) (rad (/ 4 3))))))))
 
 (defn true-colors [tile colors]
   (let [height (:height tile)

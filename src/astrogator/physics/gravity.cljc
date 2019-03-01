@@ -2,7 +2,7 @@
   (:require
     [astrogator.physics.trafo :as t]
     [astrogator.util.selectors :as s]
-    [clojure.math.numeric-tower :as m]
+    [astrogator.util.math :as m]
     [astrogator.physics.astro :as astro]
     [astrogator.physics.units :as u]))
 

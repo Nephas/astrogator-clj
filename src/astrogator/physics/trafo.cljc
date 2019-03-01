@@ -24,7 +24,7 @@
 
 (def neg #(scalar -1 %))
 
-(def screen-center (scalar 1/2 c/screen-size))
+(def screen-center (scalar 0.5 c/screen-size))
 
 (defn norm [v]
   (let [sqr #(* % %)]

@@ -15,7 +15,7 @@
   (q/with-stroke [(apply q/color color) 128]
                  (do (q/stroke-weight 2)
                      (let [orientations (map #(t/scalar 20 %) '([0 1] [0 -1] [1 0] [-1 0]))]
-                       (dorun (map #(q/line (t/add pos (t/scalar 1/2 %))
+                       (dorun (map #(q/line (t/add pos (t/scalar 0.5 %))
                                             (t/add pos %)) orientations))))))
 
 (defn cursor [pos color]
@@ -23,7 +23,7 @@
                  (do (col/fill [0 0 0] 0)
                      (q/stroke-weight 2)
                      (let [size 10
-                           offset (* 1/2 size)]
+                           offset (* 0.5 size)]
                        (q/rect (- (pos 0) offset) (- (pos 1) offset) size size)))))
 
 (defn format-map [keymap]

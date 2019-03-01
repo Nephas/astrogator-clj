@@ -3,7 +3,6 @@
             [astrogator.physics.trafo :as t]
             [astrogator.generation.system.distantsystem :as ds]
             [astrogator.physics.units :as u]
-            [distributions.core :as d]
             [astrogator.util.log :as log]
             [astrogator.render.gui :as gui]))
 
@@ -21,16 +20,16 @@
           (for [iteration (range number)]
             (do (log-progress iteration number)
                 (let [seed (r/new-seed)
-                      mass (+ 0.1 (d/sample (d/exponential 1)))
-                      pos (t/scalar size-AU [(d/sample (d/normal 0 1)) (d/sample (d/normal 0 1))])]
+                      mass (+ 0.1 (r/uniform))
+                      pos (t/scalar size-AU [(r/uniform -1.0 1.0) (r/uniform -1.0 1.0)])]
                   (ds/generate-distant-system mass seed pos))))))))
 
 (defn generate-clouds "size [pc]" [size number]
   (log/info (str "- generating clouds: size [pc] " size ", number: " number))
   (let [size-AU (u/conv size :pc :AU)]
     (for [x (range number)]
-      (let [radius-AU (u/conv (* 0.1 size (r/rand)) :pc :AU)
-            pos (t/scalar size-AU [(d/sample (d/uniform -1 1)) (d/sample (d/normal 0 1))])]
+      (let [radius-AU (u/conv (* 0.1 size (r/uniform)) :pc :AU)
+            pos (t/scalar size-AU [(r/uniform -1.0 1.0) (r/uniform -1.0 1.0)])]
         {:radius    radius-AU
          :sectorpos pos
-         :color     [(r/rand-range 0.7 0.9) 0.4 0.4]}))))
+         :color     [(r/uniform 0.7 0.9) 0.4 0.4]}))))

@@ -9,6 +9,6 @@
 (defn generate-asteroid [parent-mass orbit-radius]
   (let [torbit (a/t-orbit orbit-radius :AU parent-mass :Msol)
         cylvel (* 2 Math/PI (/ 1 torbit))
-        cylpos [orbit-radius (* 2 Math/PI (r/rand))]
+        cylpos [orbit-radius (* 2 Math/PI (r/uniform))]
         mappos [0 0]]
     (->Asteroid :asteroid cylvel cylpos mappos)))

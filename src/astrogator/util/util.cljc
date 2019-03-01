@@ -11,3 +11,6 @@
 
 (defn mean [vals]
   (/ (apply + vals) (count vals)))
+
+(defn zip [l1 l2]
+  (map #(list %1 %2) l1 l2))

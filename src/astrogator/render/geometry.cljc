@@ -33,7 +33,7 @@
                       (circle pos size)))
    (q/with-stroke [(apply q/color color) 128]
                   (do (col/fill color 64)
-                      (q/stroke-weight (* 1/2 size))
+                      (q/stroke-weight (* 0.5 size))
                       (circle pos (* 2 size))))))
 
 (defn half-circle
@@ -42,4 +42,4 @@
    (q/no-stroke)
    (let [phase (+ Math/PI phase-in)
          rot (/ Math/PI 2)]
-     (q/arc (pos 0) (pos 1) size size (- phase rot) (+ phase rot) :pie))))
+     (q/arc (pos 0) (pos 1) size size (- phase rot) (+ phase rot)))))

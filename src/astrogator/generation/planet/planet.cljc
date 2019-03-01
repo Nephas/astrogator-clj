@@ -18,14 +18,14 @@
                  (assoc :moons (l/generate-moon-system (:mass this) (* 0.01 (:rhill this)) (:rhill this)))))))
 
 (defn generate-planet [parent-mass seed orbit-radius]
-  (let [mass (r/rand-range 0.5 100)
+  (let [mass (r/uniform 0.5 100)
         radius (a/planet-radius mass :Me)
         torbit (a/t-orbit orbit-radius :AU parent-mass :Msol)
         rhill (a/hill-sphere orbit-radius (unit/conv mass :Me :Msol) parent-mass)
-        color {:rock    [(r/rand-range 0.0 0.25) 0.6 0.6]
-               :ocean   [(r/rand-range 0.5 0.75) 0.6 0.6]
-               :glacier [(r/rand-range 0.5 0.75) 0.2 0.8]}
+        color {:rock    [(r/uniform 0.0 0.25) 0.6 0.6]
+               :ocean   [(r/uniform 0.5 0.75) 0.6 0.6]
+               :glacier [(r/uniform 0.5 0.75) 0.2 0.8]}
         cylvel (* 2 Math/PI (/ 1 torbit))
-        cylpos [orbit-radius (* 2 Math/PI (r/rand))]
+        cylpos [orbit-radius (* 2 Math/PI (r/uniform))]
         mappos [0 0]]
     (->Planet :planet mass radius seed rhill torbit cylvel cylpos mappos color)))

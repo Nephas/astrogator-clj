@@ -1,5 +1,5 @@
 (ns astrogator.physics.astro
-  (:require [clojure.math.numeric-tower :as m]
+  (:require [astrogator.util.math :as m]
             [astrogator.physics.units :as u]))
 
 
@@ -71,17 +71,17 @@
 (defn stefan-boltzmann "[K]" [L $L R $R]
   (let [L (u/conv L $L :W)
         R (u/conv R $R :m)]
-    (m/expt (/ L (* 4 Math/PI sigma (m/expt R 2))) 1/4)))
+    (m/expt (/ L (* 4 Math/PI sigma (m/expt R 2))) 0.25)))
 
 (defn hill-sphere "[a]" [a m M]
-  (* 0.9 a (m/expt (/ m (* 3 M)) 1/3)))
+  (* 0.9 a (m/expt (/ m (* 3 M)) (/ 1 3))))
 
 (defn planet-radius "[Re]" [m $m]
   (let [rho (if (< (u/conv m $m :Me) 10)
               5500
               1000)
         m (u/conv m $m :kg)]
-    (u/conv (m/expt (/ m (* 4/3 Math/PI rho)) 1/3) :m :Re)))
+    (u/conv (m/expt (/ m (* (/ 4 3) Math/PI rho)) (/ 1 3)) :m :Re)))
 
 (defn t-orbit "[d]" [r $r m $m]
   (let [r (u/conv r $r :AU)

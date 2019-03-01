@@ -1,14 +1,13 @@
 (ns astrogator.input.keyboard
   (:require [astrogator.gui.camera :as c]
             [astrogator.util.selectors :as s]
-            [astrogator.physics.move.orbit :as o]
-            [astrogator.state :as state]))
+            [astrogator.physics.move.orbit :as o]))
 
 (defn handle-key [state event]
       (case (:key event)
         (:+) (c/zoom :in state)
         (:-) (c/zoom :out state)
-        (:<) (update-in state [:time :dps] #(* 1/2 %))
+        (:<) (update-in state [:time :dps] #(* 0.5 %))
         (:>) (update-in state [:time :dps] #(* 2 %))
         (:1) (assoc-in state [:camera :map-mode] :physical)
         (:2) (assoc-in state [:camera :map-mode] :heat)

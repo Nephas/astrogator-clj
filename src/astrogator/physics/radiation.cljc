@@ -1,5 +1,5 @@
 (ns astrogator.physics.radiation
-  (:require [clojure.math.numeric-tower :as m]
+  (:require [astrogator.util.math :as m]
             [astrogator.util.selectors :as s]
             [astrogator.physics.trafo :as t]))
 

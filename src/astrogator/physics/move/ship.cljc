@@ -14,7 +14,7 @@
 
 (defn move-in-potential [body dt system]
   (let [mapacc (acc-at-pos (:mappos body) system)
-        intervel (t/add (t/scalar (* 1/2 dt) mapacc) (:mapvel body))
+        intervel (t/add (t/scalar (* 0.5 dt) mapacc) (:mapvel body))
         mappos (t/add (t/scalar dt intervel) (:mappos body))
         interacc (acc-at-pos mappos system)
         mapvel (t/add (t/scalar dt interacc) intervel)]

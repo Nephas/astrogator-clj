@@ -1,5 +1,5 @@
 (ns astrogator.core
-  (:require [quil.core :as q]
+  (:require [quil.core :as q :include-macros true]
             [quil.middleware :as m]
             [astrogator.conf :as c]
             [astrogator.render.render :as render]
@@ -45,6 +45,8 @@
                :size c/screen-size
                :setup setup
 
+               :host "canvas"
+
                :update update-state
                :draw draw-state
 
@@ -53,4 +55,5 @@
                :mouse-wheel mouse/handle-wheel
                :mouse-moved mouse/handle-move
 
-               :middleware [m/fun-mode]))
+               :middleware [m/fun-mode]
+               :features [:global-key-events]))
