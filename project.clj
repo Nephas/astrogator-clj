@@ -10,9 +10,7 @@
                  [environ "1.0.0"]
 
                  ;Game
-                 [quil "2.7.1"]
-                 [funcool/cuerdas "2.0.5"]
-                 ]
+                 [quil "2.7.1"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.15"]

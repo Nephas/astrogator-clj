@@ -5,7 +5,7 @@
             [astrogator.physics.trafo :as t]
             [astrogator.render.conf :as r]
             [astrogator.util.rand :as rand]
-            [astrogator.util.string :as str]
+            [astrogator.util.string :as string]
             [astrogator.conf :as conf]
             [astrogator.util.log :as log]))
 
@@ -28,7 +28,22 @@
 
 (defn format-map [keymap]
   ;(map #(format "%-12s%s\n" (str (first %1)) (str/fmt-numeric (second %1))) keymap)
-  "a :b")
+  (map #(str (first %1) ": " (subs (second %1) 0 20) "\n") keymap))
+
+(defn render-columns
+  ([col1 col2 [x y] sep] (do (q/text (string/join col1 "\n") x y)
+                             (q/text (string/join col2 "\n") (+ sep x) y))))
+
+(defn render-framed-keymap
+  ([col1 col2 pos] (let [sep (* 8 12)
+                         width 20
+                         fmt-keys #(str " - " (subs (str %) 1) ":")
+                         fmt-vals #(string/cut (str %) 20)
+                         border (str (apply str (repeat width "=")))
+                         col1 (concat [border] (map fmt-keys col1) [border])
+                         col2 (concat [""] (map fmt-vals col2) [""])]
+                     (render-columns col1 col2 pos sep)))
+  ([keymap pos] (render-framed-keymap (keys keymap) (vals keymap) pos)))
 
 (defn render-at-body [state body renderer]
   (if (nil? body)
@@ -36,14 +51,9 @@
     (let [pos (t/map-to-screen (:mappos body) (state :camera))]
       (renderer pos r/gui-primary))))
 
-(defn animate-target-gui [keymap animation]
-  (let [counter (int (/ (animation :target) 2))
-        lines (format-map (apply dissoc keymap [:surface :moons :color]))]
-    (take counter lines)))
-
-(defn frame [lines]
-  (let [border (str (apply str (repeat 16 "=")) "\n")]
-    (concat [border] lines [border])))
+(defn render-animated-target-gui [keymap pos animation]
+  (let [counter (animation :target)]
+    (render-framed-keymap (take counter (keys keymap)) (take counter (vals keymap)) pos)))
 
 (defn loading-screen
   ([screen] (q/with-graphics @screen (do (q/background 0 0 0)
@@ -52,8 +62,8 @@
 
 (defn render-gui [state]
   (col/fill r/gui-secondary)
-  (q/text (apply str (frame (format-map (state :time)))) 50 50)
-  (q/text (apply str (frame (animate-target-gui (s/get-target state) (state :animation)))) 50 200)
-  (q/text (apply str (frame (format-map (s/get-playership state)))) 50 (- (conf/screen-size 1) 300))
+  (render-framed-keymap (state :time) [50 50])
+  (render-animated-target-gui (s/get-target state) [50 200] (state :animation))
+  (render-framed-keymap (s/get-playership state) [50 (- (conf/screen-size 1) 300)])
   (render-at-body state (s/get-refbody state) crosshair)
   (render-at-body state (s/get-target state) cursor))

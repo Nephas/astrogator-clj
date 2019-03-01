@@ -28,3 +28,10 @@
   "Reads a number from a string. Returns nil if not a number."
   [s] (if (re-find #"^-?\d+\.?\d*$" s)
         (read-string s)))
+
+(defn join
+  ([coll del] (reduce #(str %1 del %2) coll))
+  ([coll] (join coll "")))
+
+(defn cut [s size]
+  (if (> (count s) size) (str (subs s 0 size) "…") s))
