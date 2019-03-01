@@ -1,10 +1,10 @@
 (ns astrogator.conf)
 
-(def screen-size [1800 1000])
+(def screen-size [1280 1024])
 
 (def frame-rate 30)
 
-(def log-level :info)
+(def log-level :debug)
 
 (def log-folder nil)
 

@@ -27,7 +27,8 @@
                        (q/rect (- (pos 0) offset) (- (pos 1) offset) size size)))))
 
 (defn format-map [keymap]
-  (map #(format "%-12s%s\n" (str (first %1)) (str/fmt-numeric (second %1))) keymap))
+  ;(map #(format "%-12s%s\n" (str (first %1)) (str/fmt-numeric (second %1))) keymap)
+  "a :b")
 
 (defn render-at-body [state body renderer]
   (if (nil? body)
@@ -46,8 +47,7 @@
 
 (defn loading-screen
   ([screen] (q/with-graphics @screen (do (q/background 0 0 0)
-                                         (q/text "Loading" 100 100)
-                                         (q/redraw))))
+                                         (q/text "Loading" 100 100))))
   ([number screen] (q/text (str "Loading " (apply str (repeat number ". "))) 100 100)))
 
 (defn render-gui [state]

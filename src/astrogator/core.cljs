@@ -12,48 +12,52 @@
             [astrogator.physics.thermal :as t]
             [astrogator.render.gui :as gui]))
 
-(def store (atom {}))
+(def store (atom s/init-state))
 (def screen (atom nil))
 
 (defn setup []
   (do (reset! screen (q/current-graphics))
       (q/frame-rate c/frame-rate)
+      (enable-console-print!)
       (q/text-font (q/create-font "Consolas" 14 true))
       (q/color-mode :hsb 1.0 1.0 1.0 255)
       (q/ellipse-mode :radius)
       (q/no-stroke)
       (s/load-universe store screen)))
 
-(defn update-state [state]
-  (let [new-state (-> state
+(defn update-state []
+  (let [new-state (-> @store
                       (p/move-viewsystem)
                       (t/update-thermal)
                       (cam/update-camera)
                       (cam/update-playership)
                       (ani/update-animations))]
-    (if (key/reset? state)
+    (if (key/reset? @store)
       (s/load-universe store screen)
       (reset! store new-state))))
 
-(defn draw-state [state]
-  (do (render/render-universe (state :universe) (state :camera))
-      (gui/render-gui state)))
+(defn draw-state []
+  (do (render/render-universe (@store :universe) (@store :camera))
+      (gui/render-gui @store)))
 
-(defn -main [& args]
-  (q/defsketch astrogator
-               :title "Astrogator"
-               :size c/screen-size
-               :setup setup
+(defn handler [handle]
+  (fn [state event]
+    (reset! store (handle state event))))
 
-               :host "canvas"
+(q/defsketch -main
+             :title "Astrogator"
+             :size c/screen-size
+             :setup setup
 
-               :update update-state
-               :draw draw-state
+             :host "canvas"
 
-               :key-pressed key/handle-key
-               :mouse-clicked mouse/handle-click
-               :mouse-wheel mouse/handle-wheel
-               :mouse-moved mouse/handle-move
+             :update update-state
+             :draw draw-state
 
-               :middleware [m/fun-mode]
-               :features [:global-key-events]))
+             :key-pressed (handler key/handle-key)
+             :mouse-clicked (handler mouse/handle-click)
+             :mouse-wheel (handler mouse/handle-wheel)
+             :mouse-moved (handler mouse/handle-move)
+
+             :middleware [m/fun-mode]
+             :features [:global-key-events])

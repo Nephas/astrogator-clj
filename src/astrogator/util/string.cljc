@@ -1,6 +1,12 @@
 (ns astrogator.util.string
   (:require [astrogator.physics.trafo :as t]
-            [astrogator.util.log :as log]))
+            [astrogator.util.log :as log]
+            ))
+
+(defn format
+  "Formats a string using goog.string.format."
+  [fmt & args]
+  fmt)
 
 (defn fmt-round [x]
   (if (and (< x 1000) (> x 0.01))

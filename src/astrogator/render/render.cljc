@@ -1,6 +1,7 @@
 (ns astrogator.render.render
   (:require [astrogator.render.system :as sys]
             [quil.core :as q]
+            [astrogator.util.log :as log]
             [astrogator.render.sector :as sec]
             [astrogator.render.conf :as conf]))
 
@@ -13,5 +14,7 @@
     :sector (sec/draw-sector (universe :sector) (universe :clouds) camera)))
 
 (defn cache-all [universe camera]
-  (do (sys/draw-system (universe :viewsystem) camera)
+  (do (log/info "caching viewsystem")
+      (sys/draw-system (universe :viewsystem) camera)
+      (log/info "caching sector")
       (sec/draw-sector (universe :sector) (universe :clouds) camera)))

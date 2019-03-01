@@ -41,6 +41,7 @@
         scale-after)))
 
 (defn zoom [dir state]
+  (log/debug (str "zooming: " dir))
   (let [factor {:in  {:dist  2
                       :obj   (/ 5 4)
                       :limit 1E+8}

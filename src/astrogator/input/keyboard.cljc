@@ -1,9 +1,11 @@
 (ns astrogator.input.keyboard
   (:require [astrogator.gui.camera :as c]
             [astrogator.util.selectors :as s]
+            [astrogator.util.log :as log]
             [astrogator.physics.move.orbit :as o]))
 
 (defn handle-key [state event]
+  (do (log/debug (str "keypress: " (:key event)))
       (case (:key event)
         (:+) (c/zoom :in state)
         (:-) (c/zoom :out state)
@@ -20,7 +22,7 @@
         (:d :right) state
         (:o) (update-in state s/playership-path
                         #(o/toggle-orbit % (state :camera) (get-in state [:universe :viewsystem])))
-        state))
+        state)))
 
 (defn reset? [state]
   (get-in state [:universe :reset]))

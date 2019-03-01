@@ -41,5 +41,5 @@
 (defn handle-move [state event]
   (let [screenpos [(event :x) (event :y)]
         mappos (t/screen-to-map screenpos (state :camera))]
-    (assoc-in state [:camera :mouse] {:screenpos screenpos
+      (assoc-in state [:camera :mouse] {:screenpos screenpos
                                       :mappos    mappos})))

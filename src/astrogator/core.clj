@@ -12,7 +12,7 @@
             [astrogator.physics.thermal :as t]
             [astrogator.render.gui :as gui]))
 
-(def store (atom {}))
+(def store (atom s/init-state))
 (def screen (atom nil))
 
 (defn setup []
