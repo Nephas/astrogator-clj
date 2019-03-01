@@ -46,10 +46,14 @@
   ([keymap pos] (render-framed-keymap (keys keymap) (vals keymap) pos)))
 
 (defn render-at-body [state body renderer]
-  (if (nil? body)
-    state
-    (let [pos (t/map-to-screen (:mappos body) (state :camera))]
-      (renderer pos r/gui-primary))))
+  (if (nil? body) state
+                  (let [pos (t/map-to-screen (:mappos body) (state :camera))]
+                    (renderer pos r/gui-primary))))
+
+(defn render-at-system [state system renderer]
+  (if (nil? system) state
+                    (let [pos (t/map-to-screen (:sectorpos system) (state :camera))]
+                      (renderer pos r/gui-primary))))
 
 (defn render-animated-target-gui [keymap pos animation]
   (let [counter (animation :target)]
@@ -61,9 +65,19 @@
   ([number screen] (q/text (str "Loading " (apply str (repeat number ". "))) 100 100)))
 
 (defn render-gui [state]
-  (col/fill r/gui-secondary)
-  (render-framed-keymap (state :time) [50 50])
-  (render-animated-target-gui (s/get-target state) [50 200] (state :animation))
-  (render-framed-keymap (s/get-playership state) [50 (- (q/height) 300)])
-  (render-at-body state (s/get-refbody state) crosshair)
-  (render-at-body state (s/get-target state) cursor))
+  (let [system-gui #(do (render-framed-keymap (state :time) [50 50])
+                        (render-animated-target-gui (s/get-targetbody state) [50 200] (state :animation))
+                        (render-framed-keymap (s/get-playership state) [50 (- (q/height) 300)])
+                        (render-at-body state (s/get-refbody state) crosshair)
+                        (render-at-body state (s/get-targetbody state) cursor))
+        sector-gui #(do (render-framed-keymap (state :time) [50 50])
+                        (render-animated-target-gui (s/get-targetsystem state) [50 200] (state :animation))
+                        (render-at-system state (s/get-refsystem state) crosshair)
+                        (render-at-system state (s/get-targetsystem state) cursor))]
+
+    (col/fill r/gui-secondary)
+    (case (get-in state [:camera :scale])
+      :body (system-gui)
+      :subsystem (system-gui)
+      :system (system-gui)
+      :sector (sector-gui))))

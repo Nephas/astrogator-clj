@@ -16,21 +16,21 @@
 
 (defn handle-right [state screenpos camera]
   (let [mappos (t/screen-to-map screenpos camera)
-        viewsystem (get-in state [:universe :viewsystem])]
+        refsystem (get-in state [:universe :refsystem])]
     (case (camera :scale)
-      :sector (sec/change-viewsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
-      :system (cam/change-focus state (sys/get-closest-planet-or-star viewsystem mappos))
-      :subsystem (cam/change-focus state (sys/get-closest-planet-or-star viewsystem mappos))
-      :body (cam/change-focus state (sys/get-closest-planet-or-star viewsystem mappos)))))
+      :sector (sec/change-refsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
+      :system (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos))
+      :subsystem (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos))
+      :body (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos)))))
 
 (defn handle-left [state screenpos camera]
   (let [mappos (t/screen-to-map screenpos camera)
-        viewsystem (get-in state [:universe :viewsystem])]
+        refsystem (get-in state [:universe :refsystem])]
     (case (camera :scale)
-      :sector state
-      :system (cam/change-target state (sys/get-closest-planet-or-star viewsystem mappos))
-      :subsystem (cam/change-target state (sys/get-closest-planet-or-star viewsystem mappos))
-      :body (cam/change-target state (sys/get-closest-planet-or-star viewsystem mappos)))))
+      :sector (sec/change-targetsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
+      :system (cam/change-targetbody state (sys/get-closest-planet-or-star refsystem mappos))
+      :subsystem (cam/change-targetbody state (sys/get-closest-planet-or-star refsystem mappos))
+      :body (cam/change-targetbody state (sys/get-closest-planet-or-star refsystem mappos)))))
 
 (defn handle-wheel [state event]
   (case event

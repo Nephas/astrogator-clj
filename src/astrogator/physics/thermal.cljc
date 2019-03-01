@@ -26,5 +26,5 @@
          (update-in [:planets] (update-planets bodies))))))
 
 (defn update-thermal [state]
-  (let [bodies (s/get-bodies (get-in state [:universe :viewsystem]))]
-    (update-in state [:universe :viewsystem] update-system bodies)))
+  (let [bodies (s/get-bodies (get-in state [:universe :refsystem]))]
+    (update-in state [:universe :refsystem] update-system bodies)))

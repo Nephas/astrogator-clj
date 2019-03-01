@@ -28,8 +28,8 @@
          (assoc-in [:body :mappos] mappos))))
   ([system dt] (move-system system dt [0 0] [0 0])))
 
-(defn move-viewsystem [state]
+(defn move-refsystem [state]
   (let [dpf (/ (get-in state [:time :dps]) c/frame-rate)]
     (-> state
         (update-in [:time :day] #(float (+ dpf %)))
-        (update-in [:universe :viewsystem] move-system dpf))))
+        (update-in [:universe :refsystem] move-system dpf))))

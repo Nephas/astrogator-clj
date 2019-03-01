@@ -56,8 +56,23 @@
 (defn rand-gauss []
   (reduce + (take 10 (repeatedly #(uniform -1 1)))))
 
-;(defn poisson [λ]
-;  (let [L (Math/exp (- λ))
-;        p 1
-;        k 0]
-;    ))
+(defn poisson [λ]
+  "for λ > 10: roughly gaussian centered at λ"
+  (loop [p 1
+         k 0]
+    (if (< p (Math/exp (- λ))) (dec k)
+                               (let [u (uniform)] (recur (* p u) (inc k))))))
+
+(defn gauss-approx [] (* 0.1 (- (+ (uniform) (poisson 10)) (uniform) 5.0)))
+
+(defn imf []
+  (/ (+ (uniform) (poisson 4)) 4.0))
+
+;algorithm poisson random number (Knuth):
+;init:
+;Let L ← e−λ, k ← 0 and p ← 1.
+;do:
+;k ← k + 1.
+;Generate uniform random number u in [0,1] and let p ← p × u.
+;while p > L.
+;return k − 1.

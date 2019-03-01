@@ -7,17 +7,17 @@
             [astrogator.render.conf :as conf]
             [astrogator.generation.expandable :as exp]))
 
-(defn change-focus [state body]
-  (let [full-path (into [] (concat [:universe :viewsystem] (:path body)))]
+(defn change-refbody [state body]
+  (let [full-path (into [] (concat [:universe :refsystem] (:path body)))]
     (log/info (str "changing focus: " full-path))
     (-> state
         (assoc-in [:camera :refbody] (:path body))
         (update-in full-path exp/expand-if-possible))))
 
-(defn change-target [state body]
+(defn change-targetbody [state body]
   (log/info (str "select target: " (:path body)))
   (-> state
-      (assoc-in [:camera :target] (:path body))
+      (assoc-in [:camera :targetbody] (:path body))
       (assoc-in [:animation :target] 0)))
 
 (defn update-camera [state]

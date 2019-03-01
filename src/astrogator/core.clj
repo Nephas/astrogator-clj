@@ -28,7 +28,7 @@
 
 (defn update-state [state]
   (let [new-state (-> state
-                      (p/move-viewsystem)
+                      (p/move-refsystem)
                       (t/update-thermal)
                       (cam/update-camera)
                       (cam/update-playership)

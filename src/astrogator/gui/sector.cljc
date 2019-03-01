@@ -7,11 +7,18 @@
 (defn get-closest-system [sector mappos]
   (apply min-key #(t/dist mappos (:sectorpos %)) sector))
 
-(defn change-viewsystem [state distantsystem]
-  (log/info (str "setting viewsystem: " (:seed distantsystem)))
+(defn change-refsystem [state distantsystem]
+  (log/info (str "setting refsystem: " (:seed distantsystem)))
   (-> state
       (assoc-in [:camera :sectorpos] (t/neg (:sectorpos distantsystem)))
       (assoc-in [:camera :refbody] nil)
-      (assoc-in [:universe :viewsystem] (-> distantsystem
-                                            (exp/expand-if-possible)
-                                            (pl/place-playership [10 10])))))
+      (assoc-in [:camera :refsystem] (:seed distantsystem))
+      (assoc-in [:universe :refsystem] (-> distantsystem
+                                           (exp/expand-if-possible)
+                                           (pl/place-playership [10 10])))))
+
+(defn change-targetsystem [state distantsystem]
+  (log/info (str "setting targetsystem: " (:seed distantsystem)))
+  (-> state
+      (assoc-in [:camera :targetsystem] (:seed distantsystem))
+      (assoc-in [:animation :target] 0)))

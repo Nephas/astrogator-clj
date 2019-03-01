@@ -9,28 +9,31 @@
 
 (def init-state
   {:universe  {:reset      false
-               :viewsystem nil
+               :refsystem nil
                :sector     []
                :clouds     []}
-   :camera    {:mouse     {:screenpos [0 0]
-                           :mappos    [0 0]}
-               :dist-zoom 5
-               :obj-zoom  1
-               :sectorpos [0 0]
-               :mappos    [0 0]
-               :scale     :system
-               :refbody   nil}
+   :camera    {:mouse        {:screenpos [0 0]
+                              :mappos    [0 0]}
+               :dist-zoom    5
+               :obj-zoom     1
+               :sectorpos    [0 0]
+               :mappos       [0 0]
+               :scale        :system
+               :refbody      nil
+               :targetbody   nil
+               :refsystem    nil
+               :targetsystem nil}
    :animation {:target 0
                :load   5}
    :time      {:day 0
                :dps 10}})
 
 (defn generate-universe [state]
-  (let [game-state (-> state (assoc-in [:universe :sector] (gensec/generate-sector 50 20000))
-                       (assoc-in [:universe :clouds] (gensec/generate-clouds 50 50)))]
+  (let [game-state (-> state (assoc-in [:universe :sector] (gensec/generate-sector 50 10000))
+                       (assoc-in [:universe :clouds] (gensec/generate-clouds 50 25)))]
     (-> game-state
-        (sec/change-viewsystem (rand/rand-coll (get-in game-state [:universe :sector])))
-        (p/move-viewsystem))))
+        (sec/change-refsystem (rand/rand-coll (get-in game-state [:universe :sector])))
+        (p/move-refsystem))))
 
 (defn load-universe [store screen]
   (do (gui/loading-screen screen)

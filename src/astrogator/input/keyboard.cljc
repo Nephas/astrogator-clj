@@ -17,11 +17,11 @@
         (:r) (assoc-in state [:universe :reset] true)
         (:w :up) (update-in state (conj s/playership-path :throttle) #(min 1 (+ % 0.1)))
         (:s :down) (update-in state (conj s/playership-path :throttle) #(max 0 (- % 0.1)))
-        (:m) (assoc-in state (conj s/playership-path :mapvel) ((s/get-target state) :mapvel))
+        (:m) (assoc-in state (conj s/playership-path :mapvel) ((s/get-targetbody state) :mapvel))
         (:a :left) state
         (:d :right) state
         (:o) (update-in state s/playership-path
-                        #(o/toggle-orbit % (state :camera) (get-in state [:universe :viewsystem])))
+                        #(o/toggle-orbit % (state :camera) (get-in state [:universe :refsystem])))
         state)))
 
 (defn reset? [state]

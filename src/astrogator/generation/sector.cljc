@@ -20,8 +20,8 @@
           (for [iteration (range number)]
             (do (log-progress iteration number)
                 (let [seed (r/new-seed)
-                      mass (+ 0.1 (r/uniform))
-                      pos (t/scalar size-AU [(r/uniform -1.0 1.0) (r/uniform -1.0 1.0)])]
+                      mass (r/imf)
+                      pos (t/scalar size-AU [(r/gauss-approx) (r/gauss-approx)])]
                   (ds/generate-distant-system mass seed pos))))))))
 
 (defn generate-clouds "size [pc]" [size number]
@@ -29,7 +29,7 @@
   (let [size-AU (u/conv size :pc :AU)]
     (for [x (range number)]
       (let [radius-AU (u/conv (* 0.1 size (r/uniform)) :pc :AU)
-            pos (t/scalar size-AU [(r/uniform -1.0 1.0) (r/uniform -1.0 1.0)])]
+            pos (t/scalar size-AU [(r/gauss-approx) (r/gauss-approx)])]
         {:radius    radius-AU
          :sectorpos pos
          :color     [(r/uniform 0.7 0.9) 0.4 0.4]}))))

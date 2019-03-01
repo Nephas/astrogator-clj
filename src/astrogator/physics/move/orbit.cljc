@@ -36,5 +36,5 @@
 
 (defn toggle-orbit [ship camera system]
   (if (nil? (ship :ai-mode))
-    (enter-orbit ship (camera :target) (s/get-target camera system))
+    (enter-orbit ship (camera :targetbody) (s/get-targetbody camera system))
     (leave-orbit ship)))

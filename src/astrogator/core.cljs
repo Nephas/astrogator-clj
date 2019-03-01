@@ -27,7 +27,7 @@
 
 (defn update-state []
   (let [new-state (-> @store
-                      (p/move-viewsystem)
+                      (p/move-refsystem)
                       (t/update-thermal)
                       (cam/update-camera)
                       (cam/update-playership)
