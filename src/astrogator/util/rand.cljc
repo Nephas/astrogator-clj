@@ -1,6 +1,5 @@
 (ns astrogator.util.rand
-  (:require [quil.core :as q]
-            [astrogator.util.math :as m]))
+  (:require [quil.core :as q]))
 
 (defn set-seed!
   "Sets the seed of the global random number generator."
@@ -65,8 +64,12 @@
 
 (defn gauss-approx [] (* 0.1 (- (+ (uniform) (poisson 10)) (uniform) 5.0)))
 
-(defn imf []
+(defn stellar-imf []
   (/ (+ (uniform) (poisson 4)) 4.0))
+
+(defn planetary-imf []
+  (/ (+ (uniform) (poisson 4)) 4.0))
+
 
 ;algorithm poisson random number (Knuth):
 ;init:

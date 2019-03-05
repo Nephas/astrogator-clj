@@ -3,8 +3,7 @@
             [astrogator.physics.trafo :as t]
             [astrogator.generation.system.distantsystem :as ds]
             [astrogator.physics.units :as u]
-            [astrogator.util.log :as log]
-            [astrogator.render.gui :as gui]))
+            [astrogator.util.log :as log]))
 
 (defn sort-by-brightness [system-list]
   (sort-by #(:magnitude %) system-list))
@@ -20,7 +19,7 @@
           (for [iteration (range number)]
             (do (log-progress iteration number)
                 (let [seed (r/new-seed)
-                      mass (r/imf)
+                      mass (r/stellar-imf)
                       pos (t/scalar size-AU [(r/gauss-approx) (r/gauss-approx)])]
                   (ds/generate-distant-system mass seed pos))))))))
 

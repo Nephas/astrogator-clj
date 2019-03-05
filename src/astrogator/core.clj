@@ -10,7 +10,7 @@
             [astrogator.state :as s]
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal :as t]
-            [astrogator.render.gui :as gui]
+            [astrogator.render.gui.gui :as gui]
             [astrogator.util.log :as log]
             [astrogator.util.env :as env]))
 

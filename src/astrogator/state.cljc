@@ -4,7 +4,7 @@
             [astrogator.physics.move.system :as p]
             [astrogator.util.log :as log]
             [astrogator.render.render :as render]
-            [astrogator.render.gui :as gui]
+            [astrogator.render.gui.gui :as gui]
             [astrogator.util.rand :as rand]))
 
 (def init-state

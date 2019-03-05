@@ -18,7 +18,7 @@
                  (assoc :moons (l/generate-moon-system (:mass this) (* 0.01 (:rhill this)) (:rhill this)))))))
 
 (defn generate-planet [parent-mass seed orbit-radius]
-  (let [mass (r/uniform 0.5 100)
+  (let [mass (r/planetary-imf)
         radius (a/planet-radius mass :Me)
         torbit (a/t-orbit orbit-radius :AU parent-mass :Msol)
         rhill (a/hill-sphere orbit-radius (unit/conv mass :Me :Msol) parent-mass)

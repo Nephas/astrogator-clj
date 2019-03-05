@@ -12,6 +12,11 @@
 (def gui-secondary [0.1 0.5 1])
 (def gui-primary [0.0 0.5 1])
 
+(def margin {:left 50
+             :right 50
+             :top 50
+             :bottom 50})
+
 (def airy-threshold 3)
 
 (def thresholds
