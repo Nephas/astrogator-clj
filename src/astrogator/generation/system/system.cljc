@@ -50,7 +50,7 @@
                     :cylvel     (* 2 Math/PI (/ 1 torbit))}
            :compA  compA
            :compB  compB}
-          (if planets? (ps/generate-planet-system mass (* 1.5 radiusB) sc-orbit)))))
+          (if planets? (ps/generate-planet-system mass (* 1.5 radiusB) sc-orbit true)))))
 
 (defn get-system-color
   ([compA compB] (col/blend-vec-color (get-system-color compA) (get-system-color compB)))

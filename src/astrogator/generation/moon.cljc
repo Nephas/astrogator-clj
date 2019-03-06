@@ -7,7 +7,7 @@
   orb/Orbit (orbit [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos)))
 
 (defn generate-moon [parent-mass orbit-radius]
-  (let [mass (r/uniform 0.05 0.5)
+  (let [mass (* parent-mass (r/uniform 0.02 0.2))
         radius (a/planet-radius mass :Me)
         torbit (a/t-orbit orbit-radius :AU parent-mass :Me)
         cylvel (* 2 Math/PI (/ 1 torbit))

@@ -1,7 +1,9 @@
 (ns astrogator.generation.planet.surface
   (:require [astrogator.util.util :as u]
+            [astrogator.util.log :as log]
             [astrogator.generation.planet.tilemap :as m]
-            [astrogator.util.rand :as r]))
+            [astrogator.util.rand :as r]
+            [astrogator.poetry.haiku :as h]))
 
 (defn evolve-tile [tile tile-map update-key update-procedure]
   (let [pos (:pos tile)
@@ -47,23 +49,37 @@
 (defn noisify-height [tile-map scatter]
   (u/update-values tile-map noise-evolve-tile scatter))
 
+(defn adjusted-water-amount [base-temp water-amount]
+  "-exp(x - 373) + 1"
+  (let [boiling-temp 373
+        evaporation (- 1.0 (Math/exp (* 0.05 (- base-temp boiling-temp))))]
+    (max 0 (* evaporation water-amount))))
+
 (defn init-oceans [tile-map sea-level]
   (let [update-ocean (fn [tile] (assoc-in tile [:ocean] (< (:height tile) sea-level)))]
     (u/update-values tile-map update-ocean)))
 
-(defn calculate-temperature [tile sea-level base-heat]
+(defn calculate-temperature [tile sea-level base-temp]
   (let [ocean-depth (if (:ocean tile) (- sea-level (:height tile)) 0)
-        height (if (:ocean tile) sea-level (:height tile))]
-    (+ base-heat (* ocean-depth 0.2) (- 1 (* 0.5 (Math/abs (:elevation tile))) (* 0.5 height)))))
+        height (if (:ocean tile) sea-level (:height tile))
+        elevation-term (* 80 (- 0.5 (:elevation tile)))
+        height-term (* 40 (- height 0.5))
+        ocean-term (* 20 ocean-depth)]
+    (max 0 (+ base-temp ocean-term height-term elevation-term))))
 
-(defn init-temperature [tile-map sea-level base-heat]
-  (u/update-values tile-map #(assoc-in % [:temperature] (calculate-temperature % sea-level base-heat))))
+(defn init-temperature [tile-map sea-level base-temp]
+  (u/update-values tile-map #(assoc-in % [:temperature] (calculate-temperature % sea-level base-temp))))
 
-(defn init-glaciers [tile-map freeze-temp]
-  (u/update-values tile-map #(assoc-in % [:glacier] (< (:temperature %) freeze-temp))))
+(defn init-glaciers [tile-map water-amount]
+  (let [freeze-temp 273
+        adjusted-freeze-temp (* water-amount freeze-temp)
+        glacier? (fn [tile] (or (and (:ocean tile) (< (:temperature tile) freeze-temp))
+                                (< (:temperature tile) adjusted-freeze-temp)))]
+    (u/update-values tile-map #(assoc-in % [:glacier] (glacier? %)))))
 
-(defn cellular-map [size shape-prob shape-steps height-steps noise-range sea-level base-heat freeze-temp]
-  (let [init-map (m/init-map (m/init-tiles size))]
+(defn cellular-map [size shape-prob shape-steps height-steps noise-range water-amount base-temp]
+  (let [init-map (m/init-map (m/init-tiles size))
+        sea-level (adjusted-water-amount base-temp water-amount)]
     (-> init-map
         (init-seeds shape-prob)
         (smooth-shapes shape-steps)
@@ -71,5 +87,25 @@
         (smooth-height height-steps)
         (noisify-height noise-range)
         (init-oceans sea-level)
-        (init-temperature sea-level base-heat)
-        (init-glaciers freeze-temp))))
+        (init-temperature sea-level base-temp)
+        (init-glaciers water-amount))))
+
+(defn get-descriptors [water-amount base-temp base-flux circumbinary]
+  (let [sea-level (adjusted-water-amount base-temp water-amount)
+        frozen (< base-temp 223)
+        molten (> base-temp 473)
+        dark (< base-flux 10)
+        bright (> base-flux 10000)
+        wet (and (not molten) (not frozen) (> sea-level 0.7))
+        dry (and (not molten) (< sea-level 0.3))
+        tags (into [] (filter #(not (nil? %))
+                              [(if circumbinary :multiple :single)
+                               (if (< 273 base-temp 373) :habitable :hostile)
+                               (if dark :dark)
+                               (if bright :bright)
+                               (if frozen :frozen) (if molten :molten)
+                               (if wet :wet) (if dry :dry)
+                               ]))]
+    {:sea-level sea-level
+     :tags      tags
+     :poem      (h/generate-haiku tags)}))

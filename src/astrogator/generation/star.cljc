@@ -9,10 +9,10 @@
 
 (defn generate-star [mass max-sc-orbit planets?]
   (let [radius (a/mass-radius mass)
-        min-sc-orbit (* 100 (unit/conv radius :Rsol :AU))
+        min-sc-orbit (* 10 (unit/conv radius :Rsol :AU))
         luminosity (a/mass-luminosity mass)
         temp (a/stefan-boltzmann luminosity :Lsol radius :Rsol)
         class (a/spectral-class temp)
         color (a/COLOR class)]
     (conj {:body (->Star :star mass radius max-sc-orbit luminosity temp class color)}
-          (if planets? (ps/generate-planet-system mass min-sc-orbit max-sc-orbit)))))
+          (if planets? (ps/generate-planet-system mass min-sc-orbit max-sc-orbit false)))))

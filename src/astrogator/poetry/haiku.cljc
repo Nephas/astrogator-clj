@@ -6,14 +6,20 @@
             [astrogator.util.util :as u]
             [astrogator.util.rand :as r]))
 
-(def contradictions (let [pairs {:single  :multiple
-                                 :molten  :frozen
-                                 :wet     :dry
-                                 :hostile :habitable}]
-                      (merge pairs (set/map-invert pairs))))
+(def contradictions {:single    [:multiple]
+                     :bright    [:dark]
+                     :molten    [:wet :frozen :habitable]
+                     :wet       [:dry :molten :frozen]
+                     :hostile   [:habitable]
+
+                     :multiple  [:single]
+                     :dark      [:bright]
+                     :frozen    [:wet :molten]
+                     :dry       [:wet]
+                     :habitable [:hostile :molten]})
 
 (defn get-contradictions [tags]
-  (map #(% contradictions) tags))
+  (reduce concat (map #(% contradictions) tags)))
 
 (defn contradicts? [line tags]
   (let [contra (get-contradictions tags)]

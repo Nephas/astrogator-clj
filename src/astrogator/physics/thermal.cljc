@@ -10,7 +10,9 @@
         flux (u/conv (r/flux-strength-at-pos (:mappos planet) bodies) :Lsol/AU2 :W/m2)
         total-flux (* flux (* Math/PI radius radius))
         temp (a/stefan-boltzmann total-flux :W radius :m)]
-    (assoc-in planet [:temp] temp)))
+    (-> planet
+        (assoc-in [:temp] temp)
+        (assoc-in [:flux] flux))))
 
 (defn update-planets [bodies]
   (fn [planets] (mapv #(update-temp % bodies) planets)))

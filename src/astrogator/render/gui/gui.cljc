@@ -40,8 +40,7 @@
 
 (defn render-haiku [state]
   (let [targetbody (s/get-targetbody state)
-        text (do (r/set-seed! (:seed targetbody))
-                 (h/generate-haiku []))
+        text (str (get-in targetbody [:descriptors :poem]) "\n" (get-in targetbody [:descriptors :tags]))
         textbox (e/get-textbox-renderer text [25 25])]
     (render-at-mappos state (:mappos targetbody) textbox)))
 
@@ -57,7 +56,8 @@
                         (render-cursor s/get-targetbody :mappos))
         body-gui #(-> %
                       (system-gui)
-                      (render-haiku))]
+                      (render-haiku)
+                      )]
 
     (col/fill c/gui-secondary)
     (render-clock state)

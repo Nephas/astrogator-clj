@@ -13,11 +13,11 @@
 
 (defn generate-asteroid-belt [parent-mass inner-radius outer-radius]
   (let [n-particles (r/rand-n 25 50)
-        radii (map (fn [n] (r/uniform (* 0.95 inner-radius) (* 1.05 outer-radius)))
+        radii (map (fn [_] (r/uniform (* 0.95 inner-radius) (* 1.05 outer-radius)))
                    (range n-particles))]
     (mapv #(b/generate-asteroid parent-mass %) radii)))
 
-(defn generate-planet-system [parent-mass inner-radius outer-radius]
+(defn generate-planet-system [parent-mass inner-radius outer-radius circumbinary]
   (let [n-planets (r/rand-n 5 20)
         indices (randomize-system-structure 0.8 n-planets)
         planet-radii (filterv #(< % outer-radius)
@@ -26,6 +26,6 @@
         belt-radii (filterv #(< % outer-radius)
                             (map #(a/titius-bode % inner-radius)
                                  (indices :belt-indices)))]
-    {:planets   (mapv #(p/generate-planet parent-mass (r/new-seed) %) planet-radii)
+    {:planets   (mapv #(p/generate-planet parent-mass (r/new-seed) % circumbinary) planet-radii)
      :asteroids (apply concat
                        (mapv #(generate-asteroid-belt parent-mass %1 %1) belt-radii))}))
