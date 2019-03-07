@@ -38,11 +38,16 @@
 
 (def key-to-str #(subs (str %) 1))
 
+(defn parse-expt [s] (let [ints (range 0 10)
+                           strings (map str ints)
+                           mapping (zipmap strings ints)]
+                       (get mapping s)))
+
 (defn expand-pow [exp-unit]
   (let [exp (s/split (s/replace-first exp-unit #"[0-9]" "&$0") #"&")
         base (first exp)
-        pow (if (nil? (second exp)) 1 (u/parse-number (second exp)))]
-    (mapv (fn [x] (keyword base)) (range pow))))
+        pow (if (nil? (second exp)) 1 (parse-expt (second exp)))]
+    (mapv (fn [_] (keyword base)) (range pow))))
 
 (defn parse-units [unit-key]
   (let [sep-units (map #(s/split % #"'") (s/split (key-to-str unit-key) #"/"))
