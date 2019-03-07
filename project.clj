@@ -23,6 +23,7 @@
   :uberjar-name "server-standalone.jar"
 
   ;===== WEBAPP =====;
+  :hooks [leiningen.cljsbuild]
   :clean-targets ^{:protect false} ["resources/public/js"]
   :cljsbuild {:builds [{:id           "optimized"
                         :source-paths ["src"]
