@@ -23,7 +23,6 @@
   :uberjar-name "server-standalone.jar"
 
   ;===== WEBAPP =====;
-  :hooks [leiningen.cljsbuild]
   :clean-targets ^{:protect false} ["resources/public/js"]
   :cljsbuild {:builds [{:id           "optimized"
                         :source-paths ["src"]
@@ -34,11 +33,11 @@
                                        :optimizations :advanced}}]}
 
   ;===== LOCAL-JARS =====;
-  :profiles {:astrojar  {:main         "astrogator.core"
+  :profiles {:astrojar  {:main         astrogator.core
                          :uberjar-name "astrogator-standalone.jar"
                          :aot          :all
                          :auto-clean   false}
 
-             :serverjar {:main         "server.core"
+             :serverjar {:main         server.core
                          :uberjar-name "server-standalone.jar"
                          :aot          :all}})

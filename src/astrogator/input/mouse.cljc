@@ -11,9 +11,9 @@
   (let [camera (state :camera)
         screenpos [(event :x) (event :y)]]
     (do (log/debug (str "mouse: click " (event :button)))
-      (case (event :button)
-      :right (handle-right state screenpos camera)
-      :left (handle-left state screenpos camera)))))
+        (case (event :button)
+          :right (handle-right state screenpos camera)
+          :left (handle-left state screenpos camera)))))
 
 (defn handle-right [state screenpos camera]
   (let [mappos (t/screen-to-map screenpos camera)
@@ -35,10 +35,9 @@
 
 (defn handle-wheel [state event]
   (do (log/debug (str "mouse: wheel " event))
-    (case event
-      (1) (cam/zoom :in state)
-      (-1) (cam/zoom :out state)
-      state)))
+      (cond (pos? event) (cam/zoom :in state)
+            (neg? event) (cam/zoom :out state)
+            true state)))
 
 (defn handle-move [state event]
   (let [screenpos [(event :x) (event :y)]
