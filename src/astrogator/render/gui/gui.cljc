@@ -4,6 +4,8 @@
             [quil.core :as q]
             [astrogator.physics.trafo :as t]
             [astrogator.render.conf :as c]
+            [astrogator.util.string.string :as us]
+            [astrogator.util.string.format :as fmt]
             [astrogator.render.gui.element :as e]
             [astrogator.render.gui.table :as tab]
             [astrogator.poetry.haiku :as h]
@@ -21,6 +23,13 @@
 (defn render-clock [state]
   (tab/render-framed-keymap (state :time) [(:left c/margin) (:top c/margin)])
   state)
+
+(defn render-binary-clock [state]
+  (let [text (us/join (let [blockify #(if (= \0 %) "▄" "▀")
+                            day (get-in state [:time :day])]
+                        (map blockify (fmt/f-str "~16b" (int day)))))]
+    (q/with-translation [(:left c/margin) (* 0.5 (:top c/margin))]
+                        ((e/get-textbox-renderer text)))))
 
 (defn render-playerinfo [state]
   (tab/render-framed-keymap (s/get-playership state) [(:left c/margin) (* (/ 2 3) (q/height))])
@@ -61,6 +70,7 @@
 
     (col/fill c/gui-secondary)
     (render-clock state)
+    (render-binary-clock state)
     (case (get-in state [:camera :scale])
       :body (body-gui state)
       :subsystem (system-gui state)
