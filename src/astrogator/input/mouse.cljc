@@ -10,9 +10,10 @@
 (defn handle-click [state event]
   (let [camera (state :camera)
         screenpos [(event :x) (event :y)]]
-    (case (event :button)
+    (do (log/debug (str "mouse: click " (event :button)))
+      (case (event :button)
       :right (handle-right state screenpos camera)
-      :left (handle-left state screenpos camera))))
+      :left (handle-left state screenpos camera)))))
 
 (defn handle-right [state screenpos camera]
   (let [mappos (t/screen-to-map screenpos camera)
@@ -33,13 +34,14 @@
       :body (cam/change-targetbody state (sys/get-closest-planet-or-star refsystem mappos)))))
 
 (defn handle-wheel [state event]
-  (case event
-    (1) (cam/zoom :in state)
-    (-1) (cam/zoom :out state)
-    state))
+  (do (log/debug (str "mouse: wheel " event))
+    (case event
+      (1) (cam/zoom :in state)
+      (-1) (cam/zoom :out state)
+      state)))
 
 (defn handle-move [state event]
   (let [screenpos [(event :x) (event :y)]
         mappos (t/screen-to-map screenpos (state :camera))]
-      (assoc-in state [:camera :mouse] {:screenpos screenpos
+    (assoc-in state [:camera :mouse] {:screenpos screenpos
                                       :mappos    mappos})))
