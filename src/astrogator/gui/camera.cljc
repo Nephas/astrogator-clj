@@ -45,7 +45,7 @@
   (log/debug (str "zooming: " dir))
   (let [factor {:in  {:dist  2
                       :obj   (/ 5 4)
-                      :limit 1E+9}
+                      :limit 1E+10}
                 :out {:dist  0.5
                       :obj   (/ 4 5)
                       :limit 1E-5}}

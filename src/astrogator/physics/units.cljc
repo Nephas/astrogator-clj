@@ -27,6 +27,9 @@
    ;derived units
    :acceleration {:g 9.81}
 
+   :flux         {:W/m2     1
+                  :Lsol/AU2 17185.38}
+
    :power        {:W    1
                   :Lsol 3.846e26}})
 

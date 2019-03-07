@@ -10,17 +10,9 @@
             :$sigma :W/m2'K4})
 
 (def G-metric "[m3/kg's2]" 6.674E-11)
-(def G "AU3/Msol'd2" (u/conv G-metric :m3/kg's2 :AU3/Msol'd2))
+(def G "AU3/Msol'd2" 2.976235E-4)
 
 (def sigma "[W/m2'K4]" 5.67e-08)
-
-;(def COLOR {:O [144 166 255]
-;            :B [162 188 255]
-;            :A [184 202 255]
-;            :F [203 217 255]
-;            :G [255 244 233]
-;            :K [255 226 180]
-;            :M [255 203 132]})
 
 (def COLOR {:O [0.63 0.435 1]
             :B [0.62 0.365 1]
