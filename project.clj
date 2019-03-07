@@ -18,25 +18,28 @@
             [environ/environ.lein "0.3.1"]]
 
   :main server.core
+  :uberjar-name "server-standalone.jar"
 
-  :profiles {:astro-clj  {:main         "astrogator.core"
-                          :uberjar-name "astrogator-standalone.jar"
-                          :aot          :all
-                          :auto-clean   false}
+  :hooks         [leiningen.cljsbuild]
+  :clean-targets ^{:protect false} ["resources/public/js"]
+  :cljsbuild     {:builds [{:id           "optimized"
+                            :source-paths ["src"]
+                            :compiler     {:main       "astrogator.core"
+                                           :output-to  "resources/public/js/main.js"
+                                           :output-dir "resources/public/js/optimized"
+                                           :asset-path "js/optimized"
+                                           :optimizations :advanced
+                                           }}
+                           ]}
 
-             :server     {:main         "server.core"
-                          :uberjar-name "server-standalone.jar"
-                          :aot          :all}
-
-             :astro-cljs {:hooks         [leiningen.cljsbuild]
-                          :clean-targets ^{:protect false} ["resources/public/js"]
-                          :cljsbuild     {:builds [{:id           "optimized"
-                                                    :source-paths ["src"]
-                                                    :compiler     {:main       "astrogator.core"
-                                                                   :output-to  "resources/public/js/main.js"
-                                                                   :output-dir "resources/public/js/optimized"
-                                                                   :asset-path "js/optimized"
-                                                                   :optimizations :advanced
-                                                                   }}
-                                                   ]}}}
+  ;:profiles {:astro-clj  {:main         "astrogator.core"
+  ;                        :uberjar-name "astrogator-standalone.jar"
+  ;                        :aot          :all
+  ;                        :auto-clean   false}
+  ;
+  ;           :server     {:main         "server.core"
+  ;                        :uberjar-name "server-standalone.jar"
+  ;                        :aot          :all}
+  ;
+  ;           :astro-cljs {}}
   )

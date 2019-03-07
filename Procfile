@@ -1,2 +1,1 @@
-cljsbuild: lein with-profile astro-cljs cljsbuild once
-web: lein run
+web: java $JVM_OPTS -cp target/server-standalone.jar clojure.main -m server.core
