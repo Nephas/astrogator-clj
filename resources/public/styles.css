@@ -1,5 +1,5 @@
 body {
-  background-color: darkslategray;
+  background-color: black;
   font-family: "Ubuntu Light", helvetica, sans-serif;
 }
 h1 {
@@ -16,4 +16,9 @@ ul {
 
 canvas {
    display: inline;
+}
+
+instructions-container {
+   width: 100%;
+   text-align:center;
 }
