@@ -2,9 +2,9 @@
   (:require [astrogator.physics.astro :as a]
             [astrogator.physics.units :as unit]
             [astrogator.util.rand :as r]
+            [astrogator.util.log :as log]
             [astrogator.generation.system.lunar :as l]
             [astrogator.generation.planet.surface :as surf]
-            [astrogator.util.rand :as rand]
             [astrogator.physics.move.orbit :as orb]
             [astrogator.generation.expandable :as exp]))
 
@@ -12,7 +12,8 @@
 (defrecord Planet [type mass radius seed rhill torbit cylvel cylpos mappos color circumbinary]
   orb/Orbit (orbit [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   exp/Seed (expand [this]
-             (do (rand/set-seed! (:seed this))
+             (do (log/info (str "extracting planet: " (:seed this)))
+                 (r/set-seed! (:seed this))
                  (let [base-temp (:temp this)
                        base-flux (:flux this)
                        circumbinary false

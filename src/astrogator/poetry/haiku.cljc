@@ -1,7 +1,7 @@
 (ns astrogator.poetry.haiku
   (:require [clojure.string :as s]
             [clojure.set :as set]
-            [astrogator.util.string :as string]
+            [astrogator.util.string.string :as string]
             [astrogator.poetry.lines :as l]
             [astrogator.util.util :as u]
             [astrogator.util.rand :as r]))

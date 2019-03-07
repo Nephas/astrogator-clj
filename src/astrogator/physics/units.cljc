@@ -1,6 +1,6 @@
 (ns astrogator.physics.units
   (:require [clojure.string :as s]
-            [astrogator.util.string :as u]))
+            [astrogator.util.string.string :as u]))
 
 (def units
   {:distance     {:m    1

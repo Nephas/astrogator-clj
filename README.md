@@ -12,8 +12,8 @@ REPL - run `(require 'astrogator.core)`.
 
 ## Build
 
-clj: lein with-profile clj uberjar
-cljs: lein with-profile cljs cljsbuild once
+clj: lein with-profile astro-clj uberjar
+cljs: lein with-profile astro-cljs cljsbuild once
 
 ## License
 

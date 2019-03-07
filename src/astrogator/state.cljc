@@ -26,7 +26,7 @@
    :animation {:target 0
                :load   5}
    :time      {:day 0
-               :dps 10}})
+               :dps 1}})
 
 (defn generate-universe [state]
   (let [game-state (-> state (assoc-in [:universe :sector] (gensec/generate-sector 50 10000))
