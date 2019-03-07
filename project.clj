@@ -16,6 +16,8 @@
             [lein-figwheel "0.5.15"]
             [environ/environ.lein "0.3.1"]]
 
+  :main "server.core"
+
   :profiles {:astro-clj  {:main         "astrogator.core"
                           :uberjar-name "astrogator-standalone.jar"
                           :aot          :all
