@@ -17,29 +17,28 @@
             [lein-figwheel "0.5.15"]
             [environ/environ.lein "0.3.1"]]
 
+  ;===== SERVER =====;
   :main server.core
+  :aot [server.core]
   :uberjar-name "server-standalone.jar"
 
-  :hooks         [leiningen.cljsbuild]
+  ;===== WEBAPP =====;
+  :hooks [leiningen.cljsbuild]
   :clean-targets ^{:protect false} ["resources/public/js"]
-  :cljsbuild     {:builds [{:id           "optimized"
-                            :source-paths ["src"]
-                            :compiler     {:main       "astrogator.core"
-                                           :output-to  "resources/public/js/main.js"
-                                           :output-dir "resources/public/js/optimized"
-                                           :asset-path "js/optimized"
-                                           :optimizations :advanced
-                                           }}
-                           ]}
+  :cljsbuild {:builds [{:id           "optimized"
+                        :source-paths ["src"]
+                        :compiler     {:main          "astrogator.core"
+                                       :output-to     "resources/public/js/main.js"
+                                       :output-dir    "resources/public/js/optimized"
+                                       :asset-path    "js/optimized"
+                                       :optimizations :advanced}}]}
 
-  ;:profiles {:astro-clj  {:main         "astrogator.core"
-  ;                        :uberjar-name "astrogator-standalone.jar"
-  ;                        :aot          :all
-  ;                        :auto-clean   false}
-  ;
-  ;           :server     {:main         "server.core"
-  ;                        :uberjar-name "server-standalone.jar"
-  ;                        :aot          :all}
-  ;
-  ;           :astro-cljs {}}
-  )
+  ;===== LOCAL-JARS =====;
+  :profiles {:astrojar  {:main         "astrogator.core"
+                         :uberjar-name "astrogator-standalone.jar"
+                         :aot          :all
+                         :auto-clean   false}
+
+             :serverjar {:main         "server.core"
+                         :uberjar-name "server-standalone.jar"
+                         :aot          :all}})
