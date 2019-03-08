@@ -2,7 +2,6 @@
   (:require [quil.core :as q]
             [astrogator.physics.trafo :as t]
             [astrogator.util.log :as log]
-            [astrogator.util.env :as env]
             [astrogator.util.selectors :as s]
             [astrogator.render.conf :as conf]
             [astrogator.generation.expandable :as exp]))
@@ -43,10 +42,10 @@
 
 (defn zoom [dir state]
   (log/debug (str "zooming: " dir))
-  (let [factor {:in  {:dist  2
+  (let [factor {:in  {:dist  (/ 2 1)
                       :obj   (/ 5 4)
                       :limit 1E+10}
-                :out {:dist  0.5
+                :out {:dist  (/ 1 2)
                       :obj   (/ 4 5)
                       :limit 1E-5}}
         calc-zoom (fn [zoom type] (float (* zoom (get-in factor [dir type]))))
