@@ -25,11 +25,13 @@
     (assoc-in state [:camera :mappos] (t/neg refpos))))
 
 (defn update-playership [state]
-  (let [shippos ((s/get-playership state) :mappos)
-        mousepos (get-in state [:camera :mouse :mappos])
-        diff (t/sub mousepos shippos)
-        pointing (+ (* 0.5 Math/PI) (- ((t/cart-to-pol diff) 1)))]
-    (assoc-in state (conj s/playership-path :pointing) pointing)))
+  (if (nil? (s/get-playership state))
+    state
+    (let [shippos (:mappos (s/get-playership state))
+          mousepos (get-in state [:camera :mouse :mappos])
+          diff (t/sub mousepos shippos)
+          pointing (+ (* 0.5 Math/PI) (- ((t/cart-to-pol diff) 1)))]
+      (assoc-in state (conj s/playership-path :pointing) pointing))))
 
 (defn get-scale [camera]
   (let [scale-before (camera :scale)
@@ -59,5 +61,5 @@
         (assoc-in [:camera :scale] (get-scale (state :camera))))))
 
 (defn on-screen? [[screen-x screen-y]]
-  (and (< 0 screen-x (q/width) )
+  (and (< 0 screen-x (q/width))
        (< 0 screen-y (q/height))))

@@ -1,5 +1,9 @@
 (ns astrogator.util.selectors)
 
+(def star? #(contains? % :luminosity))
+
+(def planet? #(and (contains? % :seed) (not (star? %))))
+
 (defn get-system-by-seed [state seed]
   (let [systems (get-in state [:universe :sector])]
     (first (filter #(= seed (:seed %)) systems))))

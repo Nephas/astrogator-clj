@@ -21,7 +21,7 @@
 
 (defn render-ship [ship pos]
   (q/with-stroke [(apply q/color [1 1 1]) 128]
-                 (let [mapvel (ship :mapvel)]
-                   (do (geo/arrow pos (t/normalize mapvel) (* 10 (+ 5 (Math/log10 (t/norm mapvel)))))
-                       (geo/arrow pos (t/normalize (ship :mapacc)) 20)
-                       (triangle-ship pos 5 (ship :pointing) (ship :throttle))))))
+                 (let [mapvel (:mapvel ship)]
+                   ;(do (geo/arrow pos (t/normalize mapvel) (* 10 (+ 5 (Math/log10 (t/norm mapvel)))))
+                   ;    (geo/arrow pos (t/normalize (:mapacc ship)) 20)
+                       (triangle-ship pos 5 (:pointing ship) (:throttle ship)))))

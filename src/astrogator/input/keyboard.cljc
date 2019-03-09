@@ -20,6 +20,8 @@
         (:m) (assoc-in state (conj s/playership-path :mapvel) ((s/get-targetbody state) :mapvel))
         (:a) state
         (:d) state
+        (:t) (update-in state s/playership-path
+                        #(o/transit % (state :camera) (get-in state [:universe :refsystem])))
         (:o) (update-in state s/playership-path
                         #(o/toggle-orbit % (state :camera) (get-in state [:universe :refsystem])))
         state)))

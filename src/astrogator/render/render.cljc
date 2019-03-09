@@ -14,7 +14,9 @@
     :sector (sec/draw-sector (universe :sector) (universe :clouds) camera)))
 
 (defn cache-all [universe camera]
-  (do (log/info "caching refsystem")
-      (sys/draw-system (universe :refsystem) camera)
-      (log/info "caching sector")
-      (sec/draw-sector (universe :sector) (universe :clouds) camera)))
+  (try (do (log/info "caching refsystem")
+           (sys/draw-system (universe :refsystem) camera)
+           (log/info "caching sector")
+           (sec/draw-sector (universe :sector) (universe :clouds) camera))
+       (catch Exception e
+         (log/warn "could not cache renderings"))))

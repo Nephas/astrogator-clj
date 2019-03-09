@@ -6,10 +6,11 @@
             [astrogator.generation.system.lunar :as l]
             [astrogator.generation.planet.surface :as surf]
             [astrogator.physics.move.orbit :as orb]
-            [astrogator.generation.expandable :as exp]))
+            [astrogator.generation.expandable :as exp]
+            [astrogator.physics.move.orbit :as o]))
 
 ;TODO move planetary generation pars to planet
-(defrecord Planet [type mass radius seed rhill torbit cylvel cylpos mappos color circumbinary]
+(defrecord Planet [mass radius seed rhill orbit mappos color circumbinary]
   orb/Orbit (orbit [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   exp/Seed (expand [this]
              (do (log/info (str "extracting planet: " (:seed this)))
@@ -26,12 +27,10 @@
 (defn generate-planet [parent-mass seed orbit-radius circumbinary]
   (let [mass (r/planetary-imf)
         radius (a/planet-radius mass :Me)
-        torbit (a/t-orbit orbit-radius :AU parent-mass :Msol)
+        orbit (o/circular-orbit parent-mass [orbit-radius nil])
         rhill (a/hill-sphere orbit-radius (unit/conv mass :Me :Msol) parent-mass)
         color {:rock    [(r/uniform 0.0 0.25) 0.6 0.6]
                :ocean   [(r/uniform 0.5 0.75) 0.6 0.6]
                :glacier [(r/uniform 0.5 0.75) 0.2 0.8]}
-        cylvel (* 2 Math/PI (/ 1 torbit))
-        cylpos [orbit-radius (* 2 Math/PI (r/uniform))]
         mappos [0 0]]
-    (->Planet :planet mass radius seed rhill torbit cylvel cylpos mappos color circumbinary)))
+    (->Planet mass radius seed rhill orbit mappos color circumbinary)))

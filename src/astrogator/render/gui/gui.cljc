@@ -8,8 +8,7 @@
             [astrogator.util.string.format :as fmt]
             [astrogator.render.gui.element :as e]
             [astrogator.render.gui.table :as tab]
-            [astrogator.poetry.haiku :as h]
-            [astrogator.util.rand :as r]))
+            [astrogator.util.string.string :as string]))
 
 (defn render-at-mappos [state mappos renderer]
   (if (not (nil? mappos)) (let [pos (t/map-to-screen mappos (state :camera))]
@@ -25,10 +24,10 @@
   state)
 
 (defn render-binary-clock [state]
-  (let [text (us/join (let [blockify #(if (= \0 %) "▄" "▀")
+  (let [text (us/join (let [blockify #(if (= \0 %) "╦" "╩") ; "▄" "▀"
                             day (get-in state [:time :day])]
-                        (map blockify (fmt/f-str "~16b" (int day)))))]
-    (q/with-translation [(:left c/margin) (* 0.5 (:top c/margin))]
+                        (map blockify (fmt/f-str "~20b" (int day)))))]
+    (q/with-translation [(:left c/margin) (* 3 (:top c/margin))]
                         ((e/get-textbox-renderer text)))))
 
 (defn render-playerinfo [state]
@@ -36,7 +35,8 @@
   state)
 
 (defn render-targetinfo [state target-selector]
-  (tab/render-animated-target-gui (target-selector state) [(:left c/margin) (* (/ 1 5) (q/height))] (state :animation))
+  (when (not (nil? (s/get-targetbody state)))
+    (tab/render-animated-target-gui (target-selector state) [(:left c/margin) (* (/ 1 5) (q/height))] (state :animation)))
   state)
 
 (defn render-crosshair [state ref-selector pos-selector]
@@ -44,14 +44,30 @@
   state)
 
 (defn render-cursor [state target-selector pos-selector]
-  (render-at-mappos state (pos-selector (target-selector state)) e/cursor)
+  (when (not (nil? (s/get-targetbody state)))
+    (render-at-mappos state (pos-selector (target-selector state)) e/cursor))
   state)
 
+(defn render-diamond [state target-selector pos-selector]
+  (render-at-mappos state (pos-selector (target-selector state)) e/diamond)
+  state)
+
+(defn render-course [state]
+  (when (not (nil? (s/get-targetbody state)))
+    (let [targetpos (:mappos (s/get-targetbody state))
+          shippos (:mappos (s/get-playership state))
+          dist (t/dist targetpos shippos)
+          text (e/get-textbox-renderer (str (string/fmt-generic dist) " AU"))
+          midpoint (t/scalar 0.5 (t/add targetpos shippos))]
+      (do (e/map-line targetpos shippos (:camera state))
+          (render-at-mappos state midpoint text)))))
+
 (defn render-haiku [state]
-  (let [targetbody (s/get-targetbody state)
-        text (str (get-in targetbody [:descriptors :poem]) "\n" (get-in targetbody [:descriptors :tags]))
-        textbox (e/get-textbox-renderer text [25 25])]
-    (render-at-mappos state (:mappos targetbody) textbox)))
+  (when (not (nil? (s/get-targetbody state)))
+    (let [targetbody (s/get-targetbody state)
+          text (str (get-in targetbody [:descriptors :poem]) "\n" (get-in targetbody [:descriptors :tags]))
+          textbox (e/get-textbox-renderer text [25 25])]
+      (render-at-mappos state (:mappos targetbody) textbox))))
 
 (defn render-gui [state]
   (let [sector-gui #(-> %
@@ -62,10 +78,12 @@
                         (render-playerinfo)
                         (render-targetinfo s/get-targetbody)
                         (render-crosshair s/get-refbody :mappos)
-                        (render-cursor s/get-targetbody :mappos))
+                        (render-cursor s/get-targetbody :mappos)
+                        (render-diamond s/get-playership :mappos)
+                        (render-course))
         body-gui #(-> %
                       (system-gui)
-                      (render-haiku)
+                      ;(render-haiku)
                       )]
 
     (col/fill c/gui-secondary)

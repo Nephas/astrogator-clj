@@ -1,17 +1,16 @@
 (ns astrogator.generation.moon
   (:require [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
-            [astrogator.physics.move.orbit :as orb]))
+            [astrogator.physics.move.orbit :as orb]
+            [astrogator.physics.move.orbit :as o]))
 
-(defrecord Moon [type mass radius torbit cylvel cylpos color mappos]
+(defrecord Moon [mass radius orbit color mappos]
   orb/Orbit (orbit [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos)))
 
 (defn generate-moon [parent-mass orbit-radius]
   (let [mass (* parent-mass (r/uniform 0.02 0.2))
         radius (a/planet-radius mass :Me)
-        torbit (a/t-orbit orbit-radius :AU parent-mass :Me)
-        cylvel (* 2 Math/PI (/ 1 torbit))
-        cylpos [orbit-radius (* 2 Math/PI (r/uniform))]
-        color [128 128 128]
-        mappos [0 0]]
-    (->Moon :type mass radius torbit cylvel cylpos color mappos)))
+        orbit (o/circular-orbit parent-mass :Me [orbit-radius nil])
+        mappos [0 0]
+        color [128 128 128]]
+    (->Moon mass radius orbit color mappos)))

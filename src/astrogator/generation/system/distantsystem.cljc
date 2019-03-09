@@ -7,8 +7,10 @@
 (defrecord DistantSystem [sectorpos seed mass luminosity color magnitude]
   exp/Seed (expand [this]
              (do (log/info (str "extracting system: " (:seed this)))
-                 (sys/initiate-positions
-                   (sys/generate-system (:mass this) (:seed this) true)))))
+                 (let [system (sys/generate-system (:mass this) (:seed this) true)]
+                   (-> system
+                       (sys/initiate-positions)
+                       (assoc :ships [] ))))))
 
 (defn generate-distant-system [mass seed sectorpos]
   (let [system (sys/generate-system mass seed false)

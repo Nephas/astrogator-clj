@@ -5,13 +5,14 @@
             [astrogator.util.log :as log]
             [astrogator.render.render :as render]
             [astrogator.render.gui.gui :as gui]
-            [astrogator.util.rand :as rand]))
+            [astrogator.util.rand :as rand]
+            [astrogator.generation.player :as pl]))
 
 (def init-state
-  {:universe  {:reset      false
+  {:universe  {:reset     false
                :refsystem nil
-               :sector     []
-               :clouds     []}
+               :sector    []
+               :clouds    []}
    :camera    {:mouse        {:screenpos [0 0]
                               :mappos    [0 0]}
                :dist-zoom    5
@@ -29,10 +30,13 @@
                :dps 1}})
 
 (defn generate-universe [state]
-  (let [game-state (-> state (assoc-in [:universe :sector] (gensec/generate-sector 50 10000))
-                       (assoc-in [:universe :clouds] (gensec/generate-clouds 50 25)))]
-    (-> game-state
-        (sec/change-refsystem (rand/rand-coll (get-in game-state [:universe :sector])))
+  (let [sector (gensec/generate-sector 50 10000)
+        clouds (gensec/generate-clouds 50 25)
+        refsystem (rand/rand-coll sector)]
+    (-> state
+        (assoc-in [:universe :sector] sector)
+        (assoc-in [:universe :clouds] clouds)
+        (sec/change-refsystem refsystem)
         (p/move-refsystem))))
 
 (defn load-universe [store screen]

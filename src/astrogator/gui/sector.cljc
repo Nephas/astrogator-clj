@@ -15,7 +15,7 @@
       (assoc-in [:camera :refsystem] (:seed distantsystem))
       (assoc-in [:universe :refsystem] (-> distantsystem
                                            (exp/expand-if-possible)
-                                           (pl/place-playership [10 10])))))
+                                           (pl/place-playership)))))
 
 (defn change-targetsystem [state distantsystem]
   (log/info (str "setting targetsystem: " (:seed distantsystem)))

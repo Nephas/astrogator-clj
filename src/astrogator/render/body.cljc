@@ -17,7 +17,7 @@
 (defn moon-with-shade
   ([pos size phase]
    (q/no-stroke)
-   (cast-shadow pos phase size (q/width))
+   (cast-shadow pos phase size (* 10 (q/width)))
    (geo/circle pos size conf/moon-surface-color)
    (geo/half-circle pos size phase conf/planet-night-color)))
 
@@ -25,13 +25,13 @@
   (doseq [moon (:moons refbody)]
     (let [pos (t/map-to-screen (:mappos moon) camera)
           size (* 0.1 (:radius moon) (camera :obj-zoom))
-          phase (+ Math/PI (get-in refbody [:cylpos 1]))]
+          phase (+ Math/PI (get-in refbody [:orbit :cylpos 1]))]
       (moon-with-shade pos size phase)))
   (let [pos (t/map-to-screen (:mappos refbody) camera)
         size (* 0.1 (:radius refbody) (camera :obj-zoom))
-        phase (+ Math/PI (get-in refbody [:cylpos 1]))]
+        phase (+ Math/PI (get-in refbody [:orbit :cylpos 1]))]
     (do (f/draw-soi refbody camera)
-        (cast-shadow pos phase size (q/width))
+        (cast-shadow pos phase size (* 10 (q/width)))
         (geo/circle pos size [0 0 0.4])
         (p/draw-surface (vals (:surface refbody)) (:color refbody) (* 0.58 size))
         (geo/half-circle pos size phase conf/planet-night-color))))

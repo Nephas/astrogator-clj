@@ -23,9 +23,14 @@
   ([system] (recur-stars-with-path system [])))
 
 (defn get-closest-star [system mappos]
-  (apply min-key #(t/dist mappos (:mappos %)) (recur-stars-with-path system)))
+  (apply min-key #(t/dist mappos (:mappos %))
+         (recur-stars-with-path system)))
 
 (defn get-closest-planet-or-star [system mappos]
   (apply min-key #(t/dist mappos (:mappos %))
          (concat (recur-planets-with-path system)
                  (recur-stars-with-path system))))
+
+(defn get-closest-planet [system mappos]
+  (apply min-key #(t/dist mappos (:mappos %))
+         (recur-planets-with-path system)))

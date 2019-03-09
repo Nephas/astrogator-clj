@@ -4,8 +4,8 @@
             [astrogator.physics.move.orbit :as o]))
 
 (defn shipacc [ship]
-  (let [thrust (* (ship :throttle) (ship :thrust))]
-    (t/scalar thrust (t/pol-to-cart 1 (ship :pointing)))))
+  (let [thrust (* (:throttle ship) (:thrust ship))]
+    (t/scalar thrust (t/pol-to-cart 1 (:pointing ship)))))
 
 (defn acc-at-pos [mappos system]
   (let [gravacc (g/gravacc-at-pos mappos system)
@@ -24,6 +24,7 @@
         (assoc-in [:mappos] mappos))))
 
 (defn move-ship [ship dt system]
-  (case (ship :ai-mode)
-    nil (move-in-potential ship dt system)
-    :orbit (o/move-around-parent ship dt (get-in system (conj (ship :orbit-parent) :mappos)))))
+  (cond
+    (nil? (:ai-mode ship)) (move-in-potential ship dt system)
+    (= :orbit (:ai-mode ship)) (o/orbit ship dt (get-in system (conj (:orbit-parent ship) :mappos)))
+    true system))

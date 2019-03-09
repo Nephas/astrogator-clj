@@ -16,17 +16,16 @@
            (update-in [:compA] move-system dt cylposA (o/cyl-to-map mappos cylposA))
            (update-in [:compB] move-system dt cylposB (o/cyl-to-map mappos cylposB))
            (update-in [:planets] m/move-planets dt mappos)
-           (update-in [:ships] m/move-ships dt system)
            (update-in [:asteroids] m/move-particles dt mappos)
            (assoc-in [:system :phase] phiA)
            (assoc-in [:system :mappos] mappos)))
      (-> system
          (update-in [:planets] m/move-planets dt mappos)
-         (update-in [:ships] m/move-ships dt system)
          (update-in [:asteroids] m/move-particles dt mappos)
          (assoc-in [:body :cylpos] cylpos)
          (assoc-in [:body :mappos] mappos))))
-  ([system dt] (move-system system dt [0 0] [0 0])))
+  ([system dt] (let [moved-system (move-system system dt [0 0] [0 0])]
+                 (update-in moved-system [:ships] m/move-ships dt moved-system))))
 
 (defn move-refsystem [state]
   (let [dpf (/ (get-in state [:time :dps]) c/frame-rate)]

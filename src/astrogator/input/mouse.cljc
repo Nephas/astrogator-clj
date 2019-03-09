@@ -20,7 +20,7 @@
         refsystem (get-in state [:universe :refsystem])]
     (case (camera :scale)
       :sector (sec/change-refsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
-      :system (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos))
+      :system (cam/change-refbody state (sys/get-closest-star refsystem mappos))
       :subsystem (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos))
       :body (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos)))))
 

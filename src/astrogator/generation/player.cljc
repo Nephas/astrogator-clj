@@ -1,16 +1,17 @@
-(ns astrogator.generation.player)
+(ns astrogator.generation.player
+  (:require [astrogator.physics.move.orbit :as o]
+            [astrogator.gui.system :as sys]
+            [astrogator.util.log :as log]
+            [astrogator.util.selectors :as s]))
 
-(defn generate-playership []
-  {:type         :player
-   :ai-mode      nil
-   :orbit-parent nil
-   :throttle     0
-   :thrust       0.0001
-   :pointing     0
-   :mapvel       [0.001 -0.001]
-   :mappos       [0 0]})
+(defrecord Ship [orbit mappos mapvel throttle thrust pointing orbit-parent ai-mode]
+  o/Orbit (orbit [this dt parent-mappos] (o/move-around-parent this dt parent-mappos)))
 
+(defn generate-playership [parent-path orbit]
+  (->Ship orbit [0 0] [0 0] 0 0 0 parent-path :orbit))
 
-(defn place-playership [system pos]
-  (let [ship (assoc-in (generate-playership) [:mappos] pos)]
-    (assoc-in system [:ships] [ship])))
+(defn place-playership [system]
+  (let [parent (sys/get-closest-planet system [1 1])
+        orbit-radius (* 0.5 (:rhill parent))
+        orbit (o/circular-orbit (:mass parent) :Me [orbit-radius nil])]
+    (assoc system :ships [(generate-playership (:path parent) orbit)])))

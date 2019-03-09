@@ -10,8 +10,8 @@
   ([col1 col2 pos] (let [sep (* 8 12)
                          width 20
                          fmt-keys #(str " - " (subs (str %) 1) ":")
-                         fmt-vals string/fmt-numeric
-                         border (str (apply str (repeat width "=")))
+                         fmt-vals string/fmt-generic
+                         border (str (apply str (repeat width "═")))
                          col1 (concat [border] (map fmt-keys col1) [border])
                          col2 (concat [""] (map fmt-vals col2) [""])]
                      (render-columns col1 col2 pos sep)))
