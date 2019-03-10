@@ -34,9 +34,12 @@
   (tab/render-framed-keymap (s/get-playership state) [(:left c/margin) (* (/ 2 3) (q/height))])
   state)
 
-(defn render-targetinfo [state target-selector]
-  (when (not (nil? (s/get-targetbody state)))
-    (tab/render-animated-target-gui (target-selector state) [(:left c/margin) (* (/ 1 5) (q/height))] (state :animation)))
+(defn render-targetinfo [state target-selector pos-selector]
+  (let [target (target-selector state)]
+    (when (not (nil? target))
+      (do (tab/render-animated-target-gui target [(:left c/margin) (* (/ 1 5) (q/height))] (state :animation))
+          (let [name (if (nil? (:name target)) "unknown" (:name target))]
+            (render-at-mappos state (pos-selector target) (e/get-textbox-renderer name [10 5]))))))
   state)
 
 (defn render-crosshair [state ref-selector pos-selector]
@@ -44,7 +47,7 @@
   state)
 
 (defn render-cursor [state target-selector pos-selector]
-  (when (not (nil? (s/get-targetbody state)))
+  (when (not (nil? (target-selector state)))
     (render-at-mappos state (pos-selector (target-selector state)) e/cursor))
   state)
 
@@ -71,12 +74,12 @@
 
 (defn render-gui [state]
   (let [sector-gui #(-> %
-                        (render-targetinfo s/get-targetsystem)
+                        (render-targetinfo s/get-targetsystem :sectorpos)
                         (render-crosshair s/get-refsystem :sectorpos)
                         (render-cursor s/get-targetsystem :sectorpos))
         system-gui #(-> %
                         (render-playerinfo)
-                        (render-targetinfo s/get-targetbody)
+                        (render-targetinfo s/get-targetbody :mappos)
                         (render-crosshair s/get-refbody :mappos)
                         (render-cursor s/get-targetbody :mappos)
                         (render-diamond s/get-playership :mappos)

@@ -3,7 +3,7 @@
             [astrogator.util.log :as log]
             [astrogator.generation.planet.tilemap :as m]
             [astrogator.util.rand :as r]
-            [astrogator.poetry.haiku :as h]))
+            [astrogator.poetry.haiku :as h]            ))
 
 (defn evolve-tile [tile tile-map update-key update-procedure]
   (let [pos (:pos tile)

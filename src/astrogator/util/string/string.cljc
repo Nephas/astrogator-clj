@@ -1,5 +1,6 @@
 (ns astrogator.util.string.string
   (:require [astrogator.physics.trafo :as t]
+            [clojure.string :as s]
             [astrogator.util.string.format :as fmt]))
 
 (declare fmt-generic)
@@ -31,3 +32,5 @@
 (defn join
   ([coll del] (reduce #(str %1 del %2) coll))
   ([coll] (join coll "")))
+
+()

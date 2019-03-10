@@ -7,10 +7,11 @@
             [astrogator.generation.planet.surface :as surf]
             [astrogator.physics.move.orbit :as orb]
             [astrogator.generation.expandable :as exp]
-            [astrogator.physics.move.orbit :as o]))
+            [astrogator.physics.move.orbit :as o]
+            [astrogator.poetry.names :as n]))
 
 ;TODO move planetary generation pars to planet
-(defrecord Planet [mass radius seed rhill orbit mappos color circumbinary]
+(defrecord Planet [mass radius seed name rhill orbit mappos color circumbinary]
   orb/Orbit (orbit [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   exp/Seed (expand [this]
              (do (log/info (str "extracting planet: " (:seed this)))
@@ -32,5 +33,6 @@
         color {:rock    [(r/uniform 0.0 0.25) 0.6 0.6]
                :ocean   [(r/uniform 0.5 0.75) 0.6 0.6]
                :glacier [(r/uniform 0.5 0.75) 0.2 0.8]}
-        mappos [0 0]]
-    (->Planet mass radius seed rhill orbit mappos color circumbinary)))
+        mappos [0 0]
+        name (n/generate-name seed (r/rand-n 5 7))]
+    (->Planet mass radius seed name rhill orbit mappos color circumbinary)))

@@ -2,7 +2,8 @@
   (:require [astrogator.physics.trafo :as t]
             [astrogator.util.selectors :as s]
             [astrogator.physics.astro :as a]
-            [astrogator.util.rand :as r]))
+            [astrogator.util.rand :as r]
+            [astrogator.gui.system :as sys]))
 
 (defprotocol Orbit
   (orbit [this dt parent-mappos]))
