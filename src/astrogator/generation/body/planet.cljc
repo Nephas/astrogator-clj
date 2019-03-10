@@ -1,10 +1,10 @@
-(ns astrogator.generation.planet.planet
+(ns astrogator.generation.body.planet
   (:require [astrogator.physics.astro :as a]
             [astrogator.physics.units :as unit]
             [astrogator.util.rand :as r]
             [astrogator.util.log :as log]
             [astrogator.generation.system.lunar :as l]
-            [astrogator.generation.planet.surface :as surf]
+            [astrogator.generation.body.surface :as surf]
             [astrogator.physics.move.orbit :as orb]
             [astrogator.generation.expandable :as exp]
             [astrogator.physics.move.orbit :as o]

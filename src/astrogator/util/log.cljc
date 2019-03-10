@@ -5,8 +5,6 @@
   (if c/log-cl
     (println (str "[" lvl "]") msg)))
 
-
-
 (defn debug [msg]
   (if (= :debug c/log-level)
     (log-cl :debug msg)))

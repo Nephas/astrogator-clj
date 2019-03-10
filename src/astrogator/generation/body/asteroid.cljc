@@ -1,7 +1,5 @@
-(ns astrogator.generation.asteroid
-  (:require [astrogator.physics.astro :as a]
-            [astrogator.util.rand :as r]
-            [astrogator.physics.move.orbit :as orb]
+(ns astrogator.generation.body.asteroid
+  (:require [astrogator.physics.move.orbit :as orb]
             [astrogator.physics.move.orbit :as o]))
 
 (defrecord Asteroid [orbit mappos]

@@ -1,4 +1,4 @@
-(ns astrogator.generation.moon
+(ns astrogator.generation.body.moon
   (:require [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
             [astrogator.physics.move.orbit :as orb]

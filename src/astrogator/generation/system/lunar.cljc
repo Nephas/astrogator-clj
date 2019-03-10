@@ -1,5 +1,5 @@
 (ns astrogator.generation.system.lunar
-  (:require [astrogator.generation.moon :as m]
+  (:require [astrogator.generation.body.moon :as m]
             [astrogator.util.rand :as r]
             [astrogator.physics.astro :as a]))
 

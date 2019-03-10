@@ -1,4 +1,4 @@
-(ns astrogator.generation.planet.tilemap
+(ns astrogator.generation.body.tilemap
   (:require [astrogator.util.hex :as h]
             [astrogator.physics.trafo :as t]))
 

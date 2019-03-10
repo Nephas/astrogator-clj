@@ -2,7 +2,7 @@
   (:require [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
             [astrogator.util.color :as col]
-            [astrogator.generation.star :as s]
+            [astrogator.generation.body.star :as s]
             [astrogator.generation.system.planetary :as ps]))
 
 (declare generate-system generate-subsystem get-system-luminosity)

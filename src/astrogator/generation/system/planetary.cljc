@@ -1,9 +1,9 @@
 (ns astrogator.generation.system.planetary
   (:require [astrogator.util.rand :as r]
             [astrogator.physics.astro :as a]
-            [astrogator.generation.asteroid :as b]
-            [astrogator.generation.moon :as m]
-            [astrogator.generation.planet.planet :as p]))
+            [astrogator.generation.body.asteroid :as b]
+            [astrogator.generation.body.moon :as m]
+            [astrogator.generation.body.planet :as p]))
 
 (defn randomize-system-structure [planet-probability n-planets]
   (let [rand-pairs (map (fn [i] (if (< (r/uniform) planet-probability) [i nil] [nil i]))

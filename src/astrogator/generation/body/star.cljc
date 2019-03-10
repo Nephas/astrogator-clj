@@ -1,4 +1,4 @@
-(ns astrogator.generation.star
+(ns astrogator.generation.body.star
   (:require [astrogator.physics.astro :as a]
             [astrogator.physics.units :as unit]
             [astrogator.generation.system.planetary :as ps]

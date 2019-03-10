@@ -1,7 +1,6 @@
-(ns astrogator.generation.planet.surface
+(ns astrogator.generation.body.surface
   (:require [astrogator.util.util :as u]
-            [astrogator.util.log :as log]
-            [astrogator.generation.planet.tilemap :as m]
+            [astrogator.generation.body.tilemap :as m]
             [astrogator.util.rand :as r]
             [astrogator.poetry.haiku :as h]            ))
 
