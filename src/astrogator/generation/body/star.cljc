@@ -7,7 +7,7 @@
             [astrogator.util.rand :as r]))
 
 (defrecord Star [mass radius rhill luminosity temp class color name]
-  orb/Orbit (orbit [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos)))
+  orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos)))
 
 (defn generate-star [mass max-sc-orbit planets?]
   (let [radius (a/mass-radius mass)

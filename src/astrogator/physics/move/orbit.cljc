@@ -3,10 +3,10 @@
             [astrogator.util.selectors :as s]
             [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
-            [astrogator.gui.system :as sys]))
+            [astrogator.util.math :as m]))
 
 (defprotocol Orbit
-  (orbit [this dt parent-mappos]))
+  (orbit-move [this dt parent-mappos]))
 
 (defrecord Orbit-Elements [cylvel cylpos torbit])
 
@@ -32,7 +32,7 @@
         (assoc-in [:mapvel] mapvel)
         (assoc-in [:orbit :cylpos] new-cylpos))))
 
-(defn enter-orbit [ship parent-path parent]
+(defn place-in-orbit [ship parent-path parent]
   (let [orbit-radius (* 0.5 (:rhill parent))
         unit (if (s/planet? parent) :Me :Msol)
         orbit (circular-orbit (:mass parent) unit [orbit-radius nil])]
@@ -51,8 +51,5 @@
   (let [targetbody (s/get-targetbody camera system)
         in-soi? (< (t/dist (:mappos ship) (:mappos targetbody)) (:rhill targetbody))]
     (if (and (not (= :orbit (:ai-mode ship))) in-soi?)
-      (enter-orbit ship (camera :targetbody) targetbody)
+      (place-in-orbit ship (camera :targetbody) 0.001)
       (leave-orbit ship))))
-
-(defn transit [ship camera system]
-  (enter-orbit ship (camera :targetbody) (s/get-targetbody camera system)))

@@ -12,7 +12,7 @@
 
 ;TODO move planetary generation pars to planet
 (defrecord Planet [mass radius seed name rhill orbit mappos color circumbinary]
-  orb/Orbit (orbit [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
+  orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   exp/Seed (expand [this]
              (do (log/info (str "extracting planet: " (:seed this)))
                  (r/set-seed! (:seed this))

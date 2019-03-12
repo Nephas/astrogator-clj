@@ -1,7 +1,8 @@
 (ns astrogator.physics.move.ship
   (:require [astrogator.physics.trafo :as t]
             [astrogator.physics.gravity :as g]
-            [astrogator.physics.move.orbit :as o]))
+            [astrogator.physics.move.orbit :as o]
+            [astrogator.physics.move.transit :as tr]))
 
 (defn shipacc [ship]
   (let [thrust (* (:throttle ship) (:thrust ship))]
@@ -26,5 +27,6 @@
 (defn move-ship [ship dt system]
   (cond
     (nil? (:ai-mode ship)) (move-in-potential ship dt system)
-    (= :orbit (:ai-mode ship)) (o/orbit ship dt (get-in system (conj (:orbit-parent ship) :mappos)))
+    (= :orbit (:ai-mode ship)) (o/orbit-move ship dt (get-in system (conj (:orbit-parent ship) :mappos)))
+    (= :transit (:ai-mode ship)) (tr/move-towards-target ship dt system)
     true system))

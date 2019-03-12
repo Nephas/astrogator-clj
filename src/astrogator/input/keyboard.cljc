@@ -2,7 +2,8 @@
   (:require [astrogator.gui.camera :as c]
             [astrogator.util.selectors :as s]
             [astrogator.util.log :as log]
-            [astrogator.physics.move.orbit :as o]))
+            [astrogator.physics.move.orbit :as o]
+            [astrogator.physics.move.transit :as t]))
 
 (defn handle-key [state event]
   (do (log/debug (str "keypress: " (:key event)))
@@ -20,10 +21,8 @@
         (:m) (assoc-in state (conj s/playership-path :mapvel) ((s/get-targetbody state) :mapvel))
         (:a) state
         (:d) state
-        (:t) (update-in state s/playership-path
-                        #(o/transit % (state :camera) (get-in state [:universe :refsystem])))
-        (:o) (update-in state s/playership-path
-                        #(o/toggle-orbit % (state :camera) (get-in state [:universe :refsystem])))
+        (:t) (update-in state s/playership-path #(t/start-transit % (get-in state [:camera :targetbody])))
+        (:o) (update-in state s/playership-path #(o/toggle-orbit % (state :camera) (s/get-refsystem state)))
         state)))
 
 (defn reset? [state]

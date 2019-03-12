@@ -5,7 +5,7 @@
             [astrogator.physics.move.orbit :as o]))
 
 (defrecord Moon [mass radius orbit color mappos]
-  orb/Orbit (orbit [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos)))
+  orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos)))
 
 (defn generate-moon [parent-mass orbit-radius]
   (let [mass (* parent-mass (r/uniform 0.02 0.2))

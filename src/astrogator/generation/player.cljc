@@ -1,11 +1,11 @@
 (ns astrogator.generation.player
   (:require [astrogator.physics.move.orbit :as o]
-            [astrogator.gui.system :as sys]
-            [astrogator.util.log :as log]
-            [astrogator.util.selectors :as s]))
+            [astrogator.physics.move.transit :as t]
+            [astrogator.gui.system :as sys]))
 
 (defrecord Ship [orbit mappos mapvel throttle thrust pointing orbit-parent ai-mode]
-  o/Orbit (orbit [this dt parent-mappos] (o/move-around-parent this dt parent-mappos)))
+  o/Orbit (orbit-move [this dt parent-mappos] (o/move-around-parent this dt parent-mappos))
+  t/Transit (transit-move [this dt origin-mappos target-mappos] (t/move-on-trajectory this dt origin-mappos target-mappos)))
 
 (defn generate-playership [parent-path orbit]
   (->Ship orbit [0 0] [0 0] 0 0 0 parent-path :orbit))

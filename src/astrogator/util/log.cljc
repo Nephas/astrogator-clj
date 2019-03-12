@@ -3,7 +3,8 @@
 
 (defn log-cl [lvl msg]
   (if c/log-cl
-    (println (str "[" lvl "]") msg)))
+    (do (println (str "[" lvl "]") (str msg))
+        msg)))
 
 (defn debug [msg]
   (if (= :debug c/log-level)
