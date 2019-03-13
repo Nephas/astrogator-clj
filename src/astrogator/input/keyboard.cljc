@@ -21,8 +21,8 @@
         (:m) (assoc-in state (conj s/playership-path :mapvel) ((s/get-targetbody state) :mapvel))
         (:a) state
         (:d) state
-        (:t) (update-in state s/playership-path #(t/start-transit % (get-in state [:camera :targetbody])))
-        (:o) (update-in state s/playership-path #(o/toggle-orbit % (state :camera) (s/get-refsystem state)))
+        (:t) (update-in state s/playership-path #(t/start-transit % (state :camera) (s/get-expanded-refsystem state)))
+        (:o) (update-in state s/playership-path #(o/toggle-orbit % (state :camera) (s/get-expanded-refsystem state)))
         state)))
 
 (defn reset? [state]

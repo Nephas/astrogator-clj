@@ -4,8 +4,8 @@
             [astrogator.util.util :as u]))
 
 (defn move-moons [planet dt]
-  (let [orbit-parent #(o/orbit-move % dt (:mappos planet))]
-    (u/update-list planet :moons orbit-parent)))
+  (let [move-around-parent #(o/orbit-move % dt (:mappos planet))]
+    (u/update-list planet :moons move-around-parent)))
 
 (defn move-planets [planets dt parent-mappos]
   (let [move-lunar-system #(-> % (o/orbit-move dt parent-mappos)

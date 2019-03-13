@@ -3,20 +3,21 @@
             [astrogator.util.selectors :as s]
             [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
-            [astrogator.util.math :as m]))
+            [astrogator.util.math :as m]
+            [astrogator.util.log :as log]))
 
 (defprotocol Orbit
   (orbit-move [this dt parent-mappos]))
 
-(defrecord Orbit-Elements [cylvel cylpos torbit])
+(defrecord Orbit-Elements [cylvel cylpos torbit parent])
 
 (defn circular-orbit
-  ([parent-mass unit [radius phi]]
+  ([[parent-mass unit] [radius phi] parent-path]
    (let [phi (if (nil? phi) (* 2 Math/PI (r/uniform)) phi)
          torbit (a/t-orbit radius :AU parent-mass unit)
          cylvel (* 2 Math/PI (/ 1 torbit))]
-     (->Orbit-Elements cylvel [radius phi] torbit)))
-  ([parent-mass cylpos] (circular-orbit parent-mass :Msol cylpos)))
+     (->Orbit-Elements cylvel [radius phi] torbit parent-path)))
+  ([parent-mass cylpos] (circular-orbit [parent-mass :Msol] cylpos nil)))
 
 (defn cyl-to-map [parent-mappos cylpos]
   (t/add parent-mappos (t/pol-to-cart cylpos)))
@@ -35,21 +36,21 @@
 (defn place-in-orbit [ship parent-path parent]
   (let [orbit-radius (* 0.5 (:rhill parent))
         unit (if (s/planet? parent) :Me :Msol)
-        orbit (circular-orbit (:mass parent) unit [orbit-radius nil])]
-    (-> ship
+        orbit (circular-orbit [(:mass parent) unit] [orbit-radius nil] parent-path)]
+    (do (log/info (str "placing ship in orbit around: " parent-path))
+      (-> ship
         (assoc-in [:ai-mode] :orbit)
-        (assoc-in [:orbit-parent] parent-path)
-        (assoc-in [:orbit] orbit))))
+        (assoc-in [:orbit] orbit)
+        (assoc-in [:transit] nil)))))
 
 (defn leave-orbit [ship]
   (-> ship
       (assoc-in [:ai-mode] nil)
-      (assoc-in [:orbit] nil)
-      (assoc-in [:orbit-parent] nil)))
+      (assoc-in [:orbit] nil)))
 
 (defn toggle-orbit [ship camera system]
   (let [targetbody (s/get-targetbody camera system)
         in-soi? (< (t/dist (:mappos ship) (:mappos targetbody)) (:rhill targetbody))]
     (if (and (not (= :orbit (:ai-mode ship))) in-soi?)
-      (place-in-orbit ship (camera :targetbody) 0.001)
+      (place-in-orbit ship (camera :targetbody) targetbody)
       (leave-orbit ship))))
