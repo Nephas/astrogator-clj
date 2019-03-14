@@ -10,7 +10,7 @@
 (defn generate-moon [parent-mass orbit-radius]
   (let [mass (* parent-mass (r/uniform 0.02 0.2))
         radius (a/planet-radius mass :Me)
-        orbit (o/circular-orbit parent-mass :Me [orbit-radius nil])
+        orbit (o/circular-orbit [parent-mass :Me] [orbit-radius nil] nil)
         mappos [0 0]
         color [128 128 128]]
     (->Moon mass radius orbit color mappos)))
