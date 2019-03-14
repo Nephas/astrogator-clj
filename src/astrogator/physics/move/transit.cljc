@@ -1,32 +1,42 @@
 (ns astrogator.physics.move.transit
   (:require [astrogator.physics.trafo :as t]
             [astrogator.physics.move.orbit :as o]
-            [astrogator.util.log :as log]))
+            [astrogator.util.log :as log]
+            [astrogator.physics.units :as u]))
 
 (defprotocol Transit
   (transit-move [this dt origin-mappos target-mappos]))
 
-(defrecord Trajectory [par parvel time origin target])
+(defrecord Trajectory [par parvel paracc parlength origin target])
+
+(defn brachistochrone [g-acc length origin target]
+  (->Trajectory 0 0 (u/conv g-acc :g :AU/d2) length origin target))
 
 (defn move-towards-target [ship dt system]
-  (let [par (get-in ship [:transit :par])
-        origin-path (get-in ship [:transit :origin])
-        target-path (get-in ship [:transit :target])]
-    (if (< par 1)
+  (let [{par         :par
+         origin-path :origin
+         target-path :target
+         parlength   :parlength} (:transit ship)]
+    (if (< par parlength)
       (transit-move ship dt
                     (get-in system (conj origin-path :mappos))
                     (get-in system (conj target-path :mappos)))
       (o/place-in-orbit ship target-path (get-in system target-path)))))
 
 (defn move-on-trajectory [ship dt origin-mappos target-mappos]
-  (let [transit (:transit ship)
-        ;new-parvel (+ (:parvel ship) (* dt 0.01))
-        ;(if (< (:par transit) 0.5)
-        ;(- (:parvel ship) (* dt paracc)))
-        new-par (+ (/ dt (:time transit)) (:par transit))
-        mappos-progress (t/scalar new-par (t/sub target-mappos origin-mappos))]
+  (let [{par       :par
+         parvel    :parvel
+         paracc    :paracc
+         parlength :parlength} (:transit ship)
+        new-parvel (if (< par (* 0.5 parlength))
+                     (+ parvel (* dt paracc))
+                     (- parvel (* dt paracc)))
+        new-par (+ (* parvel dt) par)
+        progress (/ new-par parlength)
+        mappos-progress (t/scalar progress (t/sub target-mappos origin-mappos))]
     (-> ship
         (assoc-in [:transit :par] new-par)
+        (assoc-in [:transit :parvel] new-parvel)
         (assoc-in [:mapvel] [0 0])
         (assoc-in [:mappos] (t/add origin-mappos mappos-progress)))))
 
@@ -40,5 +50,5 @@
           (-> ship
               (assoc-in [:orbit] nil)
               (assoc-in [:ai-mode] :transit)
-              (assoc-in [:transit] (->Trajectory 0 0 (* 10 dist) origin-path target-path))))
+              (assoc-in [:transit] (brachistochrone 0.01 dist origin-path target-path))))
       ship)))

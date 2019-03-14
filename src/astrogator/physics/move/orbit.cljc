@@ -3,7 +3,6 @@
             [astrogator.util.selectors :as s]
             [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
-            [astrogator.util.math :as m]
             [astrogator.util.log :as log]))
 
 (defprotocol Orbit
@@ -23,8 +22,9 @@
   (t/add parent-mappos (t/pol-to-cart cylpos)))
 
 (defn move-around-parent [body dt parent-mappos]
-  (let [[radius phase] (get-in body [:orbit :cylpos])
-        new-phase (+ phase (* dt (get-in body [:orbit :cylvel])))
+  (let [{[radius phase] :cylpos
+         cylvel         :cylvel} (:orbit body)
+        new-phase (+ phase (* dt cylvel))
         new-cylpos [radius new-phase]
         mappos (cyl-to-map parent-mappos new-cylpos)
         mapvel (t/scalar (/ 1 dt) (t/sub mappos (:mappos body)))]
@@ -38,10 +38,10 @@
         unit (if (s/planet? parent) :Me :Msol)
         orbit (circular-orbit [(:mass parent) unit] [orbit-radius nil] parent-path)]
     (do (log/info (str "placing ship in orbit around: " parent-path))
-      (-> ship
-        (assoc-in [:ai-mode] :orbit)
-        (assoc-in [:orbit] orbit)
-        (assoc-in [:transit] nil)))))
+        (-> ship
+            (assoc-in [:ai-mode] :orbit)
+            (assoc-in [:orbit] orbit)
+            (assoc-in [:transit] nil)))))
 
 (defn leave-orbit [ship]
   (-> ship

@@ -25,7 +25,9 @@
    :temperature  {:K 1}
 
    ;derived units
-   :acceleration {:g 9.81}
+   :acceleration {:m/s2  1
+                  :g     9.81
+                  :AU/d2 20.04}
 
    :flux         {:W/m2     1
                   :Lsol/AU2 17185.38}
