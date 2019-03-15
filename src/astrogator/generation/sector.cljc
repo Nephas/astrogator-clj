@@ -10,10 +10,10 @@
 
 (defn log-progress [iteration number]
   (when (zero? (mod iteration (/ number 10)))
-    (log/info (str "- generating systems: " iteration "/" number))))
+    (log/info "- generating systems: " iteration "/" number)))
 
 (defn generate-sector "size [pc]" [size number]
-  (do (log/info (str "generating sector: size [pc] " size ", number: " number))
+  (do (log/info "generating sector: size [pc] " size ", number: " number)
       (sort-by-brightness
         (let [size-AU (u/conv size :pc :AU)]
           (for [iteration (range number)]
@@ -24,7 +24,7 @@
                   (ds/generate-distant-system mass seed pos))))))))
 
 (defn generate-clouds "size [pc]" [size number]
-  (log/info (str "- generating clouds: size [pc] " size ", number: " number))
+  (log/info "- generating clouds: size [pc] " size ", number: " number)
   (let [size-AU (u/conv size :pc :AU)]
     (for [x (range number)]
       (let [radius-AU (u/conv (* 0.1 size (r/uniform)) :pc :AU)

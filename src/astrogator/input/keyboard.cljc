@@ -6,7 +6,7 @@
             [astrogator.physics.move.transit :as t]))
 
 (defn handle-key [state event]
-  (do (log/debug (str "keypress: " (:key event)))
+  (do (log/debug "keypress: " (:key event))
       (case (:key event)
         (:up) (c/zoom :in state)
         (:down) (c/zoom :out state)

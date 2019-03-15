@@ -8,7 +8,7 @@
   (apply min-key #(t/dist mappos (:sectorpos %)) sector))
 
 (defn change-refsystem [state distantsystem]
-  (log/info (str "setting refsystem: " (:seed distantsystem)))
+  (log/info "setting refsystem: " (:seed distantsystem))
   (-> state
       (assoc-in [:camera :sectorpos] (t/neg (:sectorpos distantsystem)))
       (assoc-in [:camera :refbody] nil)
@@ -18,7 +18,7 @@
                                            (pl/place-playership)))))
 
 (defn change-targetsystem [state distantsystem]
-  (log/info (str "setting targetsystem: " (:seed distantsystem)))
+  (log/info "setting targetsystem: " (:seed distantsystem))
   (-> state
       (assoc-in [:camera :targetsystem] (:seed distantsystem))
       (assoc-in [:animation :target] 0)))

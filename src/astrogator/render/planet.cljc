@@ -6,11 +6,11 @@
   (let [height (* 0.5 (Math/sqrt 3) base)]
     (q/quad 0 0 height (* 0.5 base) height (* -0.5 base) 0 (- base))))
 
-(defn draw-hex [radius color]
+(defn draw-hex [radius color rot]
   (do (apply q/fill color)
       (apply q/stroke color)
       (let [rad #(* Math/PI %)
-            wedge #(q/with-rotation [%] (draw-hex-wedge radius))]
+            wedge #(q/with-rotation [(+ rot %)] (draw-hex-wedge radius))]
         (doall (map wedge (list 0 (rad (/ 2 3)) (rad (/ 4 3))))))))
 
 (defn true-colors [tile colors]
@@ -26,10 +26,10 @@
           true ocean-color)))
 
 (defn draw-surface
-  ([tiles colors zoom]
+  ([tiles colors zoom rot]
    (q/stroke-weight 1)
    (let [scale (* 0.1 zoom)
          view-tiles (filter #(:view %) tiles)
          colors (mapv #(true-colors % colors) view-tiles)
-         positions (mapv #(h/cube-to-center-pix (:pos %) scale) view-tiles)]
-     (doall (map (fn [pos col] (q/with-translation pos (draw-hex scale col))) positions colors)))))
+         positions (mapv #(h/cube-to-center-pix (:pos %) scale rot) view-tiles)]
+     (doall (map (fn [pos col] (q/with-translation pos (draw-hex scale col rot))) positions colors)))))

@@ -23,24 +23,25 @@
       (geo/circle pos 1))))
 
 (defn get-distant-color [planet]
-  (let [rock (get-in planet [:color :rock])
-        ice (get-in planet [:color :glacier])
-        ocean (get-in planet [:color :ocean])]
-    (col/blend-vec-color rock ocean ice)))
+  (let [{rock    :rock
+         glacier :glacier
+         ocean   :ocean} (:color planet)]
+    (col/blend-vec-color rock ocean glacier)))
 
 (defn draw-planets [planets camera]
   (doseq [planet planets]
     (let [pos (t/map-to-screen (:mappos planet) camera)
-          size (* 0.1 (:radius planet) (camera :obj-zoom))]
-      (do (f/draw-soi planet camera (get-distant-color planet))
-          (b/distant-planet pos size (get-in planet [:cylpos 1]) (get-distant-color planet))))))
+          size (* 0.1 (:radius planet) (camera :obj-zoom))
+          phase (get-in planet [:cylpos 1])
+          color (get-distant-color planet)]
+      (do (f/draw-soi planet camera color)
+          (b/distant-planet pos size phase color)))))
 
 (defn draw-stars [stars camera]
   (doseq [star stars]
     (let [pos (t/map-to-screen (:mappos star) camera)
           size (* 5 (camera :obj-zoom) (:radius star))]
-      (do                                                   ;(f/draw-soi star camera (:color star))
-        (b/distant-star pos size (:color star))))))
+      (b/distant-star pos size (:color star)))))
 
 (defn draw-systems [systems camera]
   (doseq [system systems]

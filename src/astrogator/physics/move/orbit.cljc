@@ -37,7 +37,7 @@
   (let [orbit-radius (* 0.5 (:rhill parent))
         unit (if (s/planet? parent) :Me :Msol)
         orbit (circular-orbit [(:mass parent) unit] [orbit-radius nil] parent-path)]
-    (do (log/info (str "placing ship in orbit around: " parent-path))
+    (do (log/info "placing ship in orbit around: " parent-path)
         (-> ship
             (assoc-in [:ai-mode] :orbit)
             (assoc-in [:orbit] orbit)

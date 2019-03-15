@@ -18,7 +18,14 @@
 (defn cube-to-pix [[x y z] scale]
   (mapv #(* % scale) (cube-to-cart [x y z])))
 
-(defn cube-to-center-pix [[x y z] scale]
+(defn rotate [[x y] phi]
+  (let [cos (Math/cos phi)
+        sin (Math/sin phi)]
+    [(- (* cos x) (* sin y))
+     (+ (* sin x) (* cos y))]))
+
+(defn cube-to-center-pix [[x y z] scale phi]
   (let [screen-center (mapv #(* 0.5 %) (env/screen-size))
         offset #(mapv + screen-center %)]
-    (offset (cube-to-pix [x y z] scale))))
+    (offset (rotate (cube-to-pix [x y z] scale) phi))))
+

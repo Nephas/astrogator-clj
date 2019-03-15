@@ -6,12 +6,14 @@
 (defn move-system
   ([system dt cylpos mappos]
    (if (some? (system :system))
-     (let [subsystem (system :system)
-           phase (subsystem :phase)
-           phiA (+ phase (* dt (subsystem :cylvel)))
+     (let [{phase   :phase
+            cylvel  :cylvel
+            radiusA :radiusA
+            radiusB :radiusB} (:system system)
+           phiA (+ phase (* dt cylvel))
            phiB (+ phiA Math/PI)
-           cylposA [(subsystem :radiusA) phiA]
-           cylposB [(subsystem :radiusB) phiB]]
+           cylposA [radiusA phiA]
+           cylposB [radiusB phiB]]
        (-> system
            (update-in [:compA] move-system dt cylposA (o/cyl-to-map mappos cylposA))
            (update-in [:compB] move-system dt cylposB (o/cyl-to-map mappos cylposB))

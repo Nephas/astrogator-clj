@@ -46,7 +46,7 @@
         dist (t/dist (get-in system (conj origin-path :mappos))
                      (get-in system (conj target-path :mappos)))]
     (if (not= target-path origin-path)
-      (do (log/info (str "ship on transit trajectory to: " target-path))
+      (do (log/info "ship on transit trajectory to: " target-path)
           (-> ship
               (assoc-in [:orbit] nil)
               (assoc-in [:ai-mode] :transit)

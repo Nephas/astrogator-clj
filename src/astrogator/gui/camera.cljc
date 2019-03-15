@@ -8,13 +8,13 @@
 
 (defn change-refbody [state body]
   (let [full-path (into [] (concat [:universe :refsystem] (:path body)))]
-    (log/info (str "changing focus: " full-path))
+    (log/info "changing focus: " full-path)
     (-> state
         (assoc-in [:camera :refbody] (:path body))
         (update-in full-path exp/expand-if-possible))))
 
 (defn change-targetbody [state body]
-  (log/info (str "select target: " (:path body)))
+  (log/info "select target: " (:path body))
   (-> state
       (assoc-in [:camera :targetbody] (:path body))
       (assoc-in [:animation :target] 0)))
@@ -39,11 +39,11 @@
         scale-after (when-first [scale (filter #(nearer-than? %)
                                                (keys conf/thresholds))] scale)]
     (do (when (not= scale-after scale-before)
-          (log/info (str "changed view-scale to: " scale-after)))
+          (log/info "changed view-scale to: " scale-after))
         scale-after)))
 
 (defn zoom [dir state]
-  (log/debug (str "zooming: " dir))
+  (log/debug "zooming: " dir)
   (let [factor {:in  {:dist  (/ 2 1)
                       :obj   (/ 5 4)
                       :limit 1E+10}
