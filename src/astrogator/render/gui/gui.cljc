@@ -7,8 +7,10 @@
             [astrogator.util.string.string :as us]
             [astrogator.util.string.format :as fmt]
             [astrogator.render.gui.element :as e]
+            [astrogator.render.gui.text :as tx]
             [astrogator.render.gui.table :as tab]
-            [astrogator.util.string.string :as string]))
+            [astrogator.util.string.string :as string]
+            [astrogator.util.env :as env]))
 
 (defn render-at-mappos [state mappos renderer]
   (if (not (nil? mappos)) (let [pos (t/map-to-screen mappos (state :camera))]
@@ -28,7 +30,7 @@
                             day (get-in state [:time :day])]
                         (map blockify (fmt/f-str "~20b" (int day)))))]
     (q/with-translation [(:left c/margin) (* 3 (:top c/margin))]
-                        ((e/get-textbox-renderer text)))))
+                        ((tx/get-textbox-renderer text)))))
 
 (defn render-playerinfo [state]
   (tab/render-framed-keymap (s/get-playership state) [(:left c/margin) (* (/ 2 3) (q/height))])
@@ -39,7 +41,7 @@
     (when (not (nil? target))
       (do (tab/render-animated-target-gui target [(:left c/margin) (* (/ 1 5) (q/height))] (state :animation))
           (let [name (if (nil? (:name target)) "unknown" (:name target))]
-            (render-at-mappos state (pos-selector target) (e/get-textbox-renderer name [10 5]))))))
+            (render-at-mappos state (pos-selector target) (tx/get-textbox-renderer name [10 5]))))))
   state)
 
 (defn render-crosshair [state ref-selector pos-selector]
@@ -60,7 +62,7 @@
     (let [targetpos (:mappos (s/get-targetbody state))
           shippos (:mappos (s/get-playership state))
           dist (t/dist targetpos shippos)
-          text (e/get-textbox-renderer (str (string/fmt-generic dist) " AU"))
+          text (tx/get-textbox-renderer (str (string/fmt-generic dist) " AU"))
           midpoint (t/scalar 0.5 (t/add targetpos shippos))]
       (do (e/map-line targetpos shippos (:camera state))
           (render-at-mappos state midpoint text)))))
@@ -69,8 +71,14 @@
   (when (not (nil? (s/get-targetbody state)))
     (let [targetbody (s/get-targetbody state)
           text (str (get-in targetbody [:descriptors :poem]) "\n" (get-in targetbody [:descriptors :tags]))
-          textbox (e/get-textbox-renderer text [25 25])]
+          textbox (tx/get-textbox-renderer text [25 25])]
       (render-at-mappos state (:mappos targetbody) textbox))))
+
+(defn render-message-box [state]
+                      ((tx/get-textbox-renderer (tx/wrapped-text "askfjflksajflkjsalkjflksajfk" 5)
+                                               [(* 0.33 (q/width)) (* 0.33 (q/height))]
+                                               [(* 0.33 (q/width)) (* 0.33 (q/height))]))
+  state)
 
 (defn render-gui [state]
   (let [sector-gui #(-> %
@@ -92,6 +100,7 @@
     (col/fill c/gui-secondary)
     (render-clock state)
     (render-binary-clock state)
+    (render-message-box state)
     (case (get-in state [:camera :scale])
       :body (body-gui state)
       :subsystem (system-gui state)

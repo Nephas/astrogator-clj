@@ -5,7 +5,8 @@
             [astrogator.render.conf :as r]
             [astrogator.physics.trafo :as t]
             [astrogator.physics.gravity :as g]
-            [astrogator.util.log :as log]))
+            [astrogator.util.log :as log]
+            [astrogator.util.color :as col]))
 
 (defn get-grid
   ([x1 x2 y1 y2 d]
@@ -21,7 +22,7 @@
   ([body camera color]
    (let [pos (t/map-to-screen (:mappos body) camera)
          soi (* (:rhill body) (camera :dist-zoom))]
-     (geo/ring pos soi color)))
+     (geo/ring pos soi (col/with-alpha color 64))))
   ([body camera]
    (draw-soi body camera r/gui-secondary)))
 

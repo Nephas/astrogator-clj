@@ -32,5 +32,3 @@
 (defn join
   ([coll del] (reduce #(str %1 del %2) coll))
   ([coll] (join coll "")))
-
-()

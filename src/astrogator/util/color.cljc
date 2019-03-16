@@ -1,6 +1,11 @@
 (ns astrogator.util.color
   (:require [quil.core :as q]))
 
+(defn with-alpha
+  ([color a] (if (= (count color) 3)
+               (conj color a)
+               (assoc color 3 a))))
+
 (defn color-to-vec [col]
   [(q/hue col) (q/saturation col) (q/brightness col)])
 
@@ -11,4 +16,5 @@
 
 (defn fill
   ([vec] (q/fill (apply q/color vec)))
-  ([vec alpha] (q/fill (apply q/color vec) alpha)))
+  ([vec alpha] (q/fill (apply q/color vec) alpha))
+  ([] (fill [0 0 0] 0)))

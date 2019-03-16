@@ -8,7 +8,7 @@
             [astrogator.physics.trafo :as t]))
 
 (defn cast-shadow [pos phase size length]
-  (col/fill conf/planet-shade-color 196)
+  (col/fill conf/planet-shade-color 128)
   (q/no-stroke)
   (q/with-translation pos
                       (q/with-rotation [(+ Math/PI phase)]
@@ -32,9 +32,9 @@
         phase (+ Math/PI (get-in refbody [:orbit :cylpos 1]))
         rot (get-in refbody [:rotation :angle])]
     (do (f/draw-soi refbody camera)
+        (p/draw-surface (vals (:surface refbody)) (:color refbody) (* 0.65 size) rot)
+        (geo/ring pos (* 1.1 size) conf/back-color (* 0.2 size))
         (cast-shadow pos phase size (* 10 (q/width)))
-        (geo/circle pos size [0 0 0.4])
-        (p/draw-surface (vals (:surface refbody)) (:color refbody) (* 0.58 size) rot)
         (geo/half-circle pos size phase conf/planet-night-color))))
 
 (defn draw-star

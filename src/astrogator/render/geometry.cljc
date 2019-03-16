@@ -19,11 +19,13 @@
 (defn ring
   ([pos size]
    (q/ellipse (pos 0) (pos 1) size size))
+  ([pos size color width]
+   (col/fill)
+   (q/with-stroke [(apply q/color color)]
+                  (do (q/stroke-weight width)
+                      (ring pos size))))
   ([pos size color]
-   (col/fill [0 0 0] 0)
-   (q/with-stroke [(apply q/color color) 64]
-                  (do (q/stroke-weight 2)
-                      (ring pos size)))))
+   (ring pos size color 2)))
 
 (defn airy
   ([pos size color]
@@ -39,7 +41,8 @@
 (defn half-circle
   ([pos size phase-in color]
    (col/fill color)
-   (q/no-stroke)
-   (let [phase (+ Math/PI phase-in)
-         rot (/ Math/PI 2)]
-     (q/arc (pos 0) (pos 1) size size (- phase rot) (+ phase rot)))))
+   (q/with-stroke [(apply q/color color)]
+                  (q/stroke-weight 2)
+                  (let [phase (+ Math/PI phase-in)
+                        rot (/ Math/PI 2)]
+                    (q/arc (pos 0) (pos 1) size size (- phase rot) (+ phase rot))))))
