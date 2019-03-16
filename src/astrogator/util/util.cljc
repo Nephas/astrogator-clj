@@ -4,8 +4,8 @@
 (defn update-values [m f & args]
   (into {} (for [[k v] m] [k (apply f v args)])))
 
-(defn update-list [m k f]
-  (update-in m [k] #(mapv f %)))
+(defn update-all [m k f & args]
+  (update-in m [k] (fn [l] (map #(apply f % args) l))))
 
 (defn times [n f]
   (apply comp (repeat n f)))

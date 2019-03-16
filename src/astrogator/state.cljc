@@ -37,7 +37,7 @@
         (assoc-in [:universe :sector] sector)
         (assoc-in [:universe :clouds] clouds)
         (sec/change-refsystem refsystem)
-        (p/move-refsystem))))
+        (p/move-universe))))
 
 (defn load-universe [store screen]
   (do (gui/loading-screen screen)

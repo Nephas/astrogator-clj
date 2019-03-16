@@ -1,7 +1,20 @@
 (ns astrogator.physics.move.system
   (:require [astrogator.conf :as c]
-            [astrogator.physics.move.move :as m]
-            [astrogator.physics.move.orbit :as o]))
+            [astrogator.physics.move.orbit :as o]
+            [astrogator.util.util :as u]
+            [astrogator.physics.move.ship :as s]
+            [astrogator.physics.move.rotate :as rot]))
+
+(defn move-planet [planet dt parent-mappos]
+  (-> planet
+      (rot/rotate dt)
+      (o/orbit-move dt parent-mappos)
+      (u/update-all :moons o/orbit-move dt (:mappos planet))))
+
+(defn move-children [system dt]
+  (-> system
+      (u/update-all :planets move-planet dt (:mappos system))
+      (u/update-all :asteroids o/orbit-move dt (:mappos system))))
 
 (defn move-system
   ([system dt cylpos mappos]
@@ -10,27 +23,31 @@
             cylvel  :cylvel
             radiusA :radiusA
             radiusB :radiusB} (:system system)
-           phiA (+ phase (* dt cylvel))
-           phiB (+ phiA Math/PI)
-           cylposA [radiusA phiA]
-           cylposB [radiusB phiB]]
+           phase (+ phase (* dt cylvel))
+           cylposA [radiusA phase]
+           cylposB [radiusB (+ phase Math/PI)]]
        (-> system
            (update-in [:compA] move-system dt cylposA (o/cyl-to-map mappos cylposA))
            (update-in [:compB] move-system dt cylposB (o/cyl-to-map mappos cylposB))
-           (update-in [:planets] m/move-planets dt mappos)
-           (update-in [:asteroids] m/move-particles dt mappos)
-           (assoc-in [:system :phase] phiA)
-           (assoc-in [:system :mappos] mappos)))
+           (assoc-in [:system :phase] phase)
+           (assoc-in [:system :mappos] mappos)
+           (move-children dt)))
      (-> system
-         (update-in [:planets] m/move-planets dt mappos)
-         (update-in [:asteroids] m/move-particles dt mappos)
          (assoc-in [:body :cylpos] cylpos)
-         (assoc-in [:body :mappos] mappos))))
-  ([system dt] (let [moved-system (move-system system dt [0 0] [0 0])]
-                 (update-in moved-system [:ships] m/move-ships dt moved-system))))
+         (assoc-in [:body :mappos] mappos)
+         (move-children dt))))
+  ([system dt] (let [system (move-system system dt [0 0] [0 0])]
+                 (u/update-all system :ships s/move-ship dt system))))
 
-(defn move-refsystem [state]
+(defn move-time [time dt]
+  (let [day (float (+ (:day time) dt))
+        year (int (/ day 365.25))]
+    (-> time
+        (assoc :day day)
+        (assoc :year year))))
+
+(defn move-universe [state]
   (let [dpf (/ (get-in state [:time :dps]) c/frame-rate)]
     (-> state
-        (update-in [:time :day] #(float (+ dpf %)))
+        (update-in [:time] move-time dpf)
         (update-in [:universe :refsystem] move-system dpf))))
