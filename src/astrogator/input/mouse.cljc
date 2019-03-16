@@ -13,16 +13,19 @@
     (do (log/debug "mouse: click " (event :button))
         (case (event :button)
           :right (handle-right state screenpos camera)
-          :left (handle-left state screenpos camera)))))
+          :left (handle-left state screenpos camera)
+          :center state))))
 
 (defn handle-right [state screenpos camera]
   (let [mappos (t/screen-to-map screenpos camera)
+        threshold (t/screen-dist-to-map 25 camera)
         refsystem (get-in state [:universe :refsystem])]
-    (case (camera :scale)
-      :sector (sec/change-refsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
-      :system (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos))
-      :subsystem (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos))
-      :body (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos)))))
+    (do (log/info threshold)
+        (case (camera :scale)
+          :sector (sec/change-refsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
+          :system (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos threshold))
+          :subsystem (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos threshold))
+          :body (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos))))))
 
 (defn handle-left [state screenpos camera]
   (let [mappos (t/screen-to-map screenpos camera)

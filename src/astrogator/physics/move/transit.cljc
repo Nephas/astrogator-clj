@@ -16,11 +16,11 @@
   (let [{par         :par
          origin-path :origin
          target-path :target
-         parlength   :parlength} (:transit ship)]
+         parlength   :parlength} (:transit ship)
+        origin (get-in system origin-path)
+        target (get-in system target-path)]
     (if (< par parlength)
-      (transit-move ship dt
-                    (get-in system (conj origin-path :mappos))
-                    (get-in system (conj target-path :mappos)))
+      (transit-move ship dt (:mappos origin) (:mappos target))
       (o/place-in-orbit ship target-path (get-in system target-path)))))
 
 (defn move-on-trajectory [ship dt origin-mappos target-mappos]

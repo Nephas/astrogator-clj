@@ -97,7 +97,7 @@
         bright (> base-flux 10000)
         wet (and (not molten) (not frozen) (> sea-level 0.7))
         dry (and (not molten) (< sea-level 0.3))
-        tags (into [] (filter #(not (nil? %))
+        tags (into [] (filter some?
                               [(if circumbinary :multiple :single)
                                (if (< 273 base-temp 373) :habitable :hostile)
                                (if dark :dark)

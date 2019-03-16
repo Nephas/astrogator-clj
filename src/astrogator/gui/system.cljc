@@ -22,11 +22,21 @@
      [(assoc (system :body) :path (conj path :body))]))
   ([system] (recur-stars-with-path system [])))
 
-(defn get-closest-planet-or-star [system mappos]
-  (apply min-key #(t/dist mappos (:mappos %))
-         (concat (recur-planets-with-path system)
-                 (recur-stars-with-path system))))
+(defn get-closest-planet-or-star
+  ([system mappos cutoff]
+   (let [get-dist #(t/dist mappos (:mappos %))
+         planets (recur-planets-with-path system)
+         stars (recur-stars-with-path system)]
+     (apply min-key #(:priority %)
+            (concat (map #(assoc % :priority (+ cutoff (get-dist %))) planets)
+                    (map #(assoc % :priority (get-dist %)) stars)))))
+  ([system mappos]
+   (get-closest-planet-or-star system mappos 0)))
 
 (defn get-closest-planet [system mappos]
   (apply min-key #(t/dist mappos (:mappos %))
          (recur-planets-with-path system)))
+
+(defn get-closest-star [system mappos]
+  (apply min-key #(t/dist mappos (:mappos %))
+         (recur-stars-with-path system)))

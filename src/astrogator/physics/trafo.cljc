@@ -57,3 +57,6 @@
                                      :system (camera :mappos)
                                      :sector (camera :sectorpos))]
                         (screen-to-map screenpos offset (camera :dist-zoom)))))
+
+(defn screen-dist-to-map [screendist camera]
+  (/ screendist (camera :dist-zoom)))

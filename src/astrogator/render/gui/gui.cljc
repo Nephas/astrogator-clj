@@ -13,7 +13,7 @@
             [astrogator.util.env :as env]))
 
 (defn render-at-mappos [state mappos renderer]
-  (if (not (nil? mappos)) (let [pos (t/map-to-screen mappos (state :camera))]
+  (if (some? mappos) (let [pos (t/map-to-screen mappos (state :camera))]
                             (q/with-translation pos (renderer)))))
 
 (defn loading-screen
@@ -38,10 +38,10 @@
 
 (defn render-targetinfo [state target-selector pos-selector]
   (let [target (target-selector state)]
-    (when (not (nil? target))
+    (when (some? target)
       (do (tab/render-animated-target-gui target [(:left c/margin) (* (/ 1 5) (q/height))] (state :animation))
           (let [name (if (nil? (:name target)) "unknown" (:name target))]
-            (render-at-mappos state (pos-selector target) (tx/get-textbox-renderer name [10 5]))))))
+            (render-at-mappos state (pos-selector target) (tx/get-textbox-renderer name [20 -10]))))))
   state)
 
 (defn render-crosshair [state ref-selector pos-selector]
@@ -49,35 +49,38 @@
   state)
 
 (defn render-cursor [state target-selector pos-selector]
-  (when (not (nil? (target-selector state)))
+  (when (some? (target-selector state))
     (render-at-mappos state (pos-selector (target-selector state)) e/cursor))
   state)
 
 (defn render-diamond [state target-selector pos-selector]
-  (render-at-mappos state (pos-selector (target-selector state)) e/diamond)
-  state)
+  (do (render-at-mappos state (pos-selector (target-selector state)) e/diamond)
+      (render-at-mappos state (pos-selector (target-selector state)) (tx/get-textbox-renderer "you" [-15 -10]))
+      state))
 
 (defn render-course [state]
-  (when (not (nil? (s/get-targetbody state)))
+  (when (and (some? (s/get-targetbody state))
+             (not= (s/get-targetbody state) (s/get-player-orbit-body state)))
     (let [targetpos (:mappos (s/get-targetbody state))
           shippos (:mappos (s/get-playership state))
           dist (t/dist targetpos shippos)
           text (tx/get-textbox-renderer (str (string/fmt-generic dist) " AU"))
           midpoint (t/scalar 0.5 (t/add targetpos shippos))]
       (do (e/map-line targetpos shippos (:camera state))
-          (render-at-mappos state midpoint text)))))
+          (render-at-mappos state midpoint text))))
+  state)
 
 (defn render-haiku [state]
-  (when (not (nil? (s/get-targetbody state)))
+  (when (= (s/get-refbody state) (s/get-player-orbit-body state))
     (let [targetbody (s/get-targetbody state)
-          text (str (get-in targetbody [:descriptors :poem]) "\n" (get-in targetbody [:descriptors :tags]))
-          textbox (tx/get-textbox-renderer text [25 25])]
+          text (str (get-in targetbody [:descriptors :poem]))
+          textbox (tx/get-textbox-renderer (tx/framed-lines text 20) [20 20])]
       (render-at-mappos state (:mappos targetbody) textbox))))
 
 (defn render-message-box [state]
-                      ((tx/get-textbox-renderer (tx/wrapped-text "askfjflksajflkjsalkjflksajfk" 5)
-                                               [(* 0.33 (q/width)) (* 0.33 (q/height))]
-                                               [(* 0.33 (q/width)) (* 0.33 (q/height))]))
+  ((tx/get-textbox-renderer (tx/wrapped-text "askfjflksajflkjsalkjflksajfk" 5)
+                            [(* 0.33 (q/width)) (* 0.33 (q/height))]
+                            [(* 0.33 (q/width)) (* 0.33 (q/height))]))
   state)
 
 (defn render-gui [state]
@@ -86,21 +89,21 @@
                         (render-crosshair s/get-refsystem :sectorpos)
                         (render-cursor s/get-targetsystem :sectorpos))
         system-gui #(-> %
-                        (render-playerinfo)
                         (render-targetinfo s/get-targetbody :mappos)
                         (render-crosshair s/get-refbody :mappos)
                         (render-cursor s/get-targetbody :mappos)
                         (render-diamond s/get-playership :mappos)
                         (render-course))
         body-gui #(-> %
-                      (system-gui)
-                      ;(render-haiku)
-                      )]
+                      (render-targetinfo s/get-targetbody :mappos)
+                      (render-cursor s/get-targetbody :mappos)
+                      (render-diamond s/get-playership :mappos)
+                      (render-haiku))]
 
     (col/fill c/gui-secondary)
     (render-clock state)
     (render-binary-clock state)
-    (render-message-box state)
+    (render-playerinfo state)
     (case (get-in state [:camera :scale])
       :body (body-gui state)
       :subsystem (system-gui state)
