@@ -2,7 +2,9 @@
   (:require [astrogator.physics.trafo :as t]
             [astrogator.physics.gravity :as g]
             [astrogator.physics.move.orbit :as o]
-            [astrogator.physics.move.transit :as tr]))
+            [astrogator.physics.move.transit :as tr]
+            [astrogator.physics.units :as u]
+            [astrogator.util.log :as log]))
 
 (defn shipacc [ship]
   (let [thrust (* (:throttle ship) (:thrust ship))]
@@ -25,8 +27,12 @@
         (assoc-in [:mappos] mappos))))
 
 (defn move-ship [ship dt system]
-  (cond
-    (nil? (:ai-mode ship)) (move-in-potential ship dt system)
-    (= :orbit (:ai-mode ship)) (o/orbit-move ship dt (get-in system (conj (get-in ship [:orbit :parent]) :mappos)))
-    (= :transit (:ai-mode ship)) (tr/move-towards-target ship dt system)
-    true ship))
+  (let [moved-ship (cond
+                     (nil? (:ai-mode ship)) (move-in-potential ship dt system)
+                     (= :orbit (:ai-mode ship)) (o/orbit-move ship dt (get-in system (conj (get-in ship [:orbit :parent]) :mappos)))
+                     (= :transit (:ai-mode ship)) (tr/move-towards-target ship dt system)
+                     true ship)
+        mapvel (t/scalar (/ 1 dt) (t/sub (:mappos moved-ship) (:mappos ship)))]
+    (-> moved-ship
+        (assoc :mapvel mapvel)
+        (assoc :beta (u/conv (t/norm mapvel) :AU/d :c)))))

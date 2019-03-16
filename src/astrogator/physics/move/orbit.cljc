@@ -30,7 +30,6 @@
         mapvel (t/scalar (/ 1 dt) (t/sub mappos (:mappos body)))]
     (-> body
         (assoc-in [:mappos] mappos)
-        (assoc-in [:mapvel] mapvel)
         (assoc-in [:orbit :cylpos] new-cylpos))))
 
 (defn place-in-orbit [ship parent-path parent]

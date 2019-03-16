@@ -25,6 +25,10 @@
    :temperature  {:K 1}
 
    ;derived units
+   :velocity     {:m/s 1
+                  :AU/d 1731457
+                  :c   299792458}
+
    :acceleration {:m/s2  1
                   :g     9.81
                   :AU/d2 20.04}

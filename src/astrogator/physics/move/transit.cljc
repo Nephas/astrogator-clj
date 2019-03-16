@@ -37,7 +37,6 @@
     (-> ship
         (assoc-in [:transit :par] new-par)
         (assoc-in [:transit :parvel] new-parvel)
-        (assoc-in [:mapvel] [0 0])
         (assoc-in [:mappos] (t/add origin-mappos mappos-progress)))))
 
 (defn start-transit [ship camera system]
