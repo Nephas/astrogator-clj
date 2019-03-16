@@ -6,7 +6,8 @@
             [astrogator.util.selectors :as s]
             [quil.core :as q]
             [astrogator.util.color :as col]
-            [astrogator.render.conf :as conf]))
+            [astrogator.render.conf :as conf]
+            [astrogator.util.log :as log]))
 
 ;TODO extract draw protocol
 (defn draw-asteroids [particles camera]

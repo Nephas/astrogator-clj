@@ -5,7 +5,7 @@
   (into {} (for [[k v] m] [k (apply f v args)])))
 
 (defn update-all [m k f & args]
-  (update-in m [k] (fn [l] (map #(apply f % args) l))))
+  (update-in m [k] (fn [l] (mapv #(apply f % args) l))))
 
 (defn times [n f]
   (apply comp (repeat n f)))

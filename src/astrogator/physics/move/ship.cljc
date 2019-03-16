@@ -29,4 +29,4 @@
     (nil? (:ai-mode ship)) (move-in-potential ship dt system)
     (= :orbit (:ai-mode ship)) (o/orbit-move ship dt (get-in system (conj (get-in ship [:orbit :parent]) :mappos)))
     (= :transit (:ai-mode ship)) (tr/move-towards-target ship dt system)
-    true system))
+    true ship))

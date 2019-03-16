@@ -11,10 +11,10 @@
       (o/orbit-move dt parent-mappos)
       (u/update-all :moons o/orbit-move dt (:mappos planet))))
 
-(defn move-children [system dt]
+(defn move-children [system dt parent-mappos]
   (-> system
-      (u/update-all :planets move-planet dt (:mappos system))
-      (u/update-all :asteroids o/orbit-move dt (:mappos system))))
+      (u/update-all :planets move-planet dt parent-mappos)
+      (u/update-all :asteroids o/orbit-move dt parent-mappos)))
 
 (defn move-system
   ([system dt cylpos mappos]
@@ -31,13 +31,13 @@
            (update-in [:compB] move-system dt cylposB (o/cyl-to-map mappos cylposB))
            (assoc-in [:system :phase] phase)
            (assoc-in [:system :mappos] mappos)
-           (move-children dt)))
+           (move-children dt mappos)))
      (-> system
          (assoc-in [:body :cylpos] cylpos)
          (assoc-in [:body :mappos] mappos)
-         (move-children dt))))
-  ([system dt] (let [system (move-system system dt [0 0] [0 0])]
-                 (u/update-all system :ships s/move-ship dt system))))
+         (move-children dt mappos))))
+  ([system dt] (let [moved-system (move-system system dt [0 0] [0 0])]
+                 (u/update-all moved-system :ships s/move-ship dt moved-system))))
 
 (defn move-time [time dt]
   (let [day (float (+ (:day time) dt))
