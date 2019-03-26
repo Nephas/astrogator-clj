@@ -16,8 +16,8 @@
         key (if (some? coded-key) coded-key (:key event))]
     (do (log/debug "keypress: " (q/key-code) " - " (:key event))
         (case key
-          (:up) (c/zoom :in state)
-          (:down) (c/zoom :out state)
+          (:up) (update state :camera #(c/zoom % :in))
+          (:down) (update state :camera #(c/zoom % :out))
           (:left) (update-in state [:time :dps] #(* 0.5 %))
           (:right) (update-in state [:time :dps] #(* 2 %))
           (:space) (update-in state s/playership-path #(t/start-transit % (state :camera) (s/get-expanded-refsystem state)))

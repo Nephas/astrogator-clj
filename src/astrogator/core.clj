@@ -1,4 +1,5 @@
 (ns astrogator.core
+  (:gen-class)
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [astrogator.conf :as c]
@@ -18,7 +19,7 @@
 (defn setup []
   (do (reset! screen (q/current-graphics))
       (q/frame-rate c/frame-rate)
-      (q/text-font (q/create-font "Consolas" 14 true))
+      (q/text-font (q/create-font "src/data/conthrax-sb.ttf" 14 true))
       (q/color-mode :hsb 1.0 1.0 1.0 255)
       (q/ellipse-mode :radius)
       (q/no-stroke)

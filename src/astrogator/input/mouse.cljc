@@ -36,11 +36,16 @@
       :subsystem (cam/change-targetbody state (sys/get-closest-planet-or-star refsystem mappos))
       :body (cam/change-targetbody state (sys/get-closest-planet-or-star refsystem mappos)))))
 
+(defn accumulate-zoom [camera event]
+  (let [acc-zoom (+ (:acc-zoom camera) event)
+        zoom-step #(-> camera (cam/zoom %) (assoc :acc-zoom 0))]
+    (cond (>= acc-zoom 1) (zoom-step :in)
+          (<= acc-zoom -1) (zoom-step :out)
+          true (assoc camera :acc-zoom acc-zoom))))
+
 (defn handle-wheel [state event]
   (do (log/debug "mouse: wheel " event)
-      (cond (pos? event) (cam/zoom :in state)
-            (neg? event) (cam/zoom :out state)
-            true state)))
+      (update state :camera accumulate-zoom event)))
 
 (defn handle-move [state event]
   (let [screenpos [(event :x) (event :y)]

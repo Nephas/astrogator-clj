@@ -17,6 +17,7 @@
                               :mappos    [0 0]}
                :dist-zoom    5
                :obj-zoom     1
+               :acc-zoom     0
                :sectorpos    [0 0]
                :mappos       [0 0]
                :scale        :system

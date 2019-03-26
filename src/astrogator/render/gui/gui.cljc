@@ -26,7 +26,7 @@
   state)
 
 (defn render-binary-clock [state]
-  (let [text (us/join (let [blockify #(if (= \0 %) "╦" "╩") ; "▄" "▀"
+  (let [text (us/join (let [blockify #(if (= \0 %) "0 " "= ")
                             day (get-in state [:time :day])]
                         (map blockify (fmt/f-str "~20b" (int day)))))]
     (q/with-translation [(:left c/margin) (* 3 (:top c/margin))]

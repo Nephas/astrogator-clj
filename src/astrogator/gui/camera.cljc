@@ -42,23 +42,22 @@
           (log/info "changed view-scale to: " scale-after))
         scale-after)))
 
-(defn zoom [dir state]
+(defn zoom [camera dir]
   (log/debug "zooming: " dir)
-  (let [factor {:in  {:dist  (/ 2 1)
-                      :obj   (/ 5 4)
+  (let [factor {:in  {:dist  2
+                      :obj   1.25
                       :limit 1E+10}
-                :out {:dist  (/ 1 2)
-                      :obj   (/ 4 5)
+                :out {:dist  0.5
+                      :obj   0.8
                       :limit 1E-5}}
         calc-zoom (fn [zoom type] (float (* zoom (get-in factor [dir type]))))
-        new-dist-zoom (calc-zoom (get-in state [:camera :dist-zoom]) :dist)
+        new-dist-zoom (calc-zoom (:dist-zoom camera) :dist)
         zoom? (not (or (and (= dir :in) (> new-dist-zoom (get-in factor [:in :limit])))
                        (and (= dir :out) (< new-dist-zoom (get-in factor [:out :limit])))))]
-
-    (-> state
-        (update-in [:camera :dist-zoom] (if zoom? #(calc-zoom % :dist) identity))
-        (update-in [:camera :obj-zoom] (if zoom? #(calc-zoom % :obj) identity))
-        (assoc-in [:camera :scale] (get-scale (state :camera))))))
+    (-> camera
+        (update-in [:dist-zoom] (if zoom? #(calc-zoom % :dist) identity))
+        (update-in [:obj-zoom] (if zoom? #(calc-zoom % :obj) identity))
+        (assoc-in [:scale] (get-scale camera)))))
 
 (defn on-screen? [[screen-x screen-y]]
   (and (< 0 screen-x (q/width))
