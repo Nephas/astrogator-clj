@@ -10,11 +10,12 @@
             [astrogator.render.gui.text :as tx]
             [astrogator.render.gui.table :as tab]
             [astrogator.util.string.string :as string]
-            [astrogator.util.env :as env]))
+            [astrogator.util.env :as env]
+            [astrogator.physics.units :as u]))
 
 (defn render-at-mappos [state mappos renderer]
   (if (some? mappos) (let [pos (t/map-to-screen mappos (state :camera))]
-                            (q/with-translation pos (renderer)))))
+                       (q/with-translation pos (renderer)))))
 
 (defn loading-screen
   ([screen] (q/with-graphics @screen (do (q/background 0 0 0)
@@ -64,10 +65,19 @@
     (let [targetpos (:mappos (s/get-targetbody state))
           shippos (:mappos (s/get-playership state))
           dist (t/dist targetpos shippos)
-          text (tx/get-textbox-renderer (str (string/fmt-generic dist) " AU"))
-          midpoint (t/scalar 0.5 (t/add targetpos shippos))]
+          text (tx/get-textbox-renderer (str (string/fmt-generic dist) " AU"))]
       (do (e/map-line targetpos shippos (:camera state))
-          (render-at-mappos state midpoint text))))
+          (render-at-mappos state (t/midpoint targetpos shippos) text))))
+  state)
+
+(defn render-interstellar-course [state]
+  (when (some? (s/get-targetsystem state))
+    (let [targetpos (:sectorpos (s/get-targetsystem state))
+          shippos (:sectorpos (s/get-refsystem state))
+          dist (u/conv (t/dist targetpos shippos) :AU :pc)
+          text (tx/get-textbox-renderer (str (string/fmt-generic dist) " pc"))]
+      (do (e/map-line targetpos shippos (:camera state))
+          (render-at-mappos state (t/midpoint targetpos shippos) text))))
   state)
 
 (defn render-haiku [state]
@@ -87,7 +97,8 @@
   (let [sector-gui #(-> %
                         (render-targetinfo s/get-targetsystem :sectorpos)
                         (render-crosshair s/get-refsystem :sectorpos)
-                        (render-cursor s/get-targetsystem :sectorpos))
+                        (render-cursor s/get-targetsystem :sectorpos)
+                        (render-interstellar-course))
         system-gui #(-> %
                         (render-targetinfo s/get-targetbody :mappos)
                         (render-crosshair s/get-refbody :mappos)
