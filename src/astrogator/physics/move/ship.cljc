@@ -4,7 +4,8 @@
             [astrogator.physics.move.orbit :as o]
             [astrogator.physics.move.transit :as tr]
             [astrogator.physics.units :as u]
-            [astrogator.util.log :as log]))
+            [astrogator.util.log :as log]
+            [astrogator.physics.move.clock :as c]))
 
 (defn shipacc [ship]
   (let [thrust (* (:throttle ship) (:thrust ship))]
@@ -33,7 +34,9 @@
                      (= :interplanetary (:ai-mode ship)) (tr/move-interplanetary ship dt system)
                      (= :interstellar (:ai-mode ship)) (tr/move-interstellar ship dt system)
                      true ship)
-        mapvel (t/scalar (/ 1 dt) (t/sub (:mappos moved-ship) (:mappos ship)))]
+        mapvel (t/scalar (/ 1 dt) (t/sub (:mappos moved-ship) (:mappos ship)))
+        beta (min 1 (u/conv (t/norm mapvel) :AU/d :c))]
     (-> moved-ship
         (assoc :mapvel mapvel)
-        (assoc :beta (u/conv (t/norm mapvel) :AU/d :c)))))
+        (assoc :beta beta)
+        (update-in [:time] c/tick dt beta))))

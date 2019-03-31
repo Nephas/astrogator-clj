@@ -2,8 +2,11 @@
   (:require [astrogator.physics.trafo :as t]
             [astrogator.render.geometry :as geo]
             [astrogator.render.body :as b]
-            [astrogator.gui.camera :as c]))
+            [astrogator.gui.camera :as c]
+            [astrogator.util.selectors :as s]))
 
+(defn get-playership-sectorpos [state]
+  (t/add (:mappos (s/get-playership state)) (:sectorpos (s/get-refsystem state))))
 
 (defn draw-sector [systems clouds camera]
   (do (doseq [cloud clouds]

@@ -32,8 +32,10 @@
          targetseed :targetseed
          parlength  :parlength} (:interstellar ship)]
     (cond (< par (* 0.5 parlength)) (transit-move ship dt origin target)
-          (> par (* 1 parlength)) (let [targetplanet (sys/get-closest-planet system [1 1])]
-                                       (o/place-in-orbit (dissoc ship :swapsystem) (:path targetplanet) targetplanet))
+          (> par (* 1 parlength)) (let [targetplanet (sys/get-closest-planet system [0 0])]
+                                    (-> ship
+                                        (o/place-in-orbit (:path targetplanet) targetplanet)
+                                        (dissoc :swapsystem)))
           true (if (false? (:swapsystem ship))
                  (transit-move ship dt origin target)
                  (-> ship (assoc :swapsystem targetseed)

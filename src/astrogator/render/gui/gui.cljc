@@ -10,8 +10,8 @@
             [astrogator.render.gui.text :as tx]
             [astrogator.render.gui.table :as tab]
             [astrogator.util.string.string :as string]
-            [astrogator.util.env :as env]
-            [astrogator.physics.units :as u]))
+            [astrogator.physics.units :as u]
+            [astrogator.render.sector :as sec]))
 
 (defn render-at-mappos [state mappos renderer]
   (if (some? mappos) (let [pos (t/map-to-screen mappos (state :camera))]
@@ -55,7 +55,7 @@
   state)
 
 (defn render-diamond [state target-selector scale]
-  (let [pos (if (= scale :sector) (t/add (:mappos (target-selector state)) (:sectorpos (s/get-refsystem state)))
+  (let [pos (if (= scale :sector) (sec/get-playership-sectorpos state)
                                   (:mappos (target-selector state)))]
     (do (render-at-mappos state pos e/diamond)
         (render-at-mappos state pos (tx/get-textbox-renderer "you" [-15 -10]))
@@ -75,7 +75,7 @@
 (defn render-interstellar-course [state]
   (when (some? (s/get-targetsystem state))
     (let [targetpos (:sectorpos (s/get-targetsystem state))
-          shippos (:sectorpos (s/get-refsystem state))
+          shippos (sec/get-playership-sectorpos state)
           dist (u/conv (t/dist targetpos shippos) :AU :pc)
           text (tx/get-textbox-renderer (str (string/fmt-generic dist) " pc"))]
       (do (e/map-line targetpos shippos (:camera state))

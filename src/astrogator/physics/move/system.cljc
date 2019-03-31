@@ -1,6 +1,7 @@
 (ns astrogator.physics.move.system
-  (:require [astrogator.conf :as c]
+  (:require [astrogator.conf :as conf]
             [astrogator.physics.move.orbit :as o]
+            [astrogator.physics.move.clock :as c]
             [astrogator.util.util :as u]
             [astrogator.util.selectors :as sel]
             [astrogator.physics.move.ship :as s]
@@ -53,15 +54,8 @@
                                          (assoc-in (conj sel/playership-path :swapsystem) false)
                                          (sec/change-refsystem (sel/get-system-by-seed state targetseed)))))))
 
-(defn move-time [time dt]
-  (let [day (float (+ (:day time) dt))
-        year (int (/ day 365.25))]
-    (-> time
-        (assoc :day day)
-        (assoc :year year))))
-
 (defn move-universe [state]
-  (let [dpf (/ (get-in state [:time :dps]) c/frame-rate)]
+  (let [dt (float (/ (get-in state [:time :dps]) conf/frame-rate))]
     (-> state
-        (update-in [:time] move-time dpf)
-        (update-in [:universe :refsystem] move-system dpf))))
+        (update-in [:time] c/tick dt)
+        (update-in [:universe :refsystem] move-system dt))))
