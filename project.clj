@@ -13,6 +13,7 @@
                  ;Game
                  [quil "2.7.1"]]
 
+  :repl-options {:init-ns astrogator.core}
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.15"]
             [environ/environ.lein "0.3.1"]]
