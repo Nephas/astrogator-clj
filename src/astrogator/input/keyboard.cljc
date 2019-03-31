@@ -20,7 +20,7 @@
           (:down) (update state :camera #(c/zoom % :out))
           (:left) (update-in state [:time :dps] #(* 0.5 %))
           (:right) (update-in state [:time :dps] #(* 2 %))
-          (:space) (update-in state s/playership-path #(t/start-transit % (state :camera) (s/get-expanded-refsystem state)))
+          (:space) (update-in state s/playership-path #(t/start-transit % (state :camera) (s/get-expanded-refsystem state) (s/get-sector state)))
           (:1) (assoc-in state [:camera :map-mode] :physical)
           (:2) (assoc-in state [:camera :map-mode] :heat)
           (:3) (assoc-in state [:camera :map-mode] :height)

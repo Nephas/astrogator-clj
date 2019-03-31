@@ -4,12 +4,15 @@
 
 (def planet? #(and (contains? % :seed) (not (star? %))))
 
-(defn get-system-by-seed [state seed]
-  (let [systems (get-in state [:universe :sector])]
+(defn get-system-by-seed [state|sector seed]
+  (let [systems (if (seq? state|sector) state|sector (get-in state|sector [:universe :sector]))]
     (first (filter #(= seed (:seed %)) systems))))
 
 (defn get-expanded-refsystem [state]
   (get-in state [:universe :refsystem]))
+
+(defn get-sector [state]
+  (get-in state [:universe :sector]))
 
 (defn get-targetsystem
   ([state] (get-system-by-seed state (get-in state [:camera :targetsystem]))))

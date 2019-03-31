@@ -30,7 +30,8 @@
   (let [moved-ship (cond
                      (nil? (:ai-mode ship)) (move-in-potential ship dt system)
                      (= :orbit (:ai-mode ship)) (o/orbit-move ship dt (get-in system (conj (get-in ship [:orbit :parent]) :mappos)))
-                     (= :transit (:ai-mode ship)) (tr/move-towards-target ship dt system)
+                     (= :interplanetary (:ai-mode ship)) (tr/move-interplanetary ship dt system)
+                     (= :interstellar (:ai-mode ship)) (tr/move-interstellar ship dt system)
                      true ship)
         mapvel (t/scalar (/ 1 dt) (t/sub (:mappos moved-ship) (:mappos ship)))]
     (-> moved-ship

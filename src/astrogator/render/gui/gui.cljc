@@ -54,10 +54,12 @@
     (render-at-mappos state (pos-selector (target-selector state)) e/cursor))
   state)
 
-(defn render-diamond [state target-selector pos-selector]
-  (do (render-at-mappos state (pos-selector (target-selector state)) e/diamond)
-      (render-at-mappos state (pos-selector (target-selector state)) (tx/get-textbox-renderer "you" [-15 -10]))
-      state))
+(defn render-diamond [state target-selector scale]
+  (let [pos (if (= scale :sector) (t/add (:mappos (target-selector state)) (:sectorpos (s/get-refsystem state)))
+                                  (:mappos (target-selector state)))]
+    (do (render-at-mappos state pos e/diamond)
+        (render-at-mappos state pos (tx/get-textbox-renderer "you" [-15 -10]))
+        state)))
 
 (defn render-course [state]
   (when (and (some? (s/get-targetbody state))
@@ -98,17 +100,18 @@
                         (render-targetinfo s/get-targetsystem :sectorpos)
                         (render-crosshair s/get-refsystem :sectorpos)
                         (render-cursor s/get-targetsystem :sectorpos)
+                        (render-diamond s/get-playership :sector)
                         (render-interstellar-course))
         system-gui #(-> %
                         (render-targetinfo s/get-targetbody :mappos)
                         (render-crosshair s/get-refbody :mappos)
                         (render-cursor s/get-targetbody :mappos)
-                        (render-diamond s/get-playership :mappos)
+                        (render-diamond s/get-playership :system)
                         (render-course))
         body-gui #(-> %
                       (render-targetinfo s/get-targetbody :mappos)
                       (render-cursor s/get-targetbody :mappos)
-                      (render-diamond s/get-playership :mappos)
+                      (render-diamond s/get-playership :body)
                       (render-haiku))]
 
     (col/fill c/gui-secondary)

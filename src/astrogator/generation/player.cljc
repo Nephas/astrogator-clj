@@ -10,8 +10,10 @@
 (defn generate-playership [orbit]
   (->Ship orbit [0 0] [0 0] 0 0 0 :orbit))
 
-(defn place-playership [system]
-  (let [parent (sys/get-closest-planet system [1 1])
-        orbit-radius (* 0.5 (:rhill parent))
-        orbit (o/circular-orbit [(:mass parent) :Me] [orbit-radius nil] (:path parent))]
-    (assoc system :ships [(generate-playership orbit)])))
+(defn place-playership
+  ([system ship]
+   (let [parent (sys/get-closest-planet system [1 1])
+         orbit-radius (* 0.5 (:rhill parent))
+         orbit (o/circular-orbit [(:mass parent) :Me] [orbit-radius nil] (:path parent))]
+     (assoc system :ships [(if (nil? ship) (generate-playership orbit) ship)])))
+  ([system] (place-playership system nil)))

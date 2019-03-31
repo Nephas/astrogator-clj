@@ -26,8 +26,7 @@
          cylvel         :cylvel} (:orbit body)
         new-phase (+ phase (* dt cylvel))
         new-cylpos [radius new-phase]
-        mappos (cyl-to-map parent-mappos new-cylpos)
-        mapvel (t/scalar (/ 1 dt) (t/sub mappos (:mappos body)))]
+        mappos (cyl-to-map parent-mappos new-cylpos)]
     (-> body
         (assoc-in [:mappos] mappos)
         (assoc-in [:orbit :cylpos] new-cylpos))))
@@ -40,7 +39,8 @@
         (-> ship
             (assoc-in [:ai-mode] :orbit)
             (assoc-in [:orbit] orbit)
-            (assoc-in [:transit] nil)))))
+            (assoc-in [:interplanetary] nil)
+            (assoc-in [:interstellar] nil)))))
 
 (defn leave-orbit [ship]
   (-> ship
