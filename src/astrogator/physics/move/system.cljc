@@ -10,10 +10,10 @@
             [astrogator.util.log :as log]))
 
 (defn move-planet [planet dt parent-mappos]
-  (-> planet
-      (rot/rotate dt)
-      (o/orbit-move dt parent-mappos)
-      (u/update-all :moons o/orbit-move dt (:mappos planet))))
+  (let [moved-planet (-> planet
+                         (rot/rotate dt)
+                         (o/orbit-move dt parent-mappos))]
+    (u/update-all moved-planet :moons o/orbit-move dt (:mappos moved-planet))))
 
 (defn move-children [system dt parent-mappos]
   (-> system

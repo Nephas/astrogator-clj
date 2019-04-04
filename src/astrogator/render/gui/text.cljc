@@ -5,7 +5,7 @@
             [astrogator.util.string.string :as string]))
 
 (defn framed-lines
-  ([wrapped-text width] (let [border (str (apply str (repeat width "═")))]
+  ([wrapped-text width] (let [border (str (apply str (repeat width "= ")))]
                           (string/join [border wrapped-text border] "\n"))))
 
 (defn get-textbox-renderer

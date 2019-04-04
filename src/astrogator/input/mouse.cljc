@@ -22,7 +22,7 @@
         refsystem (get-in state [:universe :refsystem])]
     (do (log/info threshold)
         (case (camera :scale)
-          :sector (sec/change-refsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
+          :sector state
           :system (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos threshold))
           :subsystem (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos threshold))
           :body (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos))))))

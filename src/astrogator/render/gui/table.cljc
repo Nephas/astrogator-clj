@@ -7,9 +7,9 @@
                              (q/text (string/join col2 "\n") (+ sep x) y))))
 
 (defn render-framed-keymap
-  ([col1 col2 pos] (let [sep (* 8 12)
+  ([col1 col2 pos] (let [sep (* 8 14)
                          width 20
-                         fmt-keys #(str " - " (subs (str %) 1) ":")
+                         fmt-keys #(str " - " (string/cut (subs (str %) 1) 8) ":")
                          fmt-vals string/fmt-generic
                          border (str (apply str (repeat width "- ")))
                          col1 (concat [border] (map fmt-keys col1) [border])

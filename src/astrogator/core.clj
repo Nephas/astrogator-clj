@@ -31,7 +31,6 @@
                       (p/move-universe)
                       (t/update-thermal)
                       (cam/update-camera)
-                      ;(cam/update-playership)
                       (ani/update-animations))]
     (if (key/reset? state)
       (s/load-universe store screen)
