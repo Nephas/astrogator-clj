@@ -10,7 +10,7 @@
             [astrogator.gui.animation :as ani]
             [astrogator.state :as s]
             [astrogator.physics.move.system :as p]
-            [astrogator.physics.thermal :as t]
+            [astrogator.physics.thermal.thermal :as t]
             [astrogator.render.gui.gui :as gui]))
 
 (def store (atom s/init-state))

@@ -1,18 +1,26 @@
-(ns astrogator.physics.thermal
+(ns astrogator.physics.thermal.thermal
   (:require
-    [astrogator.physics.radiation :as r]
+    [astrogator.physics.thermal.radiation :as r]
+    [astrogator.physics.thermal.climate :as c]
     [astrogator.physics.units :as u]
     [astrogator.util.selectors :as s]
     [astrogator.physics.astro :as a]))
+
+(defn update-planet [planet]
+  (if (some? (:surface planet))
+    (update-in planet [:surface] c/update-surface (:climate planet))
+    planet))
 
 (defn update-temp [planet bodies]
   (let [radius (u/conv (:radius planet) :Re :m)
         flux (u/conv (r/flux-strength-at-pos (:mappos planet) bodies) :Lsol/AU2 :W/m2)
         total-flux (* flux (* Math/PI radius radius))
-        temp (a/stefan-boltzmann total-flux :W radius :m)]
+        blackbody-temp (a/stefan-boltzmann total-flux :W radius :m)
+        angle (get-in planet [:orbit :cylpos 1])]
     (-> planet
-        (assoc-in [:temp] temp)
-        (assoc-in [:flux] flux))))
+        (assoc-in [:flux] flux)
+        (update-in [:climate] c/update-climate blackbody-temp angle)
+        (update-planet))))
 
 (defn update-planets [bodies]
   (fn [planets] (mapv #(update-temp % bodies) planets)))

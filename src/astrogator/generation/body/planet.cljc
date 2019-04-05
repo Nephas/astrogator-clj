@@ -8,28 +8,30 @@
             [astrogator.physics.move.orbit :as orb]
             [astrogator.generation.expandable :as exp]
             [astrogator.physics.move.rotate :as rot]
-            [astrogator.poetry.names :as n]))
+            [astrogator.poetry.names :as n]
+            [astrogator.physics.thermal.climate :as c]))
 
-;TODO move planetary generation pars to planet
-(defrecord Planet [mass radius seed name rhill orbit rotation mappos color circumbinary]
+(defrecord Planet [mass radius seed name rhill orbit climate rotation mappos color circumbinary]
   orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   rot/Rot (rotate [this dt] (rot/rotate this dt))
   exp/Seed (expand [this]
              (do (log/info "extracting planet: " (:seed this))
                  (r/set-seed! (:seed this))
-                 (let [base-temp (:temp this)
-                       base-flux (:flux this)
-                       circumbinary false
-                       water-amount (r/uniform 0.05 0.95)]
+                 (let [circumbinary false
+                       {flux    :flux
+                        climate :climate
+                        rhill   :rhill
+                        mass    :mass} this]
                    (-> this
-                       (assoc :descriptors (surf/get-descriptors water-amount base-temp base-flux circumbinary))
-                       (assoc :surface (surf/cellular-map 16 0.45 4 8 0.2 water-amount base-temp))
-                       (assoc :moons (l/generate-moon-system (:mass this) (* 0.1 (:rhill this)) (:rhill this))))))))
+                       (assoc :descriptors (surf/get-descriptors climate flux circumbinary))
+                       (assoc :surface (surf/cellular-map 16 0.45 4 8 0.2))
+                       (assoc :moons (l/generate-moon-system mass (* 0.1 rhill) rhill)))))))
 
 (defn generate-planet [parent-mass seed orbit-radius circumbinary]
   (let [mass (r/planetary-imf)
         radius (a/planet-radius mass :Me)
         orbit (orb/circular-orbit parent-mass [orbit-radius nil])
+        climate (c/climate 0 (r/uniform 0.05 0.95))
         rotation (rot/rotation (+ (r/uniform) (r/poisson 2)))
         rhill (a/hill-sphere orbit-radius (unit/conv mass :Me :Msol) parent-mass)
         color {:rock    [(r/uniform 0.0 0.25) 0.6 0.6]
@@ -37,4 +39,4 @@
                :glacier [(r/uniform 0.5 0.75) 0.2 0.8]}
         mappos [0 0]
         name (n/generate-name seed (r/rand-n 5 7))]
-    (->Planet mass radius seed name rhill orbit rotation mappos color circumbinary)))
+    (->Planet mass radius seed name rhill orbit climate rotation mappos color circumbinary)))

@@ -2,7 +2,8 @@
   (:require [astrogator.util.util :as u]
             [astrogator.generation.body.tilemap :as m]
             [astrogator.util.rand :as r]
-            [astrogator.poetry.haiku :as h]            ))
+            [astrogator.poetry.haiku :as h]
+            [astrogator.physics.thermal.climate :as c]))
 
 (defn evolve-tile [tile tile-map update-key update-procedure]
   (let [pos (:pos tile)
@@ -48,49 +49,18 @@
 (defn noisify-height [tile-map scatter]
   (u/update-values tile-map noise-evolve-tile scatter))
 
-(defn adjusted-water-amount [base-temp water-amount]
-  "-exp(x - 373) + 1"
-  (let [boiling-temp 373
-        evaporation (- 1.0 (Math/exp (* 0.05 (- base-temp boiling-temp))))]
-    (max 0 (* evaporation water-amount))))
-
-(defn init-oceans [tile-map sea-level]
-  (let [update-ocean (fn [tile] (assoc-in tile [:ocean] (< (:height tile) sea-level)))]
-    (u/update-values tile-map update-ocean)))
-
-(defn calculate-temperature [tile sea-level base-temp]
-  (let [ocean-depth (if (:ocean tile) (- sea-level (:height tile)) 0)
-        height (if (:ocean tile) sea-level (:height tile))
-        elevation-term (* 80 (- 0.5 (:elevation tile)))
-        height-term (* 40 (- height 0.5))
-        ocean-term (* 20 ocean-depth)]
-    (max 0 (+ base-temp ocean-term height-term elevation-term))))
-
-(defn init-temperature [tile-map sea-level base-temp]
-  (u/update-values tile-map #(assoc-in % [:temperature] (calculate-temperature % sea-level base-temp))))
-
-(defn init-glaciers [tile-map water-amount]
-  (let [freeze-temp 273
-        adjusted-freeze-temp (* water-amount freeze-temp)
-        glacier? (fn [tile] (or (and (:ocean tile) (< (:temperature tile) freeze-temp))
-                                (< (:temperature tile) adjusted-freeze-temp)))]
-    (u/update-values tile-map #(assoc-in % [:glacier] (glacier? %)))))
-
-(defn cellular-map [size shape-prob shape-steps height-steps noise-range water-amount base-temp]
-  (let [init-map (m/init-map (m/init-tiles size))
-        sea-level (adjusted-water-amount base-temp water-amount)]
+(defn cellular-map [size shape-prob shape-steps height-steps noise-range]
+  (let [init-map (m/init-map (m/init-tiles size))]
     (-> init-map
         (init-seeds shape-prob)
         (smooth-shapes shape-steps)
         (init-height)
         (smooth-height height-steps)
-        (noisify-height noise-range)
-        (init-oceans sea-level)
-        (init-temperature sea-level base-temp)
-        (init-glaciers water-amount))))
+        (noisify-height noise-range))))
 
-(defn get-descriptors [water-amount base-temp base-flux circumbinary]
-  (let [sea-level (adjusted-water-amount base-temp water-amount)
+(defn get-descriptors [climate base-flux circumbinary]
+  (let [{base-temp    :base-temp
+         sea-level    :sea-level} climate
         frozen (< base-temp 223)
         molten (> base-temp 473)
         dark (< base-flux 10)
@@ -105,6 +75,5 @@
                                (if frozen :frozen) (if molten :molten)
                                (if wet :wet) (if dry :dry)
                                ]))]
-    {:sea-level sea-level
-     :tags      tags
-     :poem      (h/generate-haiku tags)}))
+    {:tags tags
+     :poem (h/generate-haiku tags)}))

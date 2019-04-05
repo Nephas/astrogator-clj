@@ -1,4 +1,4 @@
-(ns astrogator.physics.radiation
+(ns astrogator.physics.thermal.radiation
   (:require [astrogator.util.math :as m]
             [astrogator.util.selectors :as s]
             [astrogator.physics.trafo :as t]))
