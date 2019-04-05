@@ -7,6 +7,14 @@
     [astrogator.physics.astro :as a]
     [astrogator.util.util :as u]))
 
+(defn update-convection [tile time]
+  (assoc-in tile [:temp] (+ (* 0.25 (Math/sin (+ time (:seed tile)))) 1)))
+
+(defn update-star [star time]
+  (if (some? (:surface star))
+    (update-in star [:surface] u/update-values update-convection time)
+    star))
+
 (defn update-surface [planet]
   (if (some? (:surface planet))
     (let [climate (:climate planet)]
@@ -25,15 +33,17 @@
         (update-surface))))
 
 (defn update-system
-  ([system bodies]
+  ([system time bodies]
    (if (some? (system :system))
      (-> system
-         (update-in [:compA] update-system bodies)
-         (update-in [:compB] update-system bodies)
+         (update-in [:compA] update-system time bodies)
+         (update-in [:compB] update-system time bodies)
          (u/update-all :planets update-planet bodies))
      (-> system
-         (u/update-all :planets update-planet bodies)))))
+         (u/update-all :planets update-planet bodies)
+         (update-in [:body] update-star time)))))
 
 (defn update-thermal [state]
-  (let [bodies (s/get-bodies (get-in state [:universe :refsystem]))]
-    (update-in state [:universe :refsystem] update-system bodies)))
+  (let [time (get-in state [:time :day])
+        bodies (s/get-bodies (get-in state [:universe :refsystem]))]
+    (update-in state [:universe :refsystem] update-system time bodies)))

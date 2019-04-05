@@ -1,7 +1,7 @@
 (ns astrogator.render.sector
   (:require [astrogator.physics.trafo :as t]
             [astrogator.render.geometry :as geo]
-            [astrogator.render.body :as b]
+            [astrogator.render.body.body :as b]
             [astrogator.gui.camera :as c]
             [astrogator.util.selectors :as s]))
 

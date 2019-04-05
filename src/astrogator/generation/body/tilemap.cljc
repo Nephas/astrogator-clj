@@ -2,17 +2,24 @@
   (:require [astrogator.util.hex :as h]
             [astrogator.physics.trafo :as t]))
 
-(defrecord Tile [pos seed view elevation height temperature ocean glacier pressure])
+(defrecord StarTile [pos seed view elevation temp])
 
-(defn empty-tile [pos radius]
+(defrecord PlanetTile [pos seed view elevation height temp ocean glacier])
+
+(defn star-tile [pos radius]
   (let [elevation (float (- 1 (/ (h/cube-dist pos [0 0 0]) radius)))
         view (< (int (t/dist [0 0] (h/cube-to-cart pos))) radius)]
-    (->Tile pos false view elevation 0 0 false false 0)))
+    (->StarTile pos false view elevation 0)))
 
-(defn init-tiles [radius]
+(defn planet-tile [pos radius]
+  (let [elevation (float (- 1 (/ (h/cube-dist pos [0 0 0]) radius)))
+        view (< (int (t/dist [0 0] (h/cube-to-cart pos))) radius)]
+    (->PlanetTile pos false view elevation 0 0 false false)))
+
+(defn init-tiles [tile-constructor radius]
   (let [radius-range (range (- radius) (inc radius))
         positions (map (fn [x] (map (fn [y] [x y (- (+ x y))]) radius-range)) radius-range)]
-    (map (fn [pos] (empty-tile pos radius))
+    (map (fn [pos] (tile-constructor pos radius))
          (filter #(< (h/cube-dist % [0 0 0]) radius) (apply concat positions)))))
 
 (defn init-map [tile-list]

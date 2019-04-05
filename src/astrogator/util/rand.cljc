@@ -15,6 +15,10 @@
   ([x1 x2] (let [diff (- x1 x2)]
              (+ x2 (uniform diff)))))
 
+(defn phase
+  "Return a uniform value between 0 and 2 PI"
+  [] (uniform (* 2 Math/PI)))
+
 (defn rand-n
   "Returns a random integer between 0 (inclusive) and n (exclusive).
   Works like clojure.core/rand except it uses the seed specified in

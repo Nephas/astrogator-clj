@@ -20,7 +20,7 @@
         ocean-term (* 20 ocean-depth)
         elevation-term (* 80 (- 0.5 elevation))
         height-term (* 40 (- (if ocean sea-level height) 0.5))]
-    (assoc tile :temperature (max 0 (+ base-temp ocean-term height-term elevation-term)))))
+    (assoc tile :temp (max 0 (+ base-temp ocean-term height-term elevation-term)))))
 
 (defn update-ocean [tile sea-level]
   (assoc tile :ocean (< (:height tile) sea-level)))
@@ -28,8 +28,8 @@
 (defn update-glacier [tile water-amount]
   (let [ocean-freeze 273
         land-freeze (* water-amount 273)]
-    (assoc tile :glacier (or (and (:ocean tile) (< (:temperature tile) ocean-freeze))
-                             (< (:temperature tile) land-freeze)))))
+    (assoc tile :glacier (or (and (:ocean tile) (< (:temp tile) ocean-freeze))
+                             (< (:temp tile) land-freeze)))))
 
 (defn update-tile [tile climate]
   (let [{water-amount :water-amount

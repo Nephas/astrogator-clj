@@ -39,6 +39,7 @@
      (-> system
          (assoc-in [:body :cylpos] cylpos)
          (assoc-in [:body :mappos] mappos)
+         (update-in [:body] rot/rotate dt)
          (move-children dt mappos))))
   ([system dt] (let [moved-system (move-system system dt [0 0] [0 0])]
                  (u/update-all moved-system :ships s/move-ship dt moved-system))))

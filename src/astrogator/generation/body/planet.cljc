@@ -24,7 +24,7 @@
                         mass    :mass} this]
                    (-> this
                        (assoc :descriptors (surf/get-descriptors climate flux circumbinary))
-                       (assoc :surface (surf/cellular-map 16 0.45 4 8 0.2))
+                       (assoc :surface (surf/planet-map 16 0.45 4 8 0.2))
                        (assoc :moons (l/generate-moon-system mass (* 0.1 rhill) rhill)))))))
 
 (defn generate-planet [parent-mass seed orbit-radius circumbinary]

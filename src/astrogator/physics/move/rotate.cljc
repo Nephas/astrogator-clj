@@ -7,7 +7,7 @@
 
 (defn rotation
   ([angle angvel] (->Rotation angle angvel))
-  ([angvel] (rotation (r/uniform (* 2 Math/PI)) angvel)))
+  ([angvel] (rotation (r/phase) angvel)))
 
 (defn rotate [body dt]
   (let [{angle  :angle

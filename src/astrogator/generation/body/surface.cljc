@@ -49,8 +49,8 @@
 (defn noisify-height [tile-map scatter]
   (u/update-values tile-map noise-evolve-tile scatter))
 
-(defn cellular-map [size shape-prob shape-steps height-steps noise-range]
-  (let [init-map (m/init-map (m/init-tiles size))]
+(defn planet-map [size shape-prob shape-steps height-steps noise-range]
+  (let [init-map (m/init-map (m/init-tiles m/planet-tile size))]
     (-> init-map
         (init-seeds shape-prob)
         (smooth-shapes shape-steps)
