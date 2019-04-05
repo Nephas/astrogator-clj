@@ -15,9 +15,8 @@
         (doall (map wedge (list 0 (rad (/ 2 3)) (rad (/ 4 3))))))))
 
 (defn true-colors [tile colors]
-  (let [height (:height tile)
-        temp (:temperature tile)
-        ice (:glacier tile)
+  (let [{height :height
+         ice    :glacier} tile
         land (not (:ocean tile))
         ice-color (assoc (colors :glacier) 2 (+ 0.8 height))
         land-color (assoc (colors :rock) 2 (+ 0.25 height))

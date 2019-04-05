@@ -1,5 +1,4 @@
-(ns astrogator.physics.thermal.climate
-  (:require [astrogator.util.util :as u]))
+(ns astrogator.physics.thermal.climate)
 
 (defrecord Climate [water-amount sea-level base-temp season-temp])
 
@@ -14,32 +13,32 @@
     (->Climate water-amount sea-level base-temp base-temp)))
 
 (defn calculate-temperature [tile sea-level base-temp]
-  (let [ocean-depth (if (:ocean tile) (- sea-level (:height tile)) 0)
-        height (if (:ocean tile) sea-level (:height tile))
-        elevation-term (* 80 (- 0.5 (:elevation tile)))
-        height-term (* 40 (- height 0.5))
-        ocean-term (* 20 ocean-depth)]
-    (max 0 (+ base-temp ocean-term height-term elevation-term))))
+  (let [{ocean     :ocean
+         height    :height
+         elevation :elevation} tile
+        ocean-depth (if ocean (- sea-level height) 0)
+        ocean-term (* 20 ocean-depth)
+        elevation-term (* 80 (- 0.5 elevation))
+        height-term (* 40 (- (if ocean sea-level height) 0.5))]
+    (assoc tile :temperature (max 0 (+ base-temp ocean-term height-term elevation-term)))))
 
-(defn init-oceans [tile-map sea-level]
-  (let [update-ocean (fn [tile] (assoc-in tile [:ocean] (< (:height tile) sea-level)))]
-    (u/update-values tile-map update-ocean)))
+(defn update-ocean [tile sea-level]
+  (assoc tile :ocean (< (:height tile) sea-level)))
 
-(defn init-temperature [tile-map sea-level base-temp]
-  (u/update-values tile-map #(assoc-in % [:temperature] (calculate-temperature % sea-level base-temp))))
+(defn update-glacier [tile water-amount]
+  (let [ocean-freeze 273
+        land-freeze (* water-amount 273)]
+    (assoc tile :glacier (or (and (:ocean tile) (< (:temperature tile) ocean-freeze))
+                             (< (:temperature tile) land-freeze)))))
 
-(defn init-glaciers [tile-map water-amount]
-  (let [freeze-temp 273
-        adjusted-freeze-temp (* water-amount freeze-temp)
-        glacier? (fn [tile] (or (and (:ocean tile) (< (:temperature tile) freeze-temp))
-                                (< (:temperature tile) adjusted-freeze-temp)))]
-    (u/update-values tile-map #(assoc-in % [:glacier] (glacier? %)))))
-
-(defn update-surface [tile-map climate]
-  (-> tile-map
-      (init-oceans (:sea-level climate))
-      (init-temperature (:sea-level climate) (:season-temp climate))
-      (init-glaciers (:water-amount climate))))
+(defn update-tile [tile climate]
+  (let [{water-amount :water-amount
+         base-temp    :season-temp
+         sea-level    :sea-level} climate]
+    (-> tile
+        (calculate-temperature sea-level base-temp)
+        (update-ocean sea-level)
+        (update-glacier water-amount))))
 
 (defn update-climate [climate base-temp angle]
   (let [water-amount (:water-amount climate)
