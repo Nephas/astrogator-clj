@@ -5,7 +5,8 @@
             [astrogator.util.log :as log]
             [astrogator.physics.move.orbit :as o]
             [astrogator.physics.move.transit :as t]
-            [quil.core :as q]))
+            [quil.core :as q]
+            [astrogator.init :as i]))
 
 (def coded-keys {32 :space
                  8  :back
@@ -19,6 +20,7 @@
         (if (m/has-messages state)
           (if (= key :space) (m/pop-message state) state)
           (case key
+            (:r) (i/init-universe)
             (:up) (update state :camera #(c/zoom % :in))
             (:down) (update state :camera #(c/zoom % :out))
             (:left) (update-in state [:time :dps] #(* 0.5 %))
@@ -27,12 +29,8 @@
             (:1) (assoc-in state [:camera :map-mode] :physical)
             (:2) (assoc-in state [:camera :map-mode] :heat)
             (:3) (assoc-in state [:camera :map-mode] :height)
-            (:r) (assoc-in state [:universe :reset] true)
             (:w) (update-in state (conj s/playership-path :throttle) #(min 1 (+ % 0.1)))
             (:s) (update-in state (conj s/playership-path :throttle) #(max 0 (- % 0.1)))
             (:m) (assoc-in state (conj s/playership-path :mapvel) ((s/get-targetbody state) :mapvel))
             (:o) (update-in state s/playership-path #(o/toggle-orbit % (state :camera) (s/get-expanded-refsystem state)))
             state)))))
-
-(defn reset? [state]
-  (get-in state [:universe :reset]))

@@ -1,12 +1,12 @@
-(ns astrogator.state
+(ns astrogator.init
   (:require [astrogator.generation.sector :as gensec]
             [astrogator.gui.sector :as sec]
             [astrogator.physics.move.clock :as c]
             [astrogator.physics.move.system :as p]
             [astrogator.util.log :as log]
             [astrogator.render.render :as render]
-            [astrogator.render.gui.gui :as gui]
-            [astrogator.util.rand :as rand]))
+            [astrogator.util.rand :as rand]
+            [astrogator.global :as g]))
 
 (def start-messages ["You slowly drift back into con~scious~ness, cold metal and dark~ness enclo~sing you from all sides. The surging panic blocks any rea~sonable thought and you take an eternity to remem~ber..."
                      "...You're inside a Cryo-~Sarco~phague. Hastily you feel around for the emer~gency release, and bash open the door. You rip the tube-mask from your mouth and cough out a gush of coolant liquid. The drops collect into spheres slowly floa~ting away, lit only by the dim glow of Status LED's and emergency lights."
@@ -46,10 +46,10 @@
         (sec/change-refsystem refsystem)
         (p/move-universe))))
 
-(defn load-universe [store]
+(defn init-universe []
   (do (log/info "initialising state")
       (let [game-state (generate-universe init-state)]
         (do (log/info "caching renderings")
             (render/cache-all (game-state :universe) (game-state :camera))
             (log/info "setting state atom")
-            (reset! store game-state)))))
+            (reset! g/store game-state)))))

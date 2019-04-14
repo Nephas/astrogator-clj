@@ -7,7 +7,7 @@
             [astrogator.input.mouse :as mouse]
             [astrogator.gui.camera :as cam]
             [astrogator.gui.animation :as ani]
-            [astrogator.state :as s]
+            [astrogator.init :as i]
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal.thermal :as t]
             [astrogator.render.gui.gui :as gui]
@@ -21,7 +21,7 @@
       (q/color-mode :hsb 1.0 1.0 1.0 255)
       (q/ellipse-mode :radius)
       (q/no-stroke)
-      (s/load-universe g/store)))
+      (i/init-universe)))
 
 (defn update-state []
   (let [new-state (-> @g/store
@@ -31,9 +31,7 @@
                       (cam/update-camera)
                       (cam/update-playership)
                       (ani/update-animations))]
-    (if (key/reset? @g/store)
-      (s/load-universe g/store)
-      (reset! g/store new-state))))
+      (reset! g/store new-state)))
 
 (defn draw-state []
   (do (render/render-universe (@g/store :universe) (@g/store :camera))
