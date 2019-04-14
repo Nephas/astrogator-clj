@@ -14,18 +14,19 @@
 (defrecord Planet [mass radius seed name rhill orbit climate rotation mappos color circumbinary]
   orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   rot/Rot (rotate [this dt] (rot/rotate this dt))
-  exp/Seed (expand [this]
-             (do (log/info "extracting planet: " (:seed this))
-                 (r/set-seed! (:seed this))
-                 (let [circumbinary false
-                       {flux    :flux
-                        climate :climate
-                        rhill   :rhill
-                        mass    :mass} this]
-                   (-> this
-                       (assoc :descriptors (surf/get-descriptors climate flux circumbinary))
-                       (assoc :surface (surf/planet-map 16 0.45 4 8 0.2))
-                       (assoc :moons (l/generate-moon-system mass (* 0.1 rhill) rhill)))))))
+  exp/Seed (same? [this other] (exp/equal-by-seed this other))
+  (expand [this]
+    (do (log/info "extracting planet: " (:seed this))
+        (r/set-seed! (:seed this))
+        (let [circumbinary false
+              {flux    :flux
+               climate :climate
+               rhill   :rhill
+               mass    :mass} this]
+          (-> this
+              (assoc :descriptors (surf/get-descriptors climate flux circumbinary))
+              (assoc :surface (surf/planet-map 16 0.45 4 8 0.2))
+              (assoc :moons (l/generate-moon-system mass (* 0.1 rhill) rhill)))))))
 
 (defn generate-planet [parent-mass seed orbit-radius circumbinary]
   (let [mass (r/planetary-imf)

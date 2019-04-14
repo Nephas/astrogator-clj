@@ -24,8 +24,7 @@
   state)
 
 (defn render-binary-clock [state]
-  (let [
-        binarify #(fmt/f-str "~20,'0',B" %)
+  (let [binarify #(fmt/f-str "~20,'0',B" %)
         blockify (fn [bin-str] (us/join (map #(if (= \0 %) "= " "0 ") bin-str)))
         text (-> (get-in state [:time :day]) (int)
                  (binarify)
@@ -98,13 +97,6 @@
           (render-at-mappos state (t/midpoint targetpos shippos) text))))
   state)
 
-(defn render-haiku [state]
-  (when (= (s/get-refbody state) (s/get-player-orbit-body state))
-    (let [targetbody (s/get-targetbody state)
-          text (str (get-in targetbody [:descriptors :poem]))
-          textbox (tx/get-textbox-renderer (tx/framed-lines text 300) [20 20])]
-      (render-at-mappos state (:mappos targetbody) textbox))))
-
 (defn render-gui [state]
   (let [sector-gui #(-> %
                         (render-targetinfo s/get-targetsystem :sectorpos)
@@ -121,8 +113,7 @@
         body-gui #(-> %
                       (render-targetinfo s/get-targetbody :mappos)
                       (render-cursor s/get-targetbody :mappos)
-                      (render-diamond s/get-playership :body)
-                      (render-haiku))]
+                      (render-diamond s/get-playership :body))]
 
     (col/fill c/gui-secondary)
     (case (get-in state [:camera :scale])
@@ -133,5 +124,4 @@
     (render-clock state)
     (render-binary-clock state)
     (render-messages state)
-    (render-playerinfo state)
-    ))
+    (render-playerinfo state)))

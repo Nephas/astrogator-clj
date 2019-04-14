@@ -41,5 +41,5 @@
         second-line (r/rand-coll (filter #(contradicts? % tags) l/second-lines))
         tags (distinct (concat tags (:tags second-line)))
         third-line (r/rand-coll (filter #(contradicts? % tags) l/third-lines))]
-    (string/join (map #(interpolate-variations (:text %))
-                      [first-line second-line third-line]) "\n")))
+    (into [] (map #(interpolate-variations (:text %))
+         [first-line second-line third-line]))))

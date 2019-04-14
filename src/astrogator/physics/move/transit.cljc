@@ -59,36 +59,21 @@
         (assoc-in [ai-mode :parvel] new-parvel)
         (assoc-in [:mappos] (t/add origin-mappos mappos-progress)))))
 
-(defn start-interstellar [ship camera sector]
-  (let [target (s/get-system-by-seed sector (:targetsystem camera))
-        origin (s/get-system-by-seed sector (:refsystem camera))
-        dist (t/dist (:sectorpos target)
+(defn start-interstellar [ship target origin]
+  (let [dist (t/dist (:sectorpos target)
                      (:sectorpos origin))
         targetpos (t/sub (:sectorpos target) (:sectorpos origin))]
-    (if (not= target origin)
-      (do (log/info "ship on interstellar trajectory to: " (:seed target))
-          (-> ship
-              (assoc-in [:orbit] nil)
-              (assoc-in [:ai-mode] :interstellar)
-              (assoc-in [:interstellar] (brachistochrone 0.01 dist [0 0] targetpos))
-              (assoc-in [:interstellar :targetseed] (:targetsystem camera))))
-      ship)))
+    (-> ship
+        (assoc-in [:orbit] nil)
+        (assoc-in [:ai-mode] :interstellar)
+        (assoc-in [:interstellar] (brachistochrone 0.01 dist (:mappos ship) targetpos))
+        (assoc-in [:interstellar :targetseed] (:seed target)))))
 
-(defn start-interplanetary [ship camera system]
-  (let [target-path (:targetbody camera)
-        origin-path (get-in ship [:orbit :parent])
+(defn start-interplanetary [ship target-path origin-path]
+  (let [system (s/get-expanded-refsystem)
         dist (t/dist (get-in system (conj origin-path :mappos))
                      (get-in system (conj target-path :mappos)))]
-    (if (not= target-path origin-path)
-      (do (log/info "ship on interplanetary trajectory to: " target-path)
-          (-> ship
-              (assoc-in [:orbit] nil)
-              (assoc-in [:ai-mode] :interplanetary)
-              (assoc-in [:interplanetary] (brachistochrone 0.01 dist origin-path target-path))))
-      ship)))
-
-(defn start-transit [ship camera]
-  (let [system (s/get-expanded-refsystem)
-        sector (s/get-sector)]
-    (cond (= :sector (:scale camera)) (start-interstellar ship camera sector)
-          true (start-interplanetary ship camera system))))
+    (-> ship
+        (assoc-in [:orbit] nil)
+        (assoc-in [:ai-mode] :interplanetary)
+        (assoc-in [:interplanetary] (brachistochrone 0.01 dist origin-path target-path)))))

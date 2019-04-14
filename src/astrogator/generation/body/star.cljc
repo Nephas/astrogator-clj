@@ -14,13 +14,14 @@
 (defrecord Star [mass radius rhill rotation luminosity temp class color name]
   orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   rot/Rot (rotate [this dt] (rot/rotate this dt))
-  exp/Seed (expand [this]
-             (do (log/info "extracting star: " (:name this))
-                 (let [phase-seed (fn [tile] (assoc tile :seed (r/phase)))
-                       tile-map (m/init-tiles m/star-tile 32)]
-                   (assoc this :surface (-> tile-map
-                                            (m/init-map)
-                                            (u/update-values phase-seed)))))))
+  exp/Seed (same? [this other] (exp/equal-by-seed this other))
+  (expand [this]
+    (do (log/info "extracting star: " (:name this))
+        (let [phase-seed (fn [tile] (assoc tile :seed (r/phase)))
+              tile-map (m/init-tiles m/star-tile 32)]
+          (assoc this :surface (-> tile-map
+                                   (m/init-map)
+                                   (u/update-values phase-seed)))))))
 
 (defn generate-star [mass max-sc-orbit planets?]
   (let [radius (a/mass-radius mass)

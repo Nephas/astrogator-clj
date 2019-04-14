@@ -13,3 +13,6 @@
 
 (defn pop-message [state]
   (update-in state [:message :window] pop))
+
+(defn push-message [state msg]
+  (update-in state [:message :window] conj msg))

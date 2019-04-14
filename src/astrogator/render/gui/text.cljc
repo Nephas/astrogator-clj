@@ -2,7 +2,6 @@
   (:require [astrogator.util.color :as col]
             [quil.core :as q]
             [astrogator.render.conf :as r]
-            [astrogator.util.string.string :as string]
             [clojure.string :as s]))
 
 (defn get-border [symbol width]

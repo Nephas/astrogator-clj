@@ -7,7 +7,8 @@
             [astrogator.util.rand :as r]))
 
 (defrecord DistantSystem [sectorpos seed mass luminosity color magnitude name]
-  exp/Seed (expand [this]
+  exp/Seed (same? [this other] (exp/equal-by-seed this other))
+  (expand [this]
              (do (log/info "extracting system: " (:seed this))
                  (let [system (sys/generate-system (:mass this) (:seed this) true)]
                    (-> system

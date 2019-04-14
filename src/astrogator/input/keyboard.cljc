@@ -4,9 +4,9 @@
             [astrogator.state.selectors :as s]
             [astrogator.util.log :as log]
             [astrogator.physics.move.orbit :as o]
-            [astrogator.physics.move.transit :as t]
             [quil.core :as q]
-            [astrogator.state.init :as i]))
+            [astrogator.state.init :as i]
+            [astrogator.input.actions :as a]))
 
 (def coded-keys {32 :space
                  8  :back
@@ -25,7 +25,9 @@
             (:down) (update state :camera #(c/zoom % :out))
             (:left) (update-in state [:time :dps] #(* 0.5 %))
             (:right) (update-in state [:time :dps] #(* 2 %))
-            (:space) (update-in state s/playership-path t/start-transit (state :camera))
+            (:space) (a/transit state)
+            (:e) (a/explore state)
+            (:f) (a/focus-ship state)
             (:1) (assoc-in state [:camera :map-mode] :physical)
             (:2) (assoc-in state [:camera :map-mode] :heat)
             (:3) (assoc-in state [:camera :map-mode] :height)

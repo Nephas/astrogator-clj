@@ -5,9 +5,10 @@
 
 (def planet? #(and (contains? % :seed) (not (star? %))))
 
-(defn get-system-by-seed [state|sector seed]
-  (let [systems (if (seq? state|sector) state|sector (get-in state|sector [:universe :sector]))]
-    (first (filter #(= seed (:seed %)) systems))))
+(defn get-system-by-seed
+  ([state seed] (let [systems (get-in state [:universe :sector])]
+                  (first (filter #(= seed (:seed %)) systems))))
+  ([seed] (get-system-by-seed @g/store seed)))
 
 (defn get-expanded-refsystem
   ([state] (get-in state [:universe :refsystem]))
@@ -46,7 +47,7 @@
 (defn get-player-orbit-body [state]
   (let [path (get-in (get-playership state) [:orbit :parent])
         system (get-expanded-refsystem state)]
-    (get-body-by-path path system)))
+    (assoc (get-body-by-path path system) :path path)))
 
 (defn get-bodies [system]
   (if (nil? (system :body))
