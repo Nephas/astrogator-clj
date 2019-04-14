@@ -39,8 +39,7 @@
         (-> ship
             (assoc-in [:ai-mode] :orbit)
             (assoc-in [:orbit] orbit)
-            (assoc-in [:interplanetary] nil)
-            (assoc-in [:interstellar] nil)))))
+            (assoc-in [:transit] nil)))))
 
 (defn leave-orbit [ship]
   (-> ship

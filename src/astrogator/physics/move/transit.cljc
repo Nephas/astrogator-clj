@@ -26,21 +26,22 @@
       (o/place-in-orbit ship target-path (get-in system target-path)))))
 
 (defn move-interstellar [ship dt system]
-  (let [{par        :par
-         origin     :origin
-         target     :target
-         targetseed :targetseed
-         parlength  :parlength} (:interstellar ship)]
-    (cond (< par (* 0.5 parlength)) (transit-move ship dt origin target)
+  (let [{par         :par
+         origin-seed :origin
+         target-seed :target
+         parlength   :parlength} (:interstellar ship)
+        target (s/get-system-by-seed target-seed)
+        origin (s/get-system-by-seed origin-seed)
+        targetpos (t/sub (:sectorpos target) (:sectorpos origin))
+        originpos [0 0]]
+    (cond (< par (* 0.5 parlength)) (transit-move ship dt originpos targetpos)
           (> par (* 1 parlength)) (let [targetplanet (sel/get-closest-planet system [0 0])]
                                     (-> ship
                                         (o/place-in-orbit (:path targetplanet) targetplanet)
                                         (dissoc :swapsystem)))
           true (if (false? (:swapsystem ship))
-                 (transit-move ship dt origin target)
-                 (-> ship (assoc :swapsystem targetseed)
-                     (assoc-in [:interstellar :origin] (t/neg target))
-                     (assoc-in [:interstellar :target] [0 0]))))))
+                 (transit-move ship dt (t/neg targetpos) [0 0])
+                 (assoc ship :swapsystem target-seed)))))
 
 (defn move-on-trajectory [ship dt origin-mappos target-mappos]
   (let [ai-mode (:ai-mode ship)
@@ -59,15 +60,15 @@
         (assoc-in [ai-mode :parvel] new-parvel)
         (assoc-in [:mappos] (t/add origin-mappos mappos-progress)))))
 
-(defn start-interstellar [ship target origin]
-  (let [dist (t/dist (:sectorpos target)
-                     (:sectorpos origin))
-        targetpos (t/sub (:sectorpos target) (:sectorpos origin))]
+(defn start-interstellar [ship target-seed origin-seed]
+  (let [target (s/get-system-by-seed target-seed)
+        origin (s/get-system-by-seed origin-seed)
+        dist (t/dist (:sectorpos target)
+                     (:sectorpos origin))]
     (-> ship
         (assoc-in [:orbit] nil)
         (assoc-in [:ai-mode] :interstellar)
-        (assoc-in [:interstellar] (brachistochrone 0.01 dist (:mappos ship) targetpos))
-        (assoc-in [:interstellar :targetseed] (:seed target)))))
+        (assoc-in [:interstellar] (brachistochrone 0.01 dist origin-seed target-seed)))))
 
 (defn start-interplanetary [ship target-path origin-path]
   (let [system (s/get-expanded-refsystem)

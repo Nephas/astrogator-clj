@@ -20,6 +20,8 @@
       (cam/change-refbody state orbit-body)
       state)))
 
+
+
 (defn start-transit [state injector target origin]
   (if (= target origin) state
                         (do (log/info "ship on transit to: " target)
@@ -29,8 +31,8 @@
   (let [camera (:camera state)
         interstellar? (= :sector (:scale camera))]
     (if interstellar?
-      (let [target (s/get-system-by-seed (:targetsystem camera))
-            origin (s/get-system-by-seed (:refsystem camera))]
+      (let [target (:targetsystem camera)
+            origin (:refsystem camera)]
         (start-transit state t/start-interstellar target origin))
       (let [target (:targetbody camera)
             origin (get-in (s/get-playership state) [:orbit :parent])]
