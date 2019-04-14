@@ -7,7 +7,8 @@
             [astrogator.physics.move.ship :as s]
             [astrogator.physics.move.rotate :as rot]
             [astrogator.util.log :as log]
-            [astrogator.gui.camera :as cam]))
+            [astrogator.gui.camera :as cam]
+            [astrogator.generation.expandable :as exp]))
 
 (defn move-planet [planet dt parent-mappos]
   (let [moved-planet (-> planet
@@ -52,14 +53,13 @@
 
 (defn swap-refsystem [state]
   (let [ship (sel/get-playership state)
-        targetseed (:swapsystem ship)
-        originseed (:seed (sel/get-refsystem state))]
-    (if (or (nil? targetseed)
-            (false? targetseed)) state
-                                 (do (log/info "transitioning from system " originseed " to " targetseed)
-                                     (-> state
-                                         (assoc-in (conj sel/playership-path :swapsystem) false)
-                                         (change-refsystem (sel/get-system-by-seed state targetseed)))))))
+        refsystem (sel/get-refsystem state)
+        targetsystem (sel/get-system-by-seed state (:swapsystem ship))
+        swap? (not (or (nil? targetsystem)
+                       (exp/same? refsystem targetsystem)))]
+    (if swap? (do (log/info "transitioning from system " (:seed refsystem) " to " (:seed targetsystem))
+                  (change-refsystem state targetsystem))
+              state)))
 
 (defn move-universe [state]
   (let [dt (float (/ (get-in state [:time :dps]) conf/frame-rate))]

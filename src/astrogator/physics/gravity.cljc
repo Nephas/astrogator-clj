@@ -13,7 +13,7 @@
 (defn gravacc-at-pos "pos [AU]" [pos system]
   (let [stars (s/get-bodies system)
         planets (map planet-to-body (s/get-all system :planets))
-        inv-dist #(/ 1 (+ 1e-10 (m/expt (t/dist %1 %2) 3)))
+        inv-dist #(/ 1 (+ 1e-10 (m/expt (t/v-dist %1 %2) 3)))
         body-acc (fn [body] (let [bodypos (:mappos body)]
                               (t/scalar (* astro/G (:mass body) (inv-dist pos bodypos))
                                         (t/sub bodypos pos))))]

@@ -1,6 +1,8 @@
 (ns astrogator.physics.trafo
-  (:require [astrogator.conf :as c]
-            [astrogator.util.env :as env]))
+  (:require [astrogator.util.env :as env]))
+
+(defprotocol Distance
+  (dist [this other] "Euclidian distance between two similar objects"))
 
 (defn pol-to-cart
   ([r phi] [(* r (Math/cos phi))
@@ -32,7 +34,7 @@
 (defn normalize [v]
   (scalar (inv (norm v)) v))
 
-(defn dist [v1 v2]
+(defn v-dist [v1 v2]
   (let [dv (sub v1 v2)]
     (norm dv)))
 

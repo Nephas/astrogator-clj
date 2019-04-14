@@ -9,9 +9,11 @@
             [astrogator.generation.expandable :as exp]
             [astrogator.physics.move.rotate :as rot]
             [astrogator.poetry.names :as n]
-            [astrogator.physics.thermal.climate :as c]))
+            [astrogator.physics.thermal.climate :as c]
+            [astrogator.physics.trafo :as trafo]))
 
 (defrecord Planet [mass radius seed name rhill orbit climate rotation mappos color circumbinary]
+  trafo/Distance (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
   orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   rot/Rot (rotate [this dt] (rot/rotate this dt))
   exp/Seed (same? [this other] (exp/equal-by-seed this other))

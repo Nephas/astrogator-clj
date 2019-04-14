@@ -8,12 +8,12 @@
 
 (defn star-tile [pos radius]
   (let [elevation (float (- 1 (/ (h/cube-dist pos [0 0 0]) radius)))
-        view (< (int (t/dist [0 0] (h/cube-to-cart pos))) radius)]
+        view (< (int (t/v-dist [0 0] (h/cube-to-cart pos))) radius)]
     (->StarTile pos false view elevation 0)))
 
 (defn planet-tile [pos radius]
   (let [elevation (float (- 1 (/ (h/cube-dist pos [0 0 0]) radius)))
-        view (< (int (t/dist [0 0] (h/cube-to-cart pos))) radius)]
+        view (< (int (t/v-dist [0 0] (h/cube-to-cart pos))) radius)]
     (->PlanetTile pos false view elevation 0 0 false false)))
 
 (defn init-tiles [tile-constructor radius]

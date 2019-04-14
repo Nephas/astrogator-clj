@@ -2,7 +2,7 @@
   (:require [astrogator.physics.trafo :as t]))
 
 (defn get-closest-system [sector mappos]
-  (apply min-key #(t/dist mappos (:sectorpos %)) sector))
+  (apply min-key #(t/v-dist mappos (:sectorpos %)) sector))
 
 (defn get-planets-with-path [planets base-path]
   (let [indices (range (count planets))]
@@ -27,7 +27,7 @@
 
 (defn get-closest-planet-or-star
   ([system mappos cutoff]
-   (let [get-dist #(t/dist mappos (:mappos %))
+   (let [get-dist #(t/v-dist mappos (:mappos %))
          planets (recur-planets-with-path system)
          stars (recur-stars-with-path system)]
      (apply min-key #(:priority %)
@@ -37,9 +37,9 @@
    (get-closest-planet-or-star system mappos 0)))
 
 (defn get-closest-planet [system mappos]
-  (apply min-key #(t/dist mappos (:mappos %))
+  (apply min-key #(t/v-dist mappos (:mappos %))
          (recur-planets-with-path system)))
 
 (defn get-closest-star [system mappos]
-  (apply min-key #(t/dist mappos (:mappos %))
+  (apply min-key #(t/v-dist mappos (:mappos %))
          (recur-stars-with-path system)))

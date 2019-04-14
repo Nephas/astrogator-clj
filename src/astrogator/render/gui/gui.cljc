@@ -81,7 +81,7 @@
              (not= (s/get-targetbody state) (s/get-player-orbit-body state)))
     (let [targetpos (:mappos (s/get-targetbody state))
           shippos (:mappos (s/get-playership state))
-          dist (t/dist targetpos shippos)
+          dist (t/v-dist targetpos shippos)
           text (tx/get-textbox-renderer (str (string/fmt-generic dist) " AU"))]
       (do (e/map-line targetpos shippos (:camera state))
           (render-at-mappos state (t/midpoint targetpos shippos) text))))
@@ -91,7 +91,7 @@
   (when (some? (s/get-targetsystem state))
     (let [targetpos (:sectorpos (s/get-targetsystem state))
           shippos (sec/get-playership-sectorpos state)
-          dist (u/conv (t/dist targetpos shippos) :AU :pc)
+          dist (u/conv (t/v-dist targetpos shippos) :AU :pc)
           text (tx/get-textbox-renderer (str (string/fmt-generic dist) " pc"))]
       (do (e/map-line targetpos shippos (:camera state))
           (render-at-mappos state (t/midpoint targetpos shippos) text))))

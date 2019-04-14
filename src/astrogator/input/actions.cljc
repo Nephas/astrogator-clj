@@ -5,6 +5,7 @@
             [astrogator.gui.message :as m]
             [astrogator.gui.camera :as cam]
             [astrogator.physics.move.transit :as t]
+            [astrogator.physics.trafo :as trafo]
             [astrogator.util.log :as log]))
 
 (defn explore [state]
@@ -20,20 +21,31 @@
       (cam/change-refbody state orbit-body)
       state)))
 
-
-
-(defn start-transit [state injector target origin]
+(defn start-transit [state target origin dist scope]
   (if (= target origin) state
-                        (do (log/info "ship on transit to: " target)
-                            (update-in state s/playership-path injector target origin))))
+                        (let [transit (t/brachistochrone 0.01 dist origin target scope)]
+                          (do (log/info "ship on transit to: " target)
+                              (-> state
+                                  (m/push-message (scope m/transit-msg))
+                                  (update-in s/playership-path #(-> %
+                                                                    (assoc-in [:orbit] nil)
+                                                                    (assoc-in [:ai-mode] scope)
+                                                                    (assoc-in [:transit] transit))))))))
 
 (defn transit [state]
   (let [camera (:camera state)
         interstellar? (= :sector (:scale camera))]
     (if interstellar?
-      (let [target (:targetsystem camera)
-            origin (:refsystem camera)]
-        (start-transit state t/start-interstellar target origin))
-      (let [target (:targetbody camera)
-            origin (get-in (s/get-playership state) [:orbit :parent])]
-        (start-transit state t/start-interplanetary target origin)))))
+      (let [target-seed (:targetsystem camera)
+            origin-seed (:refsystem camera)
+            target (s/get-system-by-seed target-seed)
+            origin (s/get-system-by-seed origin-seed)
+            dist (trafo/dist target origin)]
+        (start-transit state target-seed origin-seed dist :interstellar))
+      (let [target-path (:targetbody camera)
+            origin-path (get-in (s/get-playership state) [:orbit :parent])
+            system (s/get-expanded-refsystem state)
+            origin (get-in system origin-path)
+            target (get-in system target-path)
+            dist (trafo/dist origin target)]
+        (start-transit state target-path origin-path dist :interplanetary)))))

@@ -9,9 +9,11 @@
             [astrogator.generation.expandable :as exp]
             [astrogator.util.log :as log]
             [astrogator.util.util :as u]
-            [astrogator.physics.move.rotate :as rot]))
+            [astrogator.physics.move.rotate :as rot]
+            [astrogator.physics.trafo :as trafo]))
 
 (defrecord Star [mass radius rhill rotation luminosity temp class color name]
+  trafo/Distance (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
   orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   rot/Rot (rotate [this dt] (rot/rotate this dt))
   exp/Seed (same? [this other] (exp/equal-by-seed this other))

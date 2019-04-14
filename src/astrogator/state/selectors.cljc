@@ -26,8 +26,9 @@
   ([state] (get-system-by-seed state (get-in state [:camera :refsystem])))
   ([] (get-refsystem @g/store)))
 
-(defn get-body-by-path [path refsystem]
-  (if (nil? path) nil (get-in refsystem path)))
+(defn get-body-by-path
+  ([path refsystem] (if (nil? path) nil (get-in refsystem path)))
+  ([path] (get-body-by-path (get-expanded-refsystem) path)))
 
 (defn get-refbody
   ([camera refsystem]

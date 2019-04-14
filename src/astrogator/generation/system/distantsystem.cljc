@@ -4,9 +4,11 @@
             [astrogator.util.log :as log]
             [astrogator.physics.astro :as a]
             [astrogator.poetry.names :as n]
-            [astrogator.util.rand :as r]))
+            [astrogator.util.rand :as r]
+            [astrogator.physics.trafo :as trafo]))
 
 (defrecord DistantSystem [sectorpos seed mass luminosity color magnitude name]
+  trafo/Distance (dist [this other] (trafo/v-dist (:sectorpos this) (:sectorpos other)))
   exp/Seed (same? [this other] (exp/equal-by-seed this other))
   (expand [this]
              (do (log/info "extracting system: " (:seed this))
