@@ -9,21 +9,19 @@
             [astrogator.gui.camera :as cam]
             [astrogator.gui.animation :as ani]
             [astrogator.state :as s]
+            [astrogator.global :as g]
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal.thermal :as t]
             [astrogator.render.gui.gui :as gui]))
 
-(def store (atom s/init-state))
-(def screen (atom nil))
-
 (defn setup []
-  (do (reset! screen (q/current-graphics))
+  (do (reset! g/screen (q/current-graphics))
       (q/frame-rate c/frame-rate)
       (q/text-font (q/create-font "src/data/conthrax.ttf" 14 true))
       (q/color-mode :hsb 1.0 1.0 1.0 255)
       (q/ellipse-mode :radius)
       (q/no-stroke)
-      (s/load-universe store screen)))
+      (s/load-universe g/store)))
 
 (defn update-state [state]
   (let [new-state (-> state
@@ -33,8 +31,8 @@
                       (cam/update-camera)
                       (ani/update-animations))]
     (if (key/reset? state)
-      (s/load-universe store screen)
-      (reset! store new-state))))
+      (s/load-universe g/store)
+      (reset! g/store new-state))))
 
 (defn draw-state [state]
   (do (render/render-universe (state :universe) (state :camera))

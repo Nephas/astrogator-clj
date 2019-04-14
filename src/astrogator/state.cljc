@@ -8,6 +8,10 @@
             [astrogator.render.gui.gui :as gui]
             [astrogator.util.rand :as rand]))
 
+(def start-messages ["You slowly drift back into con~scious~ness, cold metal and dark~ness enclo~sing you from all sides. The surging panic blocks any rea~sonable thought and you take an eternity to remem~ber..."
+                     "...You're inside a Cryo-~Sarco~phague. Hastily you feel around for the emer~gency release, and bash open the door. You rip the tube-mask from your mouth and cough out a gush of coolant liquid. The drops collect into spheres slowly floa~ting away, lit only by the dim glow of Status LED's and emergency lights."
+                     "As your memo~ries slowly return, and your brain settles into a more ratio~nal state, you care~fully make your way to the Nav-Com~puter..."])
+
 (def init-state
   {:universe  {:reset     false
                :refsystem nil
@@ -25,6 +29,8 @@
                :targetbody   nil
                :refsystem    nil
                :targetsystem nil}
+   :message   {:window (into [] (reverse start-messages))
+               :log    []}
    :animation {:target 0
                :load   5}
    :time      nil})
@@ -40,9 +46,8 @@
         (sec/change-refsystem refsystem)
         (p/move-universe))))
 
-(defn load-universe [store screen]
-  (do (gui/loading-screen screen)
-      (log/info "initialising state")
+(defn load-universe [store]
+  (do (log/info "initialising state")
       (let [game-state (generate-universe init-state)]
         (do (log/info "caching renderings")
             (render/cache-all (game-state :universe) (game-state :camera))

@@ -1,9 +1,11 @@
 (ns astrogator.util.log
-  (:require [astrogator.conf :as c]))
+  (:require [astrogator.conf :as c]
+            [astrogator.global :as g]))
 
 (defn log-cl [lvl msg]
   (if c/log-cl
     (do (println (str "[" lvl "]") msg)
+        (swap! g/log conj msg)
         msg)))
 
 (defn debug [msg & msgs]

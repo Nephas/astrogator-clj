@@ -10,40 +10,38 @@
             [astrogator.state :as s]
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal.thermal :as t]
-            [astrogator.render.gui.gui :as gui]))
-
-(def store (atom s/init-state))
-(def screen (atom nil))
+            [astrogator.render.gui.gui :as gui]
+            [astrogator.global :as g]))
 
 (defn setup []
-  (do (reset! screen (q/current-graphics))
+  (do (reset! g/screen (q/current-graphics))
       (q/frame-rate c/frame-rate)
       (enable-console-print!)
       (q/text-font (q/create-font "Ubuntu Light" 14 true))
       (q/color-mode :hsb 1.0 1.0 1.0 255)
       (q/ellipse-mode :radius)
       (q/no-stroke)
-      (s/load-universe store screen)))
+      (s/load-universe g/store)))
 
 (defn update-state []
-  (let [new-state (-> @store
+  (let [new-state (-> @g/store
                       (p/swap-refsystem)
                       (p/move-universe)
                       (t/update-thermal)
                       (cam/update-camera)
                       (cam/update-playership)
                       (ani/update-animations))]
-    (if (key/reset? @store)
-      (s/load-universe store screen)
-      (reset! store new-state))))
+    (if (key/reset? @g/store)
+      (s/load-universe g/store)
+      (reset! g/store new-state))))
 
 (defn draw-state []
-  (do (render/render-universe (@store :universe) (@store :camera))
-      (gui/render-gui @store)))
+  (do (render/render-universe (@g/store :universe) (@g/store :camera))
+      (gui/render-gui @g/store)))
 
 (defn handler [handle]
   (fn [state event]
-    (reset! store (handle state event))))
+    (reset! g/store (handle state event))))
 
 (q/defsketch -main
              :title "Astrogator"

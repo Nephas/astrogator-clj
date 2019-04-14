@@ -11,27 +11,43 @@
             [astrogator.render.gui.table :as tab]
             [astrogator.util.string.string :as string]
             [astrogator.physics.units :as u]
-            [astrogator.render.sector :as sec]))
+            [astrogator.render.sector :as sec]
+            [astrogator.gui.message :as m]
+            [astrogator.render.conf :as conf]))
 
 (defn render-at-mappos [state mappos renderer]
   (if (some? mappos) (let [pos (t/map-to-screen mappos (state :camera))]
                        (q/with-translation pos (renderer)))))
-
-(defn loading-screen
-  ([screen] (q/with-graphics @screen (do (q/background 0 0 0)
-                                         (q/text "Loading" 100 100))))
-  ([number screen] (q/text (str "Loading " (apply str (repeat number ". "))) 100 100)))
 
 (defn render-clock [state]
   (tab/render-framed-keymap (state :time) [(:left c/margin) (:top c/margin)])
   state)
 
 (defn render-binary-clock [state]
-  (let [text (us/join (let [blockify #(if (= \0 %) "= " "0 ")
-                            day (get-in state [:time :day])]
-                        (map blockify (fmt/f-str "~20,'0',B" (int day)))))]
-    (q/with-translation [(* 0.66 (q/width)) (:top c/margin)]
+  (let [
+        binarify #(fmt/f-str "~20,'0',B" %)
+        blockify (fn [bin-str] (us/join (map #(if (= \0 %) "= " "0 ") bin-str)))
+        text (-> (get-in state [:time :day]) (int)
+                 (binarify)
+                 (blockify))
+        offset (* 0.5 (q/text-width (blockify (binarify 0))))]
+    (q/with-translation [(- (* 0.5 (q/width)) offset) (:top c/margin)]
                         ((tx/get-textbox-renderer text)))))
+
+(defn render-messages [state]
+  (when (m/has-messages state)
+    (col/fill conf/gui-back)
+    (q/no-stroke)
+    (let [width (* 0.33 (q/width))
+          lines (-> (m/current-message state)
+                    (tx/wrap-by-syllable width)
+                    (concat (m/message-footer state))
+                    (tx/framed-lines width))
+          height (count lines)
+          text (string/join lines "\n")]
+      (q/with-translation [(* 0.33 (q/width)) (* 0.33 (q/height))]
+                          (q/rect 0 0 (* 0.33 (q/width)) (* height 1.12 (+ (q/text-ascent) (q/text-descent))))
+                          ((tx/get-textbox-renderer text))))))
 
 (defn render-playerinfo [state]
   (tab/render-framed-keymap (s/get-playership state) [(:left c/margin) (* (/ 2 3) (q/height))])
@@ -86,14 +102,8 @@
   (when (= (s/get-refbody state) (s/get-player-orbit-body state))
     (let [targetbody (s/get-targetbody state)
           text (str (get-in targetbody [:descriptors :poem]))
-          textbox (tx/get-textbox-renderer (tx/framed-lines text 20) [20 20])]
+          textbox (tx/get-textbox-renderer (tx/framed-lines text 300) [20 20])]
       (render-at-mappos state (:mappos targetbody) textbox))))
-
-(defn render-message-box [state]
-  ((tx/get-textbox-renderer (tx/wrapped-text "askfjflksajflkjsalkjflksajfk" 5)
-                            [(* 0.33 (q/width)) (* 0.33 (q/height))]
-                            [(* 0.33 (q/width)) (* 0.33 (q/height))]))
-  state)
 
 (defn render-gui [state]
   (let [sector-gui #(-> %
@@ -115,11 +125,13 @@
                       (render-haiku))]
 
     (col/fill c/gui-secondary)
-    (render-clock state)
-    (render-binary-clock state)
-    (render-playerinfo state)
     (case (get-in state [:camera :scale])
       :body (body-gui state)
       :subsystem (system-gui state)
       :system (system-gui state)
-      :sector (sector-gui state))))
+      :sector (sector-gui state))
+    (render-clock state)
+    (render-binary-clock state)
+    (render-messages state)
+    (render-playerinfo state)
+    ))

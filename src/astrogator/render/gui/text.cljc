@@ -2,11 +2,19 @@
   (:require [astrogator.util.color :as col]
             [quil.core :as q]
             [astrogator.render.conf :as r]
-            [astrogator.util.string.string :as string]))
+            [astrogator.util.string.string :as string]
+            [clojure.string :as s]))
+
+(defn get-border [symbol width]
+  (loop [border symbol]
+    (let [new-border (str border " " symbol)]
+      (if (< (q/text-width new-border) width)
+        (recur new-border)
+        border))))
 
 (defn framed-lines
-  ([wrapped-text width] (let [border (str (apply str (repeat width "= ")))]
-                          (string/join [border wrapped-text border] "\n"))))
+  ([lines width] (let [border (get-border "-" width)]
+                          (concat [border] lines [border]))))
 
 (defn get-textbox-renderer
   ([text [x1 y1] [x2 y2]] (fn [] (do (col/fill r/gui-secondary 255)
@@ -15,13 +23,24 @@
                            (q/text text x y))))
   ([text] (get-textbox-renderer text [0 0])))
 
-(defn wrap-lines [text length]
-  (loop [remaining-text text
-         lines []]
-    (if (< (count remaining-text) length)
-      (conj lines remaining-text)
-      (recur (subs remaining-text length)
-             (conj lines (subs remaining-text 0 length))))))
+(defn wrap-by-word [text width]
+  (let [words (s/split text #" ")
+        append #(s/trim (str %1 " " %2))
+        append-to-last (fn [lines word] (let [index (dec (count lines))]
+                                          (update lines index append word)))]
+    (loop [remaining-words words
+           lines []]
+      (if (empty? remaining-words) lines
+                                   (let [word (first remaining-words)]
+                                     (recur (rest remaining-words)
+                                            (if (< (q/text-width (append (last lines) word)) width)
+                                              (if (empty? lines) [word]
+                                                                 (append-to-last lines word))
+                                              (conj lines word))))))))
 
-(defn wrapped-text [text length]
-  (string/join (wrap-lines text length) "\n"))
+(defn wrap-by-syllable [text width]
+  (let [spaced-text (s/replace text #"~" "~ ")]
+    (->> (wrap-by-word spaced-text width)
+         (map #(s/replace % #"~ " ""))
+         (map #(s/replace % #"~" "-"))
+         (into []))))
