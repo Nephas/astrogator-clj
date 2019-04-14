@@ -1,7 +1,7 @@
 (ns astrogator.physics.gravity
   (:require
     [astrogator.physics.trafo :as t]
-    [astrogator.util.selectors :as s]
+    [astrogator.state.selectors :as s]
     [astrogator.util.math :as m]
     [astrogator.physics.astro :as astro]
     [astrogator.physics.units :as u]))

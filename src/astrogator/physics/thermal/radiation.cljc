@@ -1,6 +1,6 @@
 (ns astrogator.physics.thermal.radiation
   (:require [astrogator.util.math :as m]
-            [astrogator.util.selectors :as s]
+            [astrogator.state.selectors :as s]
             [astrogator.physics.trafo :as t]))
 
 (defn flux-strength-at-pos "[Lsol/AU2]" [pos bodies]

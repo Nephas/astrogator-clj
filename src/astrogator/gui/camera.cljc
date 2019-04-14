@@ -2,7 +2,7 @@
   (:require [quil.core :as q]
             [astrogator.physics.trafo :as t]
             [astrogator.util.log :as log]
-            [astrogator.util.selectors :as s]
+            [astrogator.state.selectors :as s]
             [astrogator.render.conf :as conf]
             [astrogator.generation.expandable :as exp]))
 

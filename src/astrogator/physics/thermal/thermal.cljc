@@ -3,7 +3,7 @@
     [astrogator.physics.thermal.radiation :as r]
     [astrogator.physics.thermal.climate :as c]
     [astrogator.physics.units :as unit]
-    [astrogator.util.selectors :as s]
+    [astrogator.state.selectors :as s]
     [astrogator.physics.astro :as a]
     [astrogator.util.util :as u]))
 

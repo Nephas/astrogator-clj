@@ -3,7 +3,7 @@
             [astrogator.physics.move.orbit :as o]
             [astrogator.physics.move.clock :as c]
             [astrogator.util.util :as u]
-            [astrogator.util.selectors :as sel]
+            [astrogator.state.selectors :as sel]
             [astrogator.physics.move.ship :as s]
             [astrogator.physics.move.rotate :as rot]
             [astrogator.gui.sector :as sec]

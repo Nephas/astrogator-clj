@@ -1,6 +1,6 @@
 (ns astrogator.physics.move.orbit
   (:require [astrogator.physics.trafo :as t]
-            [astrogator.util.selectors :as s]
+            [astrogator.state.selectors :as s]
             [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
             [astrogator.util.log :as log]))
@@ -47,8 +47,9 @@
       (assoc-in [:ai-mode] nil)
       (assoc-in [:orbit] nil)))
 
-(defn toggle-orbit [ship camera system]
-  (let [targetbody (s/get-targetbody camera system)
+(defn toggle-orbit [ship camera]
+  (let [system (s/get-expanded-refsystem)
+        targetbody (s/get-targetbody camera system)
         in-soi? (< (t/dist (:mappos ship) (:mappos targetbody)) (:rhill targetbody))]
     (if (and (not (= :orbit (:ai-mode ship))) in-soi?)
       (place-in-orbit ship (camera :targetbody) targetbody)

@@ -1,4 +1,4 @@
-(ns astrogator.global)
+(ns astrogator.state.global)
 
 (def log (atom []))
 (def store (atom nil))

@@ -7,11 +7,11 @@
             [astrogator.input.mouse :as mouse]
             [astrogator.gui.camera :as cam]
             [astrogator.gui.animation :as ani]
-            [astrogator.init :as i]
+            [astrogator.state.init :as i]
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal.thermal :as t]
             [astrogator.render.gui.gui :as gui]
-            [astrogator.global :as g]))
+            [astrogator.state.global :as g]))
 
 (defn setup []
   (do (reset! g/screen (q/current-graphics))

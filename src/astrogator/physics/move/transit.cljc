@@ -3,7 +3,7 @@
             [astrogator.physics.move.orbit :as o]
             [astrogator.util.log :as log]
             [astrogator.physics.units :as u]
-            [astrogator.util.selectors :as s]
+            [astrogator.state.selectors :as s]
             [astrogator.gui.system :as sys]))
 
 (defprotocol Transit
@@ -87,6 +87,8 @@
               (assoc-in [:interplanetary] (brachistochrone 0.01 dist origin-path target-path))))
       ship)))
 
-(defn start-transit [ship camera system sector]
-  (cond (= :sector (:scale camera)) (start-interstellar ship camera sector)
-        true (start-interplanetary ship camera system)))
+(defn start-transit [ship camera]
+  (let [system (s/get-expanded-refsystem)
+        sector (s/get-sector)]
+    (cond (= :sector (:scale camera)) (start-interstellar ship camera sector)
+          true (start-interplanetary ship camera system))))

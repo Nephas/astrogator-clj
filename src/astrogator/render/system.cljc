@@ -3,7 +3,7 @@
             [astrogator.render.body.body :as b]
             [astrogator.render.field :as f]
             [astrogator.physics.trafo :as t]
-            [astrogator.util.selectors :as s]
+            [astrogator.state.selectors :as s]
             [quil.core :as q]
             [astrogator.util.color :as col]
             [astrogator.render.conf :as conf]

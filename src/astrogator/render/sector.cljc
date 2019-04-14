@@ -3,7 +3,7 @@
             [astrogator.render.geometry :as geo]
             [astrogator.render.body.body :as b]
             [astrogator.gui.camera :as c]
-            [astrogator.util.selectors :as s]))
+            [astrogator.state.selectors :as s]))
 
 (defn get-playership-sectorpos [state]
   (t/add (:mappos (s/get-playership state)) (:sectorpos (s/get-refsystem state))))

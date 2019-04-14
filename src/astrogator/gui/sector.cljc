@@ -3,7 +3,7 @@
             [astrogator.util.log :as log]
             [astrogator.generation.expandable :as exp]
             [astrogator.generation.player :as pl]
-            [astrogator.util.selectors :as s]))
+            [astrogator.state.selectors :as s]))
 
 (defn get-closest-system [sector mappos]
   (apply min-key #(t/dist mappos (:sectorpos %)) sector))

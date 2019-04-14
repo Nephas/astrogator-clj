@@ -1,4 +1,5 @@
-(ns astrogator.util.selectors)
+(ns astrogator.state.selectors
+  (:require [astrogator.state.global :as g]))
 
 (def star? #(contains? % :luminosity))
 
@@ -8,17 +9,21 @@
   (let [systems (if (seq? state|sector) state|sector (get-in state|sector [:universe :sector]))]
     (first (filter #(= seed (:seed %)) systems))))
 
-(defn get-expanded-refsystem [state]
-  (get-in state [:universe :refsystem]))
+(defn get-expanded-refsystem
+  ([state] (get-in state [:universe :refsystem]))
+  ([] (get-expanded-refsystem @g/store)))
 
-(defn get-sector [state]
-  (get-in state [:universe :sector]))
+(defn get-sector
+  ([state] (get-in state [:universe :sector]))
+  ([] (get-sector @g/store)))
 
 (defn get-targetsystem
-  ([state] (get-system-by-seed state (get-in state [:camera :targetsystem]))))
+  ([state] (get-system-by-seed state (get-in state [:camera :targetsystem])))
+  ([] (get-targetsystem @g/store)))
 
 (defn get-refsystem
-  ([state] (get-system-by-seed state (get-in state [:camera :refsystem]))))
+  ([state] (get-system-by-seed state (get-in state [:camera :refsystem])))
+  ([] (get-refsystem @g/store)))
 
 (defn get-body-by-path [path refsystem]
   (if (nil? path) nil (get-in refsystem path)))

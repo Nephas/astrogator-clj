@@ -1,6 +1,6 @@
 (ns astrogator.util.log
   (:require [astrogator.conf :as c]
-            [astrogator.global :as g]))
+            [astrogator.state.global :as g]))
 
 (defn log-cl [lvl msg]
   (if c/log-cl

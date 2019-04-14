@@ -8,8 +8,8 @@
             [astrogator.input.mouse :as mouse]
             [astrogator.gui.camera :as cam]
             [astrogator.gui.animation :as ani]
-            [astrogator.init :as i]
-            [astrogator.global :as g]
+            [astrogator.state.init :as i]
+            [astrogator.state.global :as g]
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal.thermal :as t]
             [astrogator.render.gui.gui :as gui]))

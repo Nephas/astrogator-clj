@@ -1,5 +1,5 @@
 (ns astrogator.render.gui.gui
-  (:require [astrogator.util.selectors :as s]
+  (:require [astrogator.state.selectors :as s]
             [astrogator.util.color :as col]
             [quil.core :as q]
             [astrogator.physics.trafo :as t]
