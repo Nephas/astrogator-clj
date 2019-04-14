@@ -1,5 +1,8 @@
-(ns astrogator.gui.system
+(ns astrogator.gui.selectors
   (:require [astrogator.physics.trafo :as t]))
+
+(defn get-closest-system [sector mappos]
+  (apply min-key #(t/dist mappos (:sectorpos %)) sector))
 
 (defn get-planets-with-path [planets base-path]
   (let [indices (range (count planets))]

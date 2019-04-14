@@ -1,12 +1,13 @@
 (ns astrogator.state.init
   (:require [astrogator.generation.sector :as gensec]
-            [astrogator.gui.sector :as sec]
             [astrogator.physics.move.clock :as c]
             [astrogator.physics.move.system :as p]
             [astrogator.util.log :as log]
             [astrogator.render.render :as render]
             [astrogator.util.rand :as rand]
-            [astrogator.state.global :as g]))
+            [astrogator.state.global :as g]
+            [astrogator.gui.camera :as cam]
+            [astrogator.generation.player :as pl]))
 
 (def start-messages ["You slowly drift back into con~scious~ness, cold metal and dark~ness enclo~sing you from all sides. The surging panic blocks any rea~sonable thought and you take an eternity to remem~ber..."
                      "...You're inside a Cryo-~Sarco~phague. Hastily you feel around for the emer~gency release, and bash open the door. You rip the tube-mask from your mouth and cough out a gush of coolant liquid. The drops collect into spheres slowly floa~ting away, lit only by the dim glow of Status LED's and emergency lights."
@@ -43,7 +44,8 @@
         (assoc-in [:universe :sector] sector)
         (assoc-in [:universe :clouds] clouds)
         (assoc :time (c/clock))
-        (sec/change-refsystem refsystem)
+        (cam/change-refsystem refsystem)
+        (pl/init-playership)
         (p/move-universe))))
 
 (defn init-universe []

@@ -29,7 +29,6 @@
                       (p/move-universe)
                       (t/update-thermal)
                       (cam/update-camera)
-                      (cam/update-playership)
                       (ani/update-animations))]
       (reset! g/store new-state)))
 

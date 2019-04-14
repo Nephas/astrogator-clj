@@ -6,6 +6,20 @@
             [astrogator.render.conf :as conf]
             [astrogator.generation.expandable :as exp]))
 
+(defn change-refsystem [state distantsystem]
+  (log/info "changing focus: " (:seed distantsystem))
+  (-> state
+      (assoc-in [:camera :sectorpos] (t/neg (:sectorpos distantsystem)))
+      (assoc-in [:camera :refbody] nil)
+      (assoc-in [:camera :refsystem] (:seed distantsystem))
+      (assoc-in [:universe :refsystem] (exp/expand-if-possible distantsystem))))
+
+(defn change-targetsystem [state distantsystem]
+  (log/info "setting targetsystem: " (:seed distantsystem))
+  (-> state
+      (assoc-in [:camera :targetsystem] (:seed distantsystem))
+      (assoc-in [:animation :target] 0)))
+
 (defn change-refbody [state body]
   (let [full-path (into [] (concat [:universe :refsystem] (:path body)))]
     (log/info "changing focus: " full-path)
@@ -23,15 +37,6 @@
   (let [refbody (s/get-refbody state)
         refpos (get-in refbody [:mappos] [0 0])]
     (assoc-in state [:camera :mappos] (t/neg refpos))))
-
-(defn update-playership [state]
-  (if (nil? (s/get-playership state))
-    state
-    (let [shippos (:mappos (s/get-playership state))
-          mousepos (get-in state [:camera :mouse :mappos])
-          diff (t/sub mousepos shippos)
-          pointing (+ (* 0.5 Math/PI) (- ((t/cart-to-pol diff) 1)))]
-      (assoc-in state (conj s/playership-path :pointing) pointing))))
 
 (defn get-scale [camera]
   (let [scale-before (camera :scale)

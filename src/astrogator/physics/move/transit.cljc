@@ -4,7 +4,7 @@
             [astrogator.util.log :as log]
             [astrogator.physics.units :as u]
             [astrogator.state.selectors :as s]
-            [astrogator.gui.system :as sys]))
+            [astrogator.gui.selectors :as sel]))
 
 (defprotocol Transit
   (transit-move [this dt origin-mappos target-mappos]))
@@ -32,7 +32,7 @@
          targetseed :targetseed
          parlength  :parlength} (:interstellar ship)]
     (cond (< par (* 0.5 parlength)) (transit-move ship dt origin target)
-          (> par (* 1 parlength)) (let [targetplanet (sys/get-closest-planet system [0 0])]
+          (> par (* 1 parlength)) (let [targetplanet (sel/get-closest-planet system [0 0])]
                                     (-> ship
                                         (o/place-in-orbit (:path targetplanet) targetplanet)
                                         (dissoc :swapsystem)))

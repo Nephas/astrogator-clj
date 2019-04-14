@@ -1,8 +1,7 @@
 (ns astrogator.input.mouse
   (:require [astrogator.physics.trafo :as t]
-            [astrogator.gui.sector :as sec]
             [astrogator.gui.camera :as cam]
-            [astrogator.gui.system :as sys]
+            [astrogator.gui.selectors :as sel]
             [astrogator.util.log :as log]))
 
 (declare handle-click handle-left handle-right)
@@ -23,18 +22,18 @@
     (do (log/info threshold)
         (case (camera :scale)
           :sector state
-          :system (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos threshold))
-          :subsystem (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos threshold))
-          :body (cam/change-refbody state (sys/get-closest-planet-or-star refsystem mappos))))))
+          :system (cam/change-refbody state (sel/get-closest-planet-or-star refsystem mappos threshold))
+          :subsystem (cam/change-refbody state (sel/get-closest-planet-or-star refsystem mappos threshold))
+          :body (cam/change-refbody state (sel/get-closest-planet-or-star refsystem mappos))))))
 
 (defn handle-left [state screenpos camera]
   (let [mappos (t/screen-to-map screenpos camera)
         refsystem (get-in state [:universe :refsystem])]
     (case (camera :scale)
-      :sector (sec/change-targetsystem state (sec/get-closest-system (get-in state [:universe :sector]) mappos))
-      :system (cam/change-targetbody state (sys/get-closest-planet-or-star refsystem mappos))
-      :subsystem (cam/change-targetbody state (sys/get-closest-planet-or-star refsystem mappos))
-      :body (cam/change-targetbody state (sys/get-closest-planet-or-star refsystem mappos)))))
+      :sector (cam/change-targetsystem state (sel/get-closest-system (get-in state [:universe :sector]) mappos))
+      :system (cam/change-targetbody state (sel/get-closest-planet-or-star refsystem mappos))
+      :subsystem (cam/change-targetbody state (sel/get-closest-planet-or-star refsystem mappos))
+      :body (cam/change-targetbody state (sel/get-closest-planet-or-star refsystem mappos)))))
 
 (defn accumulate-zoom [camera event]
   (let [acc-zoom (+ (:acc-zoom camera) event)
