@@ -45,7 +45,7 @@
         (pl/init-playership)
         (p/move-universe))))
 
-(defn init-universe []
+(defn init-universe [_]
   (do (log/info "initialising state")
       (let [game-state (generate-universe init-state)]
         (do (log/info "caching renderings")

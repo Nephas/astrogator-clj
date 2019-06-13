@@ -1,12 +1,8 @@
 (ns astrogator.input.keyboard
-  (:require [astrogator.gui.camera :as c]
-            [astrogator.gui.message :as m]
-            [astrogator.state.selectors :as s]
+  (:require [astrogator.gui.message :as m]
             [astrogator.util.log :as log]
-            [astrogator.physics.move.orbit :as o]
             [quil.core :as q]
-            [astrogator.state.init :as i]
-            [astrogator.input.actions :as a]))
+            [astrogator.input.keymap :as am]))
 
 (def coded-keys {32 :space
                  8  :back
@@ -19,17 +15,7 @@
     (do (log/debug "keypress: " (q/key-code) " - " (:key event))
         (if (m/has-messages state)
           (if (= key :space) (m/pop-message state) state)
-          (case key
-            (:r) (i/init-universe)
-            (:up) (update state :camera #(c/zoom % :in))
-            (:down) (update state :camera #(c/zoom % :out))
-            (:left) (update-in state [:time :dps] #(* 0.5 %))
-            (:right) (update-in state [:time :dps] #(* 2 %))
-            (:space) (a/transit state)
-            (:e) (a/explore state)
-            (:f) (a/focus-ship state)
-            (:1) (assoc-in state [:camera :map-mode] :physical)
-            (:2) (assoc-in state [:camera :map-mode] :heat)
-            (:3) (assoc-in state [:camera :map-mode] :height)
-            (:o) (update-in state s/playership-path o/toggle-orbit (state :camera))
-            state)))))
+          (let [action (get-in am/action-map [key :action])]
+            (if (some? action)
+              (action state)
+              state))))))

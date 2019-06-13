@@ -35,17 +35,19 @@
 (defn transit [state]
   (let [camera (:camera state)
         interstellar? (= :sector (:scale camera))]
-    (if interstellar?
-      (let [target-seed (:targetsystem camera)
-            origin-seed (:refsystem camera)
-            target (s/get-system-by-seed target-seed)
-            origin (s/get-system-by-seed origin-seed)
-            dist (trafo/dist target origin)]
-        (start-transit state target-seed origin-seed dist :interstellar))
-      (let [target-path (:targetbody camera)
-            origin-path (get-in (s/get-playership state) [:orbit :parent])
-            system (s/get-expanded-refsystem state)
-            origin (get-in system origin-path)
-            target (get-in system target-path)
-            dist (trafo/dist origin target)]
-        (start-transit state target-path origin-path dist :interplanetary)))))
+    (cond (and interstellar? (some? (:targetsystem camera)))
+          (let [target-seed (:targetsystem camera)
+                origin-seed (:refsystem camera)
+                target (s/get-system-by-seed target-seed)
+                origin (s/get-system-by-seed origin-seed)
+                dist (trafo/dist target origin)]
+            (start-transit state target-seed origin-seed dist :interstellar))
+          (and (not interstellar?) (some? (:targetbody camera)))
+          (let [target-path (:targetbody camera)
+                origin-path (get-in (s/get-playership state) [:orbit :parent])
+                system (s/get-expanded-refsystem state)
+                origin (get-in system origin-path)
+                target (get-in system target-path)
+                dist (trafo/dist origin target)]
+            (start-transit state target-path origin-path dist :interplanetary))
+          true state)))

@@ -21,7 +21,7 @@
       (q/color-mode :hsb 1.0 1.0 1.0 255)
       (q/ellipse-mode :radius)
       (q/no-stroke)
-      (i/init-universe)))
+      (i/init-universe nil)))
 
 (defn update-state [state]
   (let [new-state (-> state
