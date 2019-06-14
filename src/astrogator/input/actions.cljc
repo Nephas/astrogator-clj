@@ -21,9 +21,9 @@
       (cam/change-refbody state orbit-body)
       state)))
 
-(defn start-transit [state target origin dist scope]
+(defn start-transit [state target origin offset dist scope]
   (if (= target origin) state
-                        (let [transit (t/brachistochrone 0.01 dist origin target scope)]
+                        (let [transit (t/brachistochrone 0.01 dist origin target offset scope)]
                           (do (log/info "ship on transit to: " target)
                               (-> state
                                   (m/push-message (scope m/transit-msg))
@@ -34,20 +34,23 @@
 
 (defn transit [state]
   (let [camera (:camera state)
+        ship (s/get-playership state)
         interstellar? (= :sector (:scale camera))]
     (cond (and interstellar? (some? (:targetsystem camera)))
           (let [target-seed (:targetsystem camera)
                 origin-seed (:refsystem camera)
                 target (s/get-system-by-seed target-seed)
                 origin (s/get-system-by-seed origin-seed)
+                offset (:mappos ship)
                 dist (trafo/dist target origin)]
-            (start-transit state target-seed origin-seed dist :interstellar))
+            (start-transit state target-seed origin-seed offset dist :interstellar))
           (and (not interstellar?) (some? (:targetbody camera)))
           (let [target-path (:targetbody camera)
                 origin-path (get-in (s/get-playership state) [:orbit :parent])
                 system (s/get-expanded-refsystem state)
                 origin (get-in system origin-path)
                 target (get-in system target-path)
+                offset (trafo/sub (:mappos ship) (:mappos origin))
                 dist (trafo/dist origin target)]
-            (start-transit state target-path origin-path dist :interplanetary))
+            (start-transit state target-path origin-path offset dist :interplanetary))
           true state)))

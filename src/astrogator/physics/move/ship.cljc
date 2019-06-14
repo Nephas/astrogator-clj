@@ -13,7 +13,7 @@
 
 (defn acc-at-pos [mappos system]
   (let [gravacc (g/gravacc-at-pos mappos system)
-        shipacc (shipacc (get-in system [:ships 0]))]
+        shipacc [0 0]]
     (t/add gravacc shipacc)))
 
 (defn move-in-potential [body dt system]
@@ -27,6 +27,12 @@
         (assoc-in [:mapvel] mapvel)
         (assoc-in [:mappos] mappos))))
 
+(defn consume-deltav [ship dt] "in AU/d"
+  (let [deltav (* (t/norm (:mapacc ship)) dt)]
+    (cond (= :interplanetary (:ai-mode ship)) deltav
+          (= :interstellar (:ai-mode ship)) (* 0.01 deltav)
+          true 0)))
+
 (defn move-ship [ship dt system]
   (let [moved-ship (cond
                      (nil? (:ai-mode ship)) (move-in-potential ship dt system)
@@ -34,8 +40,14 @@
                      (some? (:transit ship)) (tr/transit-by-scope ship dt system)
                      true ship)
         mapvel (t/scalar (/ 1 dt) (t/sub (:mappos moved-ship) (:mappos ship)))
+        mapacc (t/scalar (/ 1 dt) (t/sub mapvel (:mapvel ship)))
+        consumed (u/conv (consume-deltav moved-ship dt) :AU/d :km/s)
+        out-of-fuel? (neg? (:deltav ship))
         beta (min 1 (u/conv (t/norm mapvel) :AU/d :c))]
     (-> moved-ship
         (assoc :mapvel mapvel)
+        (assoc :mapacc mapacc)
         (assoc :beta beta)
-        (update-in [:time] c/tick dt beta))))
+        (update :deltav - consumed)
+        (update :ai-mode (if out-of-fuel? (fn [_] nil) identity))
+        (update :time c/tick dt beta))))

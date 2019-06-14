@@ -6,45 +6,47 @@
             [astrogator.state.selectors :as s]
             [astrogator.gui.selectors :as sel]))
 
-(defprotocol Transit
-  (transit-move [this dt origin-mappos target-mappos]))
+(declare move-on-trajectory)
 
-(defrecord Trajectory [par parvel paracc parlength origin target scope])
+(defrecord Trajectory [par parvel paracc parlength origin target offset scope])
 
-(defn brachistochrone [g-acc length origin target scope]
-  (->Trajectory 0 0 (u/conv g-acc :g :AU/d2) length origin target scope))
+(defn brachistochrone [g-acc length origin target offset scope]
+  (->Trajectory 0 0 (u/conv g-acc :g :AU/d2) length origin target offset scope))
 
 (defn move-interplanetary [ship dt system]
   (let [{par         :par
          origin-path :origin
          target-path :target
+         offset      :offset
          parlength   :parlength} (:transit ship)
         origin (get-in system origin-path)
         target (get-in system target-path)]
     (if (< par parlength)
-      (transit-move ship dt (:mappos origin) (:mappos target))
+      (move-on-trajectory ship dt (:mappos origin) (:mappos target) offset)
       (o/place-in-orbit ship target-path))))
 
 (defn move-interstellar [ship dt system]
   (let [{par         :par
          origin-seed :origin
          target-seed :target
+         offset      :offset
          parlength   :parlength} (:transit ship)
         target (s/get-system-by-seed target-seed)
         origin (s/get-system-by-seed origin-seed)
         targetpos (t/sub (:sectorpos target) (:sectorpos origin))]
-    (cond (< par (* 0.5 parlength)) (transit-move ship dt [0 0] targetpos)
+    (cond (< par (* 0.5 parlength)) (move-on-trajectory ship dt [0 0] targetpos offset)
           (> par (* 1 parlength)) (let [targetplanet (sel/get-closest-planet system [0 0])]
                                     (o/place-in-orbit ship (:path targetplanet)))
           true (-> ship
-                   (transit-move dt (t/neg targetpos) [0 0])
+                   (move-on-trajectory dt (t/neg targetpos) [0 0] offset)
                    (assoc :swapsystem target-seed)))))
 
-(defn move-on-trajectory [ship dt origin-mappos target-mappos]
+(defn move-on-trajectory [ship dt origin-mappos target-mappos offset]
   (let [{par       :par
          parvel    :parvel
          paracc    :paracc
          parlength :parlength} (:transit ship)
+        origin-mappos (t/add origin-mappos offset)
         new-parvel (if (< par (* 0.5 parlength))
                      (+ parvel (* dt paracc))
                      (- parvel (* dt paracc)))
