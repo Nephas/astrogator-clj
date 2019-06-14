@@ -13,7 +13,9 @@
             [astrogator.physics.units :as u]
             [astrogator.render.sector :as sec]
             [astrogator.gui.message :as m]
-            [astrogator.render.conf :as conf]))
+            [astrogator.render.conf :as conf]
+            [astrogator.util.log :as log]
+            [clojure.string :as str]))
 
 (defn render-at-mappos [state mappos renderer]
   (if (some? mappos) (let [pos (t/map-to-screen mappos (state :camera))]
@@ -42,10 +44,11 @@
                     (tx/wrap-by-syllable width)
                     (concat (m/message-footer state))
                     (tx/framed-lines width))
-          height (count lines)
-          text (string/join lines "\n")]
+          text (string/join lines "\n")
+          height (count (str/split text #"\n"))
+          line-height (* 1.5 conf/font-size)]
       (q/with-translation [(* 0.33 (q/width)) (* 0.33 (q/height))]
-                          (q/rect 0 0 (* 0.33 (q/width)) (* height 1.12 (+ (q/text-ascent) (q/text-descent))))
+                          (q/rect 0 (- (/ line-height 2)) (* 0.33 (q/width)) (* height line-height))
                           ((tx/get-textbox-renderer text))))))
 
 (defn render-playerinfo [state]
@@ -58,6 +61,13 @@
       (do (tab/render-animated-target-gui target [(:left c/margin) (* (/ 1 5) (q/height))] (state :animation))
           (let [name (if (nil? (:name target)) "unknown" (:name target))]
             (render-at-mappos state (pos-selector target) (tx/get-textbox-renderer name [20 -10]))))))
+  state)
+
+(defn render-fuel-bar [state]
+  (let [deltav (:deltav (s/get-playership state))
+        percentage (max 0 (/ deltav 1000))]
+    (q/with-translation [(:left c/margin) (* 0.6 (q/height))]
+                      ((e/get-bar-renderer percentage 100 "Fuel"))))
   state)
 
 (defn render-crosshair [state ref-selector pos-selector]
@@ -124,4 +134,6 @@
     (render-clock state)
     (render-binary-clock state)
     (render-messages state)
-    (render-playerinfo state)))
+    (render-playerinfo state)
+    (render-fuel-bar state)
+    ))

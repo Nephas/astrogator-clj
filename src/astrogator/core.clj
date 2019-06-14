@@ -12,12 +12,13 @@
             [astrogator.state.global :as g]
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal.thermal :as t]
-            [astrogator.render.gui.gui :as gui]))
+            [astrogator.render.gui.gui :as gui]
+            [astrogator.render.conf :as conf]))
 
 (defn setup []
   (do (reset! g/screen (q/current-graphics))
       (q/frame-rate c/frame-rate)
-      (q/text-font (q/create-font "src/data/conthrax.ttf" 14 true))
+      (q/text-font (q/create-font "src/data/conthrax.ttf" conf/font-size true))
       (q/color-mode :hsb 1.0 1.0 1.0 255)
       (q/ellipse-mode :radius)
       (q/no-stroke)

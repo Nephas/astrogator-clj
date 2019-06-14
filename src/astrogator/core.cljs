@@ -11,17 +11,18 @@
             [astrogator.physics.move.system :as p]
             [astrogator.physics.thermal.thermal :as t]
             [astrogator.render.gui.gui :as gui]
-            [astrogator.state.global :as g]))
+            [astrogator.state.global :as g]
+            [astrogator.render.conf :as conf]))
 
 (defn setup []
   (do (reset! g/screen (q/current-graphics))
       (q/frame-rate c/frame-rate)
       (enable-console-print!)
-      (q/text-font (q/create-font "Ubuntu Light" 14 true))
+      (q/text-font (q/create-font "Ubuntu Light" conf/font-size true))
       (q/color-mode :hsb 1.0 1.0 1.0 255)
       (q/ellipse-mode :radius)
       (q/no-stroke)
-      (i/init-universe)))
+      (i/init-universe nil)))
 
 (defn update-state []
   (let [new-state (-> @g/store

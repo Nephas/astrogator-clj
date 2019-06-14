@@ -2,7 +2,20 @@
   (:require [quil.core :as q]
             [astrogator.util.color :as col]
             [astrogator.physics.trafo :as t]
-            [astrogator.render.conf :as r]))
+            [astrogator.render.conf :as r]
+            [astrogator.render.conf :as conf]
+            [astrogator.render.gui.text :as tx]))
+
+(defn get-bar-renderer [percentage length label]
+  (fn []
+    (do ((tx/get-textbox-renderer label))
+        (q/with-stroke [(apply q/color r/gui-secondary) 255]
+                        (do (q/stroke-weight 2)
+                            (col/fill r/back-color 255)
+                            (q/rect 0 0 length conf/font-size)
+                            (q/no-stroke)
+                            (col/fill r/gui-primary 128)
+                            (q/rect 0 0 (* percentage length) conf/font-size))))))
 
 (defn crosshair []
   (q/with-stroke [(apply q/color r/gui-primary) 128]

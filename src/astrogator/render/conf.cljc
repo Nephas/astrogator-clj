@@ -1,5 +1,7 @@
 (ns astrogator.render.conf)
 
+(def font-size 14)
+
 (def back-color [0.7 0.2 0.2])
 
 (def particle-color [0.6 0.5 0.7])
