@@ -37,13 +37,13 @@
           phase (get-in planet [:orbit :cylpos 1])
           color (get-distant-color planet)]
       (do (f/draw-soi planet camera color)
-          (b/distant-planet pos size phase color)))))
+          (b/distant-planet pos size phase color))))
 
-(defn draw-stars [stars camera]
-  (doseq [star stars]
-    (let [pos (t/map-to-screen (:mappos star) camera)
-          size (* 5 (camera :obj-zoom) (:radius star))]
-      (b/distant-star pos size (:color star)))))
+  (defn draw-stars [stars camera]
+    (doseq [star stars]
+      (let [pos (t/map-to-screen (:mappos star) camera)
+            size (* 5 (camera :obj-zoom) (:radius star))]
+        (b/distant-star pos size (:color star))))))
 
 (defn draw-system [system camera]
   (draw-asteroids (s/get-all system :asteroids) camera)

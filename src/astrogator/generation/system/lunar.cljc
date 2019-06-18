@@ -4,7 +4,8 @@
             [astrogator.physics.astro :as a]))
 
 (defn generate-moon-system [parent-mass inner-radius outer-radius]
-  (let [n-moons (r/poisson 2)
+  (let [moon-limit (int (+ 2 (Math/sqrt parent-mass)))
+        n-moons (r/rand-n moon-limit)
         radii (filterv #(< % outer-radius)
                        (map #(a/titius-bode % inner-radius)
                             (range n-moons)))]

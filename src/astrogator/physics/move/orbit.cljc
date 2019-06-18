@@ -3,7 +3,8 @@
             [astrogator.state.selectors :as s]
             [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
-            [astrogator.util.log :as log]))
+            [astrogator.util.log :as log]
+            [astrogator.physics.units :as u]))
 
 (defprotocol Orbit
   (orbit-move [this dt parent-mappos]))
@@ -33,7 +34,7 @@
 
 (defn place-in-orbit [ship parent-path]
   (let [parent (get-in (s/get-expanded-refsystem) parent-path)
-        orbit-radius (* 0.5 (:rhill parent))
+        orbit-radius (* 10 (u/conv (:radius parent) :Re :AU))
         unit (if (s/planet? parent) :Me :Msol)
         orbit (circular-orbit [(:mass parent) unit] [orbit-radius nil] parent-path)]
     (do (log/info "placing ship in orbit around: " parent-path)

@@ -10,7 +10,8 @@
             [astrogator.physics.move.rotate :as rot]
             [astrogator.poetry.names :as n]
             [astrogator.physics.thermal.climate :as c]
-            [astrogator.physics.trafo :as trafo]))
+            [astrogator.physics.trafo :as trafo]
+            [astrogator.physics.units :as u]))
 
 (defrecord Planet [mass radius seed name rhill orbit climate rotation mappos color circumbinary]
   trafo/Distance (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
@@ -21,6 +22,7 @@
     (do (log/info "extracting planet: " (:seed this))
         (r/set-seed! (:seed this))
         (let [circumbinary false
+              inner-orbit (* 10 (u/conv radius :Re :AU))
               {flux    :flux
                climate :climate
                rhill   :rhill
@@ -28,7 +30,7 @@
           (-> this
               (assoc :descriptors (surf/get-descriptors climate flux circumbinary))
               (assoc :surface (surf/planet-map 16 0.45 4 8 0.2))
-              (assoc :moons (l/generate-moon-system mass (* 0.1 rhill) rhill)))))))
+              (assoc :moons (l/generate-moon-system mass inner-orbit rhill)))))))
 
 (defn generate-planet [parent-mass seed orbit-radius circumbinary]
   (let [mass (r/planetary-imf)

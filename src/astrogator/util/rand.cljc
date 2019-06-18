@@ -74,7 +74,7 @@
 (defn planetary-imf []
   (let [giant (rand-bool)]
     (if giant
-      (+ (uniform) (poisson 100))
+      (+ (uniform) (poisson 200))
       (/ (+ (uniform) (poisson 4)) 4.0))))
 
 
