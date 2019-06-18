@@ -72,7 +72,10 @@
   (/ (+ (uniform) (poisson 4)) 4.0))
 
 (defn planetary-imf []
-  (/ (+ (uniform) (poisson 4)) 4.0))
+  (let [giant (rand-bool)]
+    (if giant
+      (+ (uniform) (poisson 100))
+      (/ (+ (uniform) (poisson 4)) 4.0))))
 
 
 ;algorithm poisson random number (Knuth):

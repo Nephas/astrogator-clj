@@ -68,10 +68,12 @@
 (defn hill-sphere "[a]" [a m M]
   (* 0.9 a (m/expt (/ m (* 3 M)) (/ 1 3))))
 
+(defn planet-density "[kg/m3]" [m $m]
+  (let [m (u/conv m $m :Me)]
+    (- 5000 (* 14 m))))
+
 (defn planet-radius "[Re]" [m $m]
-  (let [rho (if (< (u/conv m $m :Me) 10)
-              5500
-              1000)
+  (let [rho (planet-density m $m)
         m (u/conv m $m :kg)]
     (u/conv (m/expt (/ m (* (/ 4 3) Math/PI rho)) (/ 1 3)) :m :Re)))
 

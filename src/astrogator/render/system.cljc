@@ -34,7 +34,7 @@
   (doseq [planet planets]
     (let [pos (t/map-to-screen (:mappos planet) camera)
           size (* 0.1 (:radius planet) (camera :obj-zoom))
-          phase (get-in planet [:cylpos 1])
+          phase (get-in planet [:orbit :cylpos 1])
           color (get-distant-color planet)]
       (do (f/draw-soi planet camera color)
           (b/distant-planet pos size phase color)))))
