@@ -7,7 +7,7 @@
             [astrogator.util.rand :as rand]
             [astrogator.state.global :as g]
             [astrogator.gui.camera :as cam]
-            [astrogator.generation.player :as pl]
+            [astrogator.generation.body.ship :as pl]
             [astrogator.gui.message :as m]))
 
 (def init-state

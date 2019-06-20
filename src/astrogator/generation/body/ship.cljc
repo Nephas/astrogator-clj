@@ -1,4 +1,4 @@
-(ns astrogator.generation.player
+(ns astrogator.generation.body.ship
   (:require [astrogator.physics.move.orbit :as o]
             [astrogator.gui.selectors :as gs]
             [astrogator.physics.move.clock :as c]
@@ -9,8 +9,6 @@
             [astrogator.render.draw.body :as draw]
             [astrogator.render.conf :as conf]
             [astrogator.render.draw.geometry :as geo]))
-
-(defrecord Pilot [age sanity])
 
 (defrecord Ship [orbit mappos mapvel mapacc deltav thrust pointing ai-mode time]
   o/Orbit
