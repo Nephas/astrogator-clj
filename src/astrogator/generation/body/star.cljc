@@ -10,20 +10,39 @@
             [astrogator.util.log :as log]
             [astrogator.util.util :as u]
             [astrogator.physics.move.rotate :as rot]
-            [astrogator.physics.trafo :as trafo]))
+            [astrogator.physics.trafo :as trafo]
+            [astrogator.render.body.body :as draw]
+            [astrogator.physics.trafo :as t]
+            [astrogator.util.color :as col]
+            [astrogator.render.conf :as conf]
+            [astrogator.render.geometry :as geo]
+            [quil.core :as q]))
 
 (defrecord Star [mass radius rhill rotation luminosity temp class color name]
   trafo/Distance (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
   orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   rot/Rot (rotate [this dt] (rot/rotate this dt))
-  exp/Seed (same? [this other] (exp/equal-by-seed this other))
+  exp/Seed
+  (same? [this other] (exp/equal-by-seed this other))
   (expand [this]
     (do (log/info "extracting star: " (:name this))
         (let [phase-seed (fn [tile] (assoc tile :seed (r/phase)))
               tile-map (m/init-tiles m/star-tile 32)]
           (assoc this :surface (-> tile-map
                                    (m/init-map)
-                                   (u/update-values phase-seed)))))))
+                                   (u/update-values phase-seed))))))
+  draw/Drawable
+  (draw-distant [this camera]
+    (let [pos (t/map-to-screen (:mappos this) camera)
+          size (* 5 (camera :obj-zoom) (:radius this))
+          color (:color this)]
+      (col/fill color)
+      (if (< size conf/airy-threshold)
+        (geo/airy pos 2 color)
+        (do (col/fill color)
+            (q/with-stroke [(apply q/color (assoc color 2 0.66)) 256]
+                           (do (q/stroke-weight (* size 0.2))
+                               (geo/circle pos size))))))))
 
 (defn generate-star [mass max-sc-orbit planets?]
   (let [radius (a/mass-radius mass)

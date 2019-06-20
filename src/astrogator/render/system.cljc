@@ -8,6 +8,7 @@
             [astrogator.util.color :as col]
             [astrogator.render.conf :as conf]
             [astrogator.render.body.star :as st]
+            [astrogator.render.body.body :as draw]
             [astrogator.render.body.planet :as p]))
 
 ;TODO extract draw protocol
@@ -24,26 +25,14 @@
     (let [pos (t/map-to-screen (:mappos ship) camera)]
       (geo/circle pos 1))))
 
-(defn get-distant-color [planet]
-  (let [{rock    :rock
-         glacier :glacier
-         ocean   :ocean} (:color planet)]
-    (col/blend-vec-color rock ocean glacier)))
-
 (defn draw-planets [planets camera]
   (doseq [planet planets]
-    (let [pos (t/map-to-screen (:mappos planet) camera)
-          size (* 0.1 (Math/log (+ 1 (:radius planet))) (camera :obj-zoom))
-          phase (get-in planet [:orbit :cylpos 1])
-          color (get-distant-color planet)]
-      (do (f/draw-soi planet camera color)
-          (b/distant-planet pos size phase color))))
+      (do (f/draw-soi planet camera conf/gui-secondary)
+          (draw/draw-distant planet camera)))
 
   (defn draw-stars [stars camera]
     (doseq [star stars]
-      (let [pos (t/map-to-screen (:mappos star) camera)
-            size (* 5 (camera :obj-zoom) (:radius star))]
-        (b/distant-star pos size (:color star))))))
+      (draw/draw-distant star camera))))
 
 (defn draw-system [system camera]
   (draw-asteroids (s/get-all system :asteroids) camera)

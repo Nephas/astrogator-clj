@@ -10,14 +10,27 @@
             [astrogator.physics.move.rotate :as rot]
             [astrogator.poetry.names :as n]
             [astrogator.physics.thermal.climate :as c]
+            [astrogator.render.body.body :as draw]
             [astrogator.physics.trafo :as trafo]
-            [astrogator.physics.units :as u]))
+            [astrogator.physics.units :as u]
+            [astrogator.physics.trafo :as t]
+            [astrogator.util.color :as col]
+            [astrogator.render.field :as f]
+            [astrogator.render.conf :as conf]
+            [astrogator.render.geometry :as geo]))
+
+(defn get-distant-color [planet]
+  (let [{rock    :rock
+         glacier :glacier
+         ocean   :ocean} (:color planet)]
+    (col/blend-vec-color rock ocean glacier)))
 
 (defrecord Planet [mass radius seed name rhill orbit climate rotation mappos color circumbinary type]
   trafo/Distance (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
   orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   rot/Rot (rotate [this dt] (rot/rotate this dt))
-  exp/Seed (same? [this other] (exp/equal-by-seed this other))
+  exp/Seed
+  (same? [this other] (exp/equal-by-seed this other))
   (expand [this]
     (do (log/info "extracting planet: " (:seed this))
         (r/set-seed! (:seed this))
@@ -30,7 +43,16 @@
           (-> this
               (assoc :descriptors (surf/get-descriptors climate flux circumbinary))
               (assoc :surface (surf/planet-map 16 0.45 4 8 0.2))
-              (assoc :moons (l/generate-moon-system mass inner-orbit rhill)))))))
+              (assoc :moons (l/generate-moon-system mass inner-orbit rhill))))))
+  draw/Drawable
+  (draw-distant [this camera]
+    (let [pos (t/map-to-screen (:mappos this) camera)
+          size (* 0.1 (Math/log (+ 1 (:radius this))) (camera :obj-zoom))
+          phase (get-in this [:orbit :cylpos 1])
+          color (get-distant-color this)]
+      (if (< size conf/airy-threshold)
+        (geo/airy pos 1 color)
+        (geo/half-circle pos size phase color)))))
 
 (defn generate-planet [parent-mass seed orbit-radius circumbinary]
   (let [mass (r/planetary-imf)
