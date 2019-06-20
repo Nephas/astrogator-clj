@@ -1,7 +1,8 @@
-(ns astrogator.render.geometry
+(ns astrogator.render.draw.geometry
   (:require [quil.core :as q]
             [astrogator.util.color :as col]
-            [astrogator.physics.trafo :as t]))
+            [astrogator.physics.trafo :as t]
+            [astrogator.render.conf :as conf]))
 
 (defn arrow
   ([pos vec]
@@ -46,3 +47,15 @@
                   (let [phase (+ Math/PI phase-in)
                         rot (/ Math/PI 2)]
                     (q/arc (pos 0) (pos 1) size size (- phase rot) (+ phase rot))))))
+
+(defn particle [pos color]
+  (q/no-stroke)
+  (col/fill color)
+  (circle pos 1))
+
+(defn cast-shadow [pos phase size length]
+  (col/fill conf/planet-shade-color 128)
+  (q/no-stroke)
+  (q/with-translation pos
+                      (q/with-rotation [(+ Math/PI phase)]
+                                       (q/rect 0 (* -1 size) length (* 2 size)))))

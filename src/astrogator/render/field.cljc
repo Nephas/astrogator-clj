@@ -1,5 +1,5 @@
 (ns astrogator.render.field
-  (:require [astrogator.render.geometry :as geo]
+  (:require [astrogator.render.draw.geometry :as geo]
             [astrogator.conf :as conf]
             [quil.core :as q]
             [astrogator.render.conf :as r]

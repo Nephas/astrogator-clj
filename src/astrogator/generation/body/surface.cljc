@@ -2,8 +2,7 @@
   (:require [astrogator.util.util :as u]
             [astrogator.generation.body.tilemap :as m]
             [astrogator.util.rand :as r]
-            [astrogator.poetry.haiku :as h]
-            [astrogator.physics.thermal.climate :as c]))
+            [astrogator.poetry.haiku :as h]))
 
 (defn evolve-tile [tile tile-map update-key update-procedure]
   (let [pos (:pos tile)

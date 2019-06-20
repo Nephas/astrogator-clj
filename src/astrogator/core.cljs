@@ -2,7 +2,7 @@
   (:require [quil.core :as q :include-macros true]
             [quil.middleware :as m]
             [astrogator.conf :as c]
-            [astrogator.render.render :as render]
+            [astrogator.render.universe :as render]
             [astrogator.input.keyboard :as key]
             [astrogator.input.mouse :as mouse]
             [astrogator.gui.camera :as cam]

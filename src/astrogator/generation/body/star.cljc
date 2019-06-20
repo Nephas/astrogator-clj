@@ -11,11 +11,11 @@
             [astrogator.util.util :as u]
             [astrogator.physics.move.rotate :as rot]
             [astrogator.physics.trafo :as trafo]
-            [astrogator.render.body.body :as draw]
+            [astrogator.render.draw.body :as draw]
             [astrogator.physics.trafo :as t]
             [astrogator.util.color :as col]
             [astrogator.render.conf :as conf]
-            [astrogator.render.geometry :as geo]
+            [astrogator.render.draw.geometry :as geo]
             [quil.core :as q]
             [astrogator.util.hex :as h]
             [astrogator.render.tilemap :as tm]))

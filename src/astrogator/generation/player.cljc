@@ -6,8 +6,9 @@
             [astrogator.gui.camera :as cam]
             [astrogator.physics.trafo :as trafo]
             [astrogator.physics.units :as u]
-            [astrogator.render.body.body :as draw]
-            [astrogator.render.conf :as conf]))
+            [astrogator.render.draw.body :as draw]
+            [astrogator.render.conf :as conf]
+            [astrogator.render.draw.geometry :as geo]))
 
 (defrecord Pilot [age sanity])
 
@@ -20,7 +21,7 @@
 
   draw/Drawable
   (draw-distant [this camera]
-    (draw/particle (trafo/map-to-screen (:mappos this) camera) conf/particle-color))
+    (geo/particle (trafo/map-to-screen (:mappos this) camera) conf/particle-color))
   (draw-surface [this camera] nil)
   (draw-detail [this camera]
     (draw/draw-distant this camera)))

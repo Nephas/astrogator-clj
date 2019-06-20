@@ -1,8 +1,8 @@
-(ns astrogator.render.render
+(ns astrogator.render.universe
   (:require [quil.core :as q]
             [astrogator.util.log :as log]
             [astrogator.render.conf :as conf]
-            [astrogator.render.body.body :as draw]
+            [astrogator.render.draw.body :as draw]
             [astrogator.state.selectors :as s]
             [astrogator.gui.camera :as c]
             [astrogator.physics.trafo :as t]))

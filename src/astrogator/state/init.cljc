@@ -3,7 +3,7 @@
             [astrogator.physics.move.clock :as c]
             [astrogator.physics.move.system :as p]
             [astrogator.util.log :as log]
-            [astrogator.render.render :as render]
+            [astrogator.render.universe :as render]
             [astrogator.util.rand :as rand]
             [astrogator.state.global :as g]
             [astrogator.gui.camera :as cam]

@@ -1,10 +1,10 @@
 (ns astrogator.generation.system.cloud
-  (:require [astrogator.render.body.body :as draw]
+  (:require [astrogator.render.draw.body :as draw]
             [astrogator.physics.trafo :as t]
             [astrogator.render.conf :as conf]
             [astrogator.util.color :as col]
             [quil.core :as q]
-            [astrogator.render.geometry :as geo]))
+            [astrogator.render.draw.geometry :as geo]))
 
 (defrecord Cloud [radius sectorpos color]
   draw/Drawable

@@ -6,9 +6,9 @@
             [astrogator.poetry.names :as n]
             [astrogator.util.rand :as r]
             [astrogator.physics.trafo :as trafo]
-            [astrogator.render.body.body :as draw]
+            [astrogator.render.draw.body :as draw]
             [astrogator.physics.trafo :as t]
-            [astrogator.render.geometry :as geo]))
+            [astrogator.render.draw.geometry :as geo]))
 
 (defrecord DistantSystem [sectorpos seed mass luminosity color magnitude name]
   trafo/Distance

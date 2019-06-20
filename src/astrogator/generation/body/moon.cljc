@@ -3,13 +3,11 @@
             [astrogator.util.rand :as r]
             [astrogator.physics.move.orbit :as orb]
             [astrogator.physics.move.orbit :as o]
-            [astrogator.render.body.body :as draw]
+            [astrogator.render.draw.body :as draw]
             [quil.core :as q]
-            [astrogator.render.body.planet :as p]
-            [astrogator.render.geometry :as geo]
+            [astrogator.render.draw.geometry :as geo]
             [astrogator.physics.trafo :as t]
-            [astrogator.render.conf :as conf]
-            [astrogator.util.color :as col]))
+            [astrogator.render.conf :as conf]))
 
 (defrecord Moon [mass radius orbit color mappos]
   orb/Orbit
@@ -17,14 +15,14 @@
 
   draw/Drawable
   (draw-distant [this camera]
-    (draw/particle (t/map-to-screen (:mappos this) camera) conf/moon-surface-color))
+    (geo/particle (t/map-to-screen (:mappos this) camera) conf/moon-surface-color))
   (draw-surface [this camera] nil)
   (draw-detail [this camera]
     (let [pos (t/map-to-screen (:mappos this) camera)
           size (* 0.1 (:radius this) (camera :obj-zoom))
           phase (:phase this)]
       (q/no-stroke)
-      (draw/cast-shadow pos phase size (* 10 (q/width)))
+      (geo/cast-shadow pos phase size (* 10 (q/width)))
       (geo/circle pos size conf/moon-surface-color)
       (geo/half-circle pos size phase conf/planet-night-color))))
 

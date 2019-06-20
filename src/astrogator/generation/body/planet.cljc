@@ -10,15 +10,14 @@
             [astrogator.physics.move.rotate :as rot]
             [astrogator.poetry.names :as n]
             [astrogator.physics.thermal.climate :as c]
-            [astrogator.render.body.body :as draw]
+            [astrogator.render.draw.body :as draw]
             [astrogator.physics.trafo :as trafo]
             [astrogator.physics.units :as u]
             [astrogator.physics.trafo :as t]
             [astrogator.util.color :as col]
             [astrogator.render.field :as f]
             [astrogator.render.conf :as conf]
-            [astrogator.render.geometry :as geo]
-            [astrogator.render.body.planet :as p]
+            [astrogator.render.draw.geometry :as geo]
             [quil.core :as q]
             [astrogator.util.hex :as h]
             [astrogator.render.tilemap :as tm]))
@@ -86,7 +85,7 @@
         (do (f/draw-soi this camera)
             (draw/draw-surface this camera)
             (geo/ring pos (* 1.1 size) conf/back-color (* 0.2 size))
-            (draw/cast-shadow pos phase size (* 10 (q/width)))
+            (geo/cast-shadow pos phase size (* 10 (q/width)))
             (geo/half-circle pos size phase conf/planet-night-color)))))
   (draw-surface [this camera]
     (q/stroke-weight 1)
