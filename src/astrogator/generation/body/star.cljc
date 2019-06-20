@@ -16,12 +16,23 @@
             [astrogator.util.color :as col]
             [astrogator.render.conf :as conf]
             [astrogator.render.geometry :as geo]
-            [quil.core :as q]))
+            [quil.core :as q]
+            [astrogator.util.hex :as h]
+            [astrogator.render.tilemap :as tm]))
+
+(defn true-colors [tile color]
+  (assoc color 2 (:temp tile)))
 
 (defrecord Star [mass radius rhill rotation luminosity temp class color name]
-  trafo/Distance (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
-  orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
-  rot/Rot (rotate [this dt] (rot/rotate this dt))
+  trafo/Distance
+  (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
+
+  orb/Orbit
+  (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
+
+  rot/Rot
+  (rotate [this dt] (rot/rotate this dt))
+
   exp/Seed
   (same? [this other] (exp/equal-by-seed this other))
   (expand [this]
@@ -31,6 +42,7 @@
           (assoc this :surface (-> tile-map
                                    (m/init-map)
                                    (u/update-values phase-seed))))))
+
   draw/Drawable
   (draw-distant [this camera]
     (let [pos (t/map-to-screen (:mappos this) camera)
@@ -42,7 +54,24 @@
         (do (col/fill color)
             (q/with-stroke [(apply q/color (assoc color 2 0.66)) 256]
                            (do (q/stroke-weight (* size 0.2))
-                               (geo/circle pos size))))))))
+                               (geo/circle pos size)))))))
+  (draw-detail [this camera]
+    (let [pos (t/map-to-screen (:mappos this) camera)
+          size (* 5 (camera :obj-zoom) (:radius this))
+          color (:color this)]
+      (do (col/fill color)
+          (do (draw/draw-surface this camera)
+              (geo/ring pos (* 1.6 size) (assoc color 2 0.66) (* 0.2 size))))))
+  (draw-surface [this camera]
+    (q/stroke-weight 1)
+    (let [rot (get-in this [:rotation :angle])
+          scale (* 0.25 (camera :obj-zoom) (:radius this))
+          view-tiles (filter #(:view %) (vals (:surface this)))
+          colors (mapv #(true-colors % (:color this)) view-tiles)
+          positions (mapv #(h/cube-to-center-pix (:pos %) scale rot) view-tiles)]
+      (doall (map (fn [pos col] (q/with-translation pos (tm/draw-hex scale col rot)))
+                  positions colors)))))
+
 
 (defn generate-star [mass max-sc-orbit planets?]
   (let [radius (a/mass-radius mass)

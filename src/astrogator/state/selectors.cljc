@@ -42,6 +42,8 @@
 
 (def playership-path [:universe :refsystem :ships 0])
 
+(def ships-path [:universe :refsystem :ships])
+
 (defn get-playership [state]
   (get-in state playership-path))
 

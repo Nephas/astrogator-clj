@@ -45,5 +45,5 @@
     (draw-ships (s/get-all system :ships) camera)
     (cond
       (s/planet? refbody) (p/draw-planet refbody camera)
-      (s/star? refbody) (st/draw-star refbody camera)
+      (s/star? refbody) (draw/draw-detail refbody camera)
       true nil)))
