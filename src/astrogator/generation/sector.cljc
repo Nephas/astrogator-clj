@@ -2,6 +2,7 @@
   (:require [astrogator.util.rand :as r]
             [astrogator.physics.trafo :as t]
             [astrogator.generation.system.distantsystem :as ds]
+            [astrogator.generation.system.cloud :as c]
             [astrogator.physics.units :as u]
             [astrogator.util.log :as log]))
 
@@ -29,6 +30,4 @@
     (for [x (range number)]
       (let [radius-AU (u/conv (* 0.1 size (r/uniform)) :pc :AU)
             pos (t/scalar size-AU [(r/gauss-approx) (r/gauss-approx)])]
-        {:radius    radius-AU
-         :sectorpos pos
-         :color     [(r/uniform 0.7 0.9) 0.4 0.4]}))))
+        (c/generate-cloud radius-AU pos     [(r/uniform 0.7 0.9) 0.4 0.4])))))

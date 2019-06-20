@@ -1,6 +1,5 @@
 (ns astrogator.generation.player
   (:require [astrogator.physics.move.orbit :as o]
-            [astrogator.physics.move.transit :as t]
             [astrogator.gui.selectors :as gs]
             [astrogator.physics.move.clock :as c]
             [astrogator.state.selectors :as sel]
@@ -8,7 +7,6 @@
             [astrogator.physics.trafo :as trafo]
             [astrogator.physics.units :as u]
             [astrogator.render.body.body :as draw]
-            [astrogator.render.geometry :as geo]
             [astrogator.render.conf :as conf]))
 
 (defrecord Pilot [age sanity])
@@ -25,7 +23,7 @@
     (draw/particle (trafo/map-to-screen (:mappos this) camera) conf/particle-color))
   (draw-surface [this camera] nil)
   (draw-detail [this camera]
-    (draw/draw-detail this camera)))
+    (draw/draw-distant this camera)))
 
 (defn ship [orbit]
   (->Ship orbit [0 0] [0 0] [0 0] 1000 0 0 :orbit (c/clock)))
