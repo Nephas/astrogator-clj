@@ -13,7 +13,7 @@
             [astrogator.physics.trafo :as trafo]
             [astrogator.physics.units :as u]))
 
-(defrecord Planet [mass radius seed name rhill orbit climate rotation mappos color circumbinary]
+(defrecord Planet [mass radius seed name rhill orbit climate rotation mappos color circumbinary type]
   trafo/Distance (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
   orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
   rot/Rot (rotate [this dt] (rot/rotate this dt))
@@ -43,5 +43,6 @@
                :ocean   [(r/uniform 0.5 0.75) 0.6 0.6]
                :glacier [(r/uniform 0.5 0.75) 0.2 0.8]}
         mappos [0 0]
-        name (n/generate-name seed (r/rand-n 5 7))]
-    (->Planet mass radius seed name rhill orbit climate rotation mappos color circumbinary)))
+        name (n/generate-name seed (r/rand-n 5 7))
+        type (if (< mass 10) :rock :gas)]
+    (->Planet mass radius seed name rhill orbit climate rotation mappos color circumbinary type)))
