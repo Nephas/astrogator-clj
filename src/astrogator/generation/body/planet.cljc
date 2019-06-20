@@ -17,7 +17,22 @@
             [astrogator.util.color :as col]
             [astrogator.render.field :as f]
             [astrogator.render.conf :as conf]
-            [astrogator.render.geometry :as geo]))
+            [astrogator.render.geometry :as geo]
+            [astrogator.render.body.planet :as p]
+            [quil.core :as q]
+            [astrogator.util.hex :as h]
+            [astrogator.render.tilemap :as tm]))
+
+(defn true-colors [tile colors]
+  (let [{height :height
+         ice    :glacier} tile
+        land (not (:ocean tile))
+        ice-color (assoc (colors :glacier) 2 (+ 0.8 height))
+        land-color (assoc (colors :rock) 2 (+ 0.25 height))
+        ocean-color (assoc (colors :ocean) 2 (max 0.5 (+ 0.4 height)))]
+    (cond ice ice-color
+          land land-color
+          true ocean-color)))
 
 (defn get-distant-color [planet]
   (let [{rock    :rock
@@ -26,9 +41,15 @@
     (col/blend-vec-color rock ocean glacier)))
 
 (defrecord Planet [mass radius seed name rhill orbit climate rotation mappos color circumbinary type]
-  trafo/Distance (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
-  orb/Orbit (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
-  rot/Rot (rotate [this dt] (rot/rotate this dt))
+  trafo/Distance
+  (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
+
+  orb/Orbit
+  (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
+
+  rot/Rot
+  (rotate [this dt] (rot/rotate this dt))
+
   exp/Seed
   (same? [this other] (exp/equal-by-seed this other))
   (expand [this]
@@ -50,9 +71,31 @@
           size (* 0.1 (Math/log (+ 1 (:radius this))) (camera :obj-zoom))
           phase (get-in this [:orbit :cylpos 1])
           color (get-distant-color this)]
-      (if (< size conf/airy-threshold)
-        (geo/airy pos 1 color)
-        (geo/half-circle pos size phase color)))))
+      (do (f/draw-soi this camera conf/gui-secondary)
+          (doseq [moon (:moons this)]
+            (draw/draw-distant moon camera))
+          (if (< size conf/airy-threshold)
+            (geo/airy pos 1 color)
+            (do (geo/half-circle pos size phase color))))))
+  (draw-detail [this camera]
+    (let [phase (+ Math/PI (get-in this [:orbit :cylpos 1]))]
+      (doseq [moon (:moons this)]
+        (draw/draw-detail (assoc moon :phase phase) camera))
+      (let [pos (t/map-to-screen (:mappos this) camera)
+            size (* 0.1 (:radius this) (camera :obj-zoom))]
+        (do (f/draw-soi this camera)
+            (draw/draw-surface this camera)
+            (geo/ring pos (* 1.1 size) conf/back-color (* 0.2 size))
+            (draw/cast-shadow pos phase size (* 10 (q/width)))
+            (geo/half-circle pos size phase conf/planet-night-color)))))
+  (draw-surface [this camera]
+    (q/stroke-weight 1)
+    (let [rot (get-in this [:rotation :angle])
+          scale (* 0.007 (:radius this) (camera :obj-zoom))
+          view-tiles (filter #(:view %) (vals (:surface this)))
+          colors (mapv #(true-colors % (:color this)) view-tiles)
+          positions (mapv #(h/cube-to-center-pix (:pos %) scale rot) view-tiles)]
+      (doall (map (fn [pos col] (q/with-translation pos (tm/draw-hex scale col rot))) positions colors)))))
 
 (defn generate-planet [parent-mass seed orbit-radius circumbinary]
   (let [mass (r/planetary-imf)

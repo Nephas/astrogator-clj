@@ -6,13 +6,26 @@
             [astrogator.state.selectors :as sel]
             [astrogator.gui.camera :as cam]
             [astrogator.physics.trafo :as trafo]
-            [astrogator.physics.units :as u]))
+            [astrogator.physics.units :as u]
+            [astrogator.render.body.body :as draw]
+            [astrogator.render.geometry :as geo]
+            [astrogator.render.conf :as conf]))
 
 (defrecord Pilot [age sanity])
 
 (defrecord Ship [orbit mappos mapvel mapacc deltav thrust pointing ai-mode time]
-  o/Orbit (orbit-move [this dt parent-mappos] (o/move-around-parent this dt parent-mappos))
-  trafo/Distance (dist [this other] (trafo/v-dist (:mappos this) (:mappos other))))
+  o/Orbit
+  (orbit-move [this dt parent-mappos] (o/move-around-parent this dt parent-mappos))
+
+  trafo/Distance
+  (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
+
+  draw/Drawable
+  (draw-distant [this camera]
+    (draw/particle (trafo/map-to-screen (:mappos this) camera) conf/particle-color))
+  (draw-surface [this camera] nil)
+  (draw-detail [this camera]
+    (draw/draw-detail this camera)))
 
 (defn ship [orbit]
   (->Ship orbit [0 0] [0 0] [0 0] 1000 0 0 :orbit (c/clock)))
