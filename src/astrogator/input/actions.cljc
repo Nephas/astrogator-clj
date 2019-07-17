@@ -6,9 +6,12 @@
             [astrogator.gui.camera :as cam]
             [astrogator.physics.move.transit :as t]
             [astrogator.physics.trafo :as trafo]
-            [astrogator.util.log :as log]))
+            [astrogator.util.log :as log]
+            [astrogator.state.selectors :as sel]
+            [astrogator.generation.body.ship :as pl]))
 
 (defn explore [state]
+  (log/info "explore playership orbit parent")
   (if (exp/same? (s/get-refbody state) (s/get-player-orbit-body state))
     (let [body (s/get-refbody state)
           poem (string/join (get-in body [:descriptors :poem]) "\n")]
@@ -18,8 +21,18 @@
 (defn focus-ship [state]
   (let [orbit-body (s/get-player-orbit-body state)]
     (if (and (some? orbit-body) (not (exp/same? (s/get-refbody state) orbit-body)))
-      (cam/change-refbody state orbit-body)
+      (do (log/info "focus playership")
+          (cam/change-refbody state orbit-body))
       state)))
+
+(defn refuel-ship [state]
+  (let [orbit-body (s/get-player-orbit-body state)]
+    (if (and (some? orbit-body) (= :gas (:type orbit-body)))
+      (do (log/info "refuel playership")
+          (-> state
+              (m/push-message "Gracefully, the fuel parachute descends into the upper atmosphere.")
+              (assoc-in (conj sel/playership-path :deltav) pl/max-deltav)))
+      (m/push-message state "There is no appropriate fuel source nearby."))))
 
 (defn start-transit [state target origin offset dist scope]
   (if (= target origin) state

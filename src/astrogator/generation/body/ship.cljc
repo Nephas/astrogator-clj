@@ -10,6 +10,8 @@
             [astrogator.render.conf :as conf]
             [astrogator.render.draw.geometry :as geo]))
 
+(def max-deltav 1000)
+
 (defrecord Ship [orbit mappos mapvel mapacc deltav thrust pointing ai-mode time]
   o/Orbit
   (orbit-move [this dt parent-mappos] (o/move-around-parent this dt parent-mappos))
@@ -25,7 +27,7 @@
     (draw/draw-distant this camera)))
 
 (defn ship [orbit]
-  (->Ship orbit [0 0] [0 0] [0 0] 1000 0 0 :orbit (c/clock)))
+  (->Ship orbit [0 0] [0 0] [0 0] max-deltav 0 0 :orbit (c/clock)))
 
 (defn init-playership [state]
   (let [mappos [1 1]

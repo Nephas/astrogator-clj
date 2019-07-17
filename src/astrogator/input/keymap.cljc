@@ -24,6 +24,8 @@
            :help   "Faster Simulation"}
    :space {:action #(a/transit %)
            :help   "Start Transit to Focus"}
+   :t     {:action #(a/refuel-ship %)
+           :help   "Refuel Ship"}
    :h     {:action #(show-help %)
            :help   "Show Help Screen"}
    :e     {:action #(a/explore %)

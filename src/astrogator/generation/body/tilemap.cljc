@@ -2,9 +2,26 @@
   (:require [astrogator.util.hex :as h]
             [astrogator.physics.trafo :as t]))
 
-(defrecord StarTile [pos seed view elevation temp])
+(defprotocol TileColor "provide colors for rendering derived from tile attributes"
+  (true-color [this body] "get the visible light color for rendering"))
 
-(defrecord PlanetTile [pos seed view elevation height temp ocean glacier])
+(defrecord StarTile [pos seed view elevation temp]
+  TileColor
+  (true-color [this star]
+    (assoc (:color star) 2 (:temp this))))
+
+(defrecord PlanetTile [pos seed view elevation height temp ocean glacier]
+  TileColor
+  (true-color [this planet]
+    (let [{height :height
+           ice    :glacier} this
+          land (not (:ocean this))
+          ice-color (assoc (:glacier (:color planet)) 2 (+ 0.8 height))
+          land-color (assoc (:rock (:color planet)) 2 (+ 0.25 height))
+          ocean-color (assoc (:ocean (:color planet)) 2 (max 0.5 (+ 0.4 height)))]
+      (cond ice ice-color
+            land land-color
+            true ocean-color))))
 
 (defn star-tile [pos radius]
   (let [elevation (float (- 1 (/ (h/cube-dist pos [0 0 0]) radius)))

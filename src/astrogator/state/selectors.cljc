@@ -50,7 +50,7 @@
 (defn get-player-orbit-body [state]
   (let [path (get-in (get-playership state) [:orbit :parent])
         system (get-expanded-refsystem state)]
-    (assoc (get-body-by-path path system) :path path)))
+    (if (some? path) (assoc (get-body-by-path path system) :path path))))
 
 (defn get-bodies [system]
   (if (nil? (system :body))

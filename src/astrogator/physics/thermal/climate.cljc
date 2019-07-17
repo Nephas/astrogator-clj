@@ -1,4 +1,5 @@
-(ns astrogator.physics.thermal.climate)
+(ns astrogator.physics.thermal.climate
+  (:require [astrogator.util.rand :as r]))
 
 (defrecord Climate [water-amount sea-level base-temp season-temp])
 
@@ -8,9 +9,12 @@
         evaporation (- 1.0 (Math/exp (* 0.05 (- base-temp boiling-temp))))]
     (max 0 (* evaporation water-amount))))
 
-(defn climate [base-temp water-amount]
-  (let [sea-level (adjusted-sea-level base-temp water-amount)]
-    (->Climate water-amount sea-level base-temp base-temp)))
+(defn generate-climate [mass]
+  (if (< mass 10)
+    (let [water-amount (r/uniform 0.05 0.95)
+          sea-level (adjusted-sea-level 0 water-amount)]
+      (->Climate water-amount sea-level 0 0))
+    (->Climate 0 0 0 0)))
 
 (defn calculate-temperature [tile sea-level base-temp]
   (let [{ocean     :ocean

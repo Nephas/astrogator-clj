@@ -1,16 +1,30 @@
 (ns astrogator.util.rand
-  (:require [quil.core :as q]))
+  (:require [astrogator.physics.trafo :as t]))
 
-(defn set-seed!
+(declare rand-n)
+
+(def seed (atom 0))
+
+(def pars {:size (Math/pow 2 32)
+           :mult 1664525
+           :inc  1013904223})
+
+(defn next-linear-congruential []
+  (let [n @seed
+        {size :size
+         mult :mult
+         inc  :inc} pars]
+    (reset! seed (mod (+ (* mult n) inc) size))))
+
+(defn set-seed! [num]
   "Sets the seed of the global random number generator."
-  [seed]
-  (q/random-seed seed))
+  (reset! seed num))
 
 (defn uniform
   "Returns a random floating point number between 0 (inclusive) and
   n (default 1) (exclusive). Works like clojure.core/rand except it
   uses the seed specified in set-random-seed!."
-  ([] (q/random 1.0))
+  ([] (/ (next-linear-congruential) (:size pars)))
   ([x] (* x (uniform)))
   ([x1 x2] (let [diff (- x1 x2)]
              (+ x2 (uniform diff)))))
@@ -31,8 +45,7 @@
   the same performance characteristics as nth for the given
   collection. Works like clojure.core/rand except it uses the seed
   specified in set-random-seed!."
-  [coll]
-  (nth coll (rand-n (count coll))))
+  [coll] (nth coll (rand-n (count coll))))
 
 (defn rand-bool []
   (zero? (rand-n 2)))
@@ -49,16 +62,6 @@
      (first (first (filter rand-threshold cdf-tuples)))))
   ([vals cdf] (rand-cdf (zipmap vals cdf))))
 
-;(defn rand-gauss []
-;  (let [bin-width 0.5
-;        noise (uniform bin-width)
-;        gauss-sample (m/sample m/gaussian (range -3.0 3.0 bin-width))
-;        cdf-sample (m/integrate (m/normalize gauss-sample))]
-;    (+ (rand-cdf cdf-sample) noise)))
-
-(defn rand-gauss []
-  (reduce + (take 10 (repeatedly #(uniform -1 1)))))
-
 (defn poisson [λ]
   "for λ > 10: roughly gaussian centered at λ"
   (loop [p 1
@@ -66,10 +69,15 @@
     (if (< p (Math/exp (- λ))) (dec k)
                                (let [u (uniform)] (recur (* p u) (inc k))))))
 
-(defn gauss-approx [] (* 0.1 (- (+ (uniform) (poisson 10)) (uniform) 5.0)))
+(defn rand-gauss
+  ([] (/ (+ (uniform -0.5 0.5) (- (poisson 10) 10)) 5))
+  ([width] (* width (rand-gauss))))
+
 
 (defn stellar-imf []
-  (/ (+ (uniform) (poisson 4)) 4.0))
+
+  ;(* (uniform 0.01 1) (+ (uniform) (poisson 10)))
+  (* (Math/abs (rand-gauss))))
 
 (defn planetary-imf []
   (let [giant (rand-bool)]
@@ -77,12 +85,8 @@
       (+ (uniform) (poisson 200))
       (/ (+ (uniform) (poisson 4)) 4.0))))
 
-
-;algorithm poisson random number (Knuth):
-;init:
-;Let L ← e−λ, k ← 0 and p ← 1.
-;do:
-;k ← k + 1.
-;Generate uniform random number u in [0,1] and let p ← p × u.
-;while p > L.
-;return k − 1.
+(defn rand-polar
+  ([] (let [phi (phase)]
+        [(Math/cos phi)
+         (Math/sin phi)]))
+  ([radius] (t/scalar (Math/abs (rand-gauss radius)) (rand-polar))))

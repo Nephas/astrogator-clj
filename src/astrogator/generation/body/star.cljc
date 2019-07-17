@@ -64,13 +64,8 @@
               (geo/ring pos (* 1.6 size) (assoc color 2 0.66) (* 0.2 size))))))
   (draw-surface [this camera]
     (q/stroke-weight 1)
-    (let [rot (get-in this [:rotation :angle])
-          scale (* 0.25 (camera :obj-zoom) (:radius this))
-          view-tiles (filter #(:view %) (vals (:surface this)))
-          colors (mapv #(true-colors % (:color this)) view-tiles)
-          positions (mapv #(h/cube-to-center-pix (:pos %) scale rot) view-tiles)]
-      (doall (map (fn [pos col] (q/with-translation pos (tm/draw-hex scale col rot)))
-                  positions colors)))))
+    (let [scale (* 0.25 (camera :obj-zoom) (:radius this))]
+      (tm/draw-tilemap this scale))))
 
 
 (defn generate-star [mass max-sc-orbit planets?]
