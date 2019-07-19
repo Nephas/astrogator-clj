@@ -23,8 +23,7 @@
 
 (defn uniform
   "Returns a random floating point number between 0 (inclusive) and
-  n (default 1) (exclusive). Works like clojure.core/rand except it
-  uses the seed specified in set-random-seed!."
+  n (default 1) (exclusive)."
   ([] (/ (next-linear-congruential) (:size pars)))
   ([x] (* x (uniform)))
   ([x1 x2] (let [diff (- x1 x2)]
@@ -35,17 +34,12 @@
   [] (uniform (* 2 Math/PI)))
 
 (defn rand-n
-  "Returns a random integer between 0 (inclusive) and n (exclusive).
-  Works like clojure.core/rand except it uses the seed specified in
-  set-random-seed!."
+  "Returns a random integer between 0 (inclusive) and n (exclusive)."
   ([n] (int (uniform n)))
   ([n1 n2] (int (uniform n1 n2))))
 
 (defn rand-coll
-  "Return a random element of the (sequential) collection L. Will have
-  the same performance characteristics as nth for the given
-  collection. Works like clojure.core/rand except it uses the seed
-  specified in set-random-seed!."
+  "Return a random element of a (sequential) collection."
   [coll] (nth coll (rand-n (count coll))))
 
 (defn rand-bool []
@@ -55,8 +49,7 @@
   (rand-n 1000000 100000000))
 
 (defn rand-cdf
-  "Given an ordered list of value->cumulative probability pairs,
-  returns a value."
+  "Given an ordered list of value->cumulative probability pairs, returns a random value."
   ([cdf-tuples]
    (let [r (uniform)
          rand-threshold #(< r (last %))]
