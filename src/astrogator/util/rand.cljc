@@ -1,5 +1,6 @@
 (ns astrogator.util.rand
-  (:require [astrogator.physics.trafo :as t]))
+  (:require [astrogator.physics.trafo :as t]
+            [astrogator.util.math :as m]))
 
 (declare rand-n)
 
@@ -75,9 +76,10 @@
 
 
 (defn stellar-imf []
-
-  ;(* (uniform 0.01 1) (+ (uniform) (poisson 10)))
-  (* (Math/abs (rand-gauss))))
+  (let [stepsize 0.5
+        cdf #(- 1 (Math/exp (* -0.5 %)))
+        sampled-cdf (m/sample cdf (range 0.25 25 stepsize))]
+    (+ (uniform stepsize) (rand-cdf sampled-cdf))))
 
 (defn planetary-imf []
   (let [giant (rand-bool)]
