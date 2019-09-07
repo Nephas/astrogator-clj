@@ -1,4 +1,4 @@
-(defproject astrogator_clj "0.1.0-SNAPSHOT"
+(defproject astrogator_clj "0.1-alpha"
   :description "Spaaaaace..."
   :url "http://example.com/FIXME"
   :min-lein-version "2.0.0"
@@ -24,8 +24,7 @@
   :uberjar-name "server-standalone.jar"
 
   ;===== WEBAPP =====;
-  :hooks [leiningen.cljsbuild]
-  :clean-targets ^{:protect false} ["resources/public/js"]
+  :clean-targets ^{:protect false} ["resources/public/js" "target"]
   :cljsbuild {:builds [{:id           "optimized"
                         :source-paths ["src"]
                         :compiler     {:main          "astrogator.core"
@@ -35,7 +34,7 @@
                                        :optimizations :advanced}}]}
 
   ;===== LOCAL-JARS =====;
-  :profiles {:astrojar  {:main         astrogator.core
+  :profiles {:corejar   {:main         astrogator.core
                          :uberjar-name "astrogator-standalone.jar"
                          :aot          :all
                          :auto-clean   false}
