@@ -31,7 +31,7 @@
       (do (log/info "refuel playership")
           (-> state
               (m/push-message "Gracefully, the fuel parachute descends into the upper atmosphere.")
-              (assoc-in (conj sel/playership-path :deltav) pl/max-deltav)))
+              (assoc-in (conj sel/playership-path :dv) pl/max-dv)))
       (m/push-message state "There is no appropriate fuel source nearby."))))
 
 (defn start-transit [state target origin offset dist scope]

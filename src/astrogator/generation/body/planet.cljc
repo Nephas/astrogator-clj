@@ -13,15 +13,13 @@
             [astrogator.render.draw.body :as draw]
             [astrogator.physics.trafo :as trafo]
             [astrogator.physics.units :as u]
-            [astrogator.physics.trafo :as t]
             [astrogator.util.color :as col]
             [astrogator.render.field :as f]
             [astrogator.render.conf :as conf]
             [astrogator.render.draw.geometry :as geo]
             [quil.core :as q]
-            [astrogator.util.hex :as h]
             [astrogator.render.tilemap :as tm]
-            [astrogator.generation.body.tilemap :as m]))
+            [astrogator.physics.trail :as trail]))
 
 (def base-tilesize 12)
 
@@ -29,7 +27,7 @@
   (let [{rock    :rock
          glacier :glacier
          ocean   :ocean} (:color planet)]
-    (col/blend-vec-color rock ocean glacier)))
+    (col/blend-vec-color rock glacier)))
 
 (defn get-tilesize [planet]
   (+ base-tilesize (int (:radius planet))))
@@ -40,6 +38,9 @@
 
   orb/Orbit
   (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
+
+  trail/Trail
+  (extend [this t] (trail/update-trail this t))
 
   rot/Rot
   (rotate [this dt] (rot/rotate this dt))
@@ -61,7 +62,7 @@
               (assoc :moons (l/generate-moon-system mass inner-orbit rhill))))))
   draw/Drawable
   (draw-distant [this camera]
-    (let [pos (t/map-to-screen (:mappos this) camera)
+    (let [pos (trafo/map-to-screen (:mappos this) camera)
           size (* 0.1 (Math/log (+ 1 (:radius this))) (camera :obj-zoom))
           phase (get-in this [:orbit :cylpos 1])
           color (get-distant-color this)]
@@ -75,13 +76,15 @@
     (let [phase (+ Math/PI (get-in this [:orbit :cylpos 1]))]
       (doseq [moon (:moons this)]
         (draw/draw-detail (assoc moon :phase phase) camera))
-      (let [pos (t/map-to-screen (:mappos this) camera)
+      (let [pos (trafo/map-to-screen (:mappos this) camera)
             size (* 0.1 (:radius this) (camera :obj-zoom))]
         (do (f/draw-soi this camera)
             (draw/draw-surface this camera)
             (geo/ring pos (* 1.25 size) conf/back-color (* 0.5 size))
             (geo/cast-shadow pos phase size (* 10 (q/width)))
             (geo/half-circle pos size phase conf/planet-night-color)))))
+  (draw-trail [this camera]
+    (trail/draw-trail this camera (get-distant-color this)))
   (draw-surface [this camera]
     (let [scale (* 0.01 (/ base-tilesize (get-tilesize this)) (:radius this) (camera :obj-zoom))]
       (tm/draw-tilemap this scale))))

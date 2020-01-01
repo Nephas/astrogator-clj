@@ -65,8 +65,9 @@
   state)
 
 (defn render-fuel-bar [state]
-  (let [deltav (:deltav (s/get-playership state))
-        percentage (max 0 (/ deltav 1000))]
+  (let [{dv :dv
+         max-dv :max-dv} (s/get-playership state)
+        percentage (max 0 (/ dv max-dv))]
     (q/with-translation [(:left c/margin) (* 0.6 (q/height))]
                       ((e/get-bar-renderer percentage 100 "Fuel"))))
   state)

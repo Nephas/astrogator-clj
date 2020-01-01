@@ -9,6 +9,7 @@
 
 (defn draw-each [bodies camera]
   (doseq [body bodies]
+    (draw/draw-trail body camera)
     (draw/draw-distant body camera)))
 
 (defn draw-refbody [system camera]

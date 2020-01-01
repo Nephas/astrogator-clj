@@ -19,6 +19,7 @@
                      (do (q/stroke-weight (* size 2))
                          (geo/circle pos size)))))
   (draw-surface [this camera] nil)
+  (draw-trail [this camera] nil)
   (draw-detail [this camera]
     (draw/draw-distant this camera)))
 

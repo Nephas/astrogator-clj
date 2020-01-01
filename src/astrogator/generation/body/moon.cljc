@@ -17,6 +17,7 @@
   (draw-distant [this camera]
     (geo/particle (t/map-to-screen (:mappos this) camera) conf/moon-surface-color))
   (draw-surface [this camera] nil)
+  (draw-trail [this camera] nil)
   (draw-detail [this camera]
     (let [pos (t/map-to-screen (:mappos this) camera)
           size (* 0.1 (:radius this) (camera :obj-zoom))

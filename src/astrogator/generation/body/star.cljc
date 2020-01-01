@@ -62,6 +62,7 @@
       (do (col/fill color)
           (do (draw/draw-surface this camera)
               (geo/ring pos (* 1.6 size) (assoc color 2 0.66) (* 0.2 size))))))
+  (draw-trail [this camera] nil)
   (draw-surface [this camera]
     (q/stroke-weight 1)
     (let [scale (* 0.25 (camera :obj-zoom) (:radius this))]

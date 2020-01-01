@@ -8,12 +8,14 @@
             [astrogator.physics.move.rotate :as rot]
             [astrogator.util.log :as log]
             [astrogator.gui.camera :as cam]
-            [astrogator.generation.expandable :as exp]))
+            [astrogator.generation.expandable :as exp]
+            [astrogator.physics.trail :as trail]))
 
 (defn move-planet [planet dt parent-mappos]
   (let [moved-planet (-> planet
                          (rot/rotate dt)
-                         (o/orbit-move dt parent-mappos))]
+                         (o/orbit-move dt parent-mappos)
+                         (trail/update-trail dt))]
     (u/update-all moved-planet :moons o/orbit-move dt (:mappos moved-planet))))
 
 (defn move-children [system dt parent-mappos]

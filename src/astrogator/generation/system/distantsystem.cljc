@@ -29,6 +29,7 @@
           size (* -1 (camera :obj-zoom) (:magnitude this))]
       (geo/airy pos size (:color this))))
   (draw-surface [this camera] nil)
+  (draw-trail [this camera] nil)
   (draw-detail [this camera]
     (draw/draw-distant this camera)))
 

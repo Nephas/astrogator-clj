@@ -16,7 +16,8 @@
     (geo/particle (t/map-to-screen (:mappos this) camera) conf/particle-color))
   (draw-surface [this camera] nil)
   (draw-detail [this camera]
-    (draw/draw-distant this camera)))
+    (draw/draw-distant this camera))
+  (draw-trail [this camera] nil))
 
 (defn generate-asteroid [parent-mass orbit-radius]
   (let [orbit (o/circular-orbit parent-mass [orbit-radius nil])
