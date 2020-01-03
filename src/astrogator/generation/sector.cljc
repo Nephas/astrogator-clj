@@ -1,6 +1,5 @@
 (ns astrogator.generation.sector
   (:require [astrogator.util.rand :as r]
-            [astrogator.physics.trafo :as t]
             [astrogator.generation.system.distantsystem :as ds]
             [astrogator.generation.system.cloud :as c]
             [astrogator.physics.units :as u]

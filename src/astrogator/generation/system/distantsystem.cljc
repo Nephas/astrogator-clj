@@ -8,7 +8,9 @@
             [astrogator.physics.trafo :as trafo]
             [astrogator.render.draw.body :as draw]
             [astrogator.physics.trafo :as t]
-            [astrogator.render.draw.geometry :as geo]))
+            [astrogator.render.draw.geometry :as geo]
+            [astrogator.generation.body.ship :as pl]
+            [astrogator.physics.move.system :as p]))
 
 (defrecord DistantSystem [sectorpos seed mass luminosity color magnitude name]
   trafo/Distance
@@ -17,11 +19,11 @@
   exp/Seed
   (same? [this other] (exp/equal-by-seed this other))
   (expand [this]
-             (do (log/info "extracting system: " (:seed this))
-                 (let [system (sys/generate-system (:mass this) (:seed this) true)]
-                   (-> system
-                       (sys/initiate-positions)
-                       (assoc :ships [] )))))
+    (do (log/info "extracting system: " (:seed this))
+        (let [system (sys/generate-system (:mass this) (:seed this) true)]
+          (-> system
+              (sys/initiate-positions)
+              (pl/init-npcs)))))
 
   draw/Drawable
   (draw-distant [this camera]

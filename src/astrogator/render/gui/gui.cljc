@@ -23,8 +23,7 @@
                        (q/with-translation pos (renderer)))))
 
 (defn render-clock [state]
-  (tab/render-framed-keymap (state :time) [(:left c/margin) (:top c/margin)])
-  state)
+  (tab/render-framed-keymap (state :time) [(:left c/margin) (:top c/margin)]))
 
 (defn render-binary-clock [state]
   (let [binarify #(fmt/f-str "~20,'0',B" %)
@@ -53,40 +52,38 @@
                           ((tx/get-textbox-renderer text))))))
 
 (defn render-playerinfo [state]
-  (tab/render-framed-keymap (s/get-playership state) [(:left c/margin) (* (/ 2 3) (q/height))])
-  state)
+  (tab/render-framed-keymap (s/get-playership state) [(:left c/margin) (* (/ 2 3) (q/height))]))
 
 (defn render-targetinfo [state target-selector pos-selector]
   (let [target (target-selector state)]
     (when (some? target)
       (do (tab/render-animated-target-gui target [(:left c/margin) (* (/ 1 5) (q/height))] (state :animation))
           (let [name (if (nil? (:name target)) "unknown" (:name target))]
-            (render-at-mappos state (pos-selector target) (tx/get-textbox-renderer name [20 -10]))))))
-  state)
+            (render-at-mappos state (pos-selector target) (tx/get-textbox-renderer name [20 -10])))))))
 
 (defn render-fuel-bar [state]
-  (let [{dv :dv
+  (let [{dv     :dv
          max-dv :max-dv} (s/get-playership state)
         percentage (max 0 (/ dv max-dv))]
     (q/with-translation [(:left c/margin) (* 0.6 (q/height))]
-                      ((e/get-bar-renderer percentage 100 "Fuel"))))
-  state)
+                        ((e/get-bar-renderer percentage 100 "Fuel")))))
 
 (defn render-crosshair [state ref-selector pos-selector]
-  (render-at-mappos state (pos-selector (ref-selector state)) e/crosshair)
-  state)
+  (render-at-mappos state (pos-selector (ref-selector state)) e/crosshair))
 
 (defn render-cursor [state target-selector pos-selector]
   (when (some? (target-selector state))
-    (render-at-mappos state (pos-selector (target-selector state)) e/cursor))
-  state)
+    (render-at-mappos state (pos-selector (target-selector state)) e/cursor)))
 
-(defn render-diamond [state target-selector scale]
-  (let [pos (if (= scale :sector) (get-playership-sectorpos state)
-                                  (:mappos (target-selector state)))]
+(defn render-player-diamond [state]
+  (let [pos (get-playership-sectorpos state)]
     (do (render-at-mappos state pos e/diamond)
-        (render-at-mappos state pos (tx/get-textbox-renderer "you" [-15 -10]))
-        state)))
+        (render-at-mappos state pos (tx/get-textbox-renderer "you" [-15 -10])))))
+
+(defn render-ship-diamonds [state]
+  (doseq [ship (get-in state s/ships-path)]
+    (render-at-mappos state (:mappos ship) (tx/get-textbox-renderer (:name ship) [-15 -10]))
+    (render-at-mappos state (:mappos ship) e/diamond)))
 
 (defn render-course [state]
   (when (and (some? (s/get-targetbody state))
@@ -96,8 +93,7 @@
           dist (t/v-dist targetpos shippos)
           text (tx/get-textbox-renderer (str (string/fmt-generic dist) " AU"))]
       (do (e/map-line targetpos shippos (:camera state))
-          (render-at-mappos state (t/midpoint targetpos shippos) text))))
-  state)
+          (render-at-mappos state (t/midpoint targetpos shippos) text)))))
 
 (defn render-interstellar-course [state]
   (when (some? (s/get-targetsystem state))
@@ -106,26 +102,24 @@
           dist (u/conv (t/v-dist targetpos shippos) :AU :pc)
           text (tx/get-textbox-renderer (str (string/fmt-generic dist) " pc"))]
       (do (e/map-line targetpos shippos (:camera state))
-          (render-at-mappos state (t/midpoint targetpos shippos) text))))
-  state)
+          (render-at-mappos state (t/midpoint targetpos shippos) text)))))
 
 (defn render-gui [state]
-  (let [sector-gui #(-> %
-                        (render-targetinfo s/get-targetsystem :sectorpos)
-                        (render-crosshair s/get-refsystem :sectorpos)
-                        (render-cursor s/get-targetsystem :sectorpos)
-                        (render-diamond s/get-playership :sector)
-                        (render-interstellar-course))
-        system-gui #(-> %
-                        (render-targetinfo s/get-targetbody :mappos)
-                        (render-crosshair s/get-refbody :mappos)
-                        (render-cursor s/get-targetbody :mappos)
-                        (render-diamond s/get-playership :system)
-                        (render-course))
-        body-gui #(-> %
-                      (render-targetinfo s/get-targetbody :mappos)
-                      (render-cursor s/get-targetbody :mappos)
-                      (render-diamond s/get-playership :body))]
+  (let [sector-gui #(do (render-targetinfo % s/get-targetsystem :sectorpos)
+                        (render-crosshair % s/get-refsystem :sectorpos)
+                        (render-cursor % s/get-targetsystem :sectorpos)
+                        (render-player-diamond %)
+                        (render-interstellar-course %))
+
+        system-gui #(do (render-targetinfo % s/get-targetbody :mappos)
+                        (render-crosshair % s/get-refbody :mappos)
+                        (render-cursor % s/get-targetbody :mappos)
+                        (render-ship-diamonds %)
+                        (render-course %))
+        body-gui #(do
+                    (render-targetinfo % s/get-targetbody :mappos)
+                    (render-cursor % s/get-targetbody :mappos)
+                    (render-ship-diamonds %))]
 
     (col/fill c/gui-secondary)
     (case (get-in state [:camera :scale])

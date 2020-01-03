@@ -6,6 +6,7 @@
             [astrogator.render.universe :as render]
             [astrogator.input.keyboard :as key]
             [astrogator.input.mouse :as mouse]
+            [astrogator.input.ai :as ai]
             [astrogator.gui.camera :as cam]
             [astrogator.gui.animation :as ani]
             [astrogator.state.init :as i]
@@ -29,6 +30,7 @@
                       (p/swap-refsystem)
                       (p/move-universe)
                       (t/update-thermal)
+                      (ai/make-decisions)
                       (cam/update-camera)
                       (ani/update-animations))]
       (reset! g/store new-state)))

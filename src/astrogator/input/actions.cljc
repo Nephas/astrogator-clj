@@ -36,7 +36,7 @@
 
 (defn start-transit [state target origin offset dist scope]
   (if (= target origin) state
-                        (let [transit (t/brachistochrone 0.01 dist origin target offset scope)]
+                        (let [transit (t/brachistochrone 0.1 dist origin target offset scope)]
                           (do (log/info "ship on transit to: " target)
                               (-> state
                                   (m/push-message (scope m/transit-msg))

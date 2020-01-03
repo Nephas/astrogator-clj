@@ -2,7 +2,6 @@
   (:require [astrogator.util.rand :as r]
             [astrogator.physics.astro :as a]
             [astrogator.generation.body.asteroid :as b]
-            [astrogator.generation.body.moon :as m]
             [astrogator.generation.body.planet :as p]))
 
 (defn randomize-system-structure [planet-probability n-planets]

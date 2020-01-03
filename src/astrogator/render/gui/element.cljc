@@ -32,10 +32,10 @@
                        (q/rect (- offset) (- offset) size size)))))
 
 (defn diamond []
-  (q/with-stroke [(apply q/color r/gui-primary) 128]
+  (q/with-stroke [(apply q/color r/gui-primary) 64]
                  (do (col/fill)
                      (q/stroke-weight 2)
-                     (let [size 10
+                     (let [size 7
                            offset (* 0.5 size)]
                        (q/with-rotation [(/ Math/PI 4)] (q/rect (- offset) (- offset) size size))))))
 

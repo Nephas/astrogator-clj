@@ -38,8 +38,9 @@
   (let [dv (sub v1 v2)]
     (norm dv)))
 
-(defn midpoint [v1 v2]
-  (scalar 0.5 (add v1 v2)))
+(defn midpoint
+  ([v1 v2] (scalar 0.5 (add v1 v2)))
+  ([frac v1 v2] (add v1 (scalar frac (sub v2 v1)))))
 
 (defn map-to-screen
   "screenpos = screen-center + zoom * (offset + mappos)"

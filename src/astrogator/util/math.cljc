@@ -10,6 +10,10 @@
 (defn gaussian [x]
   (Math/exp (- (* x x))))
 
+(defn sigmoid
+  ([x] (/ 1 (+ 1 (Math/exp x))))
+  ([x x0] (/ 1 (+ 1 (Math/exp (- x0 x))))))
+
 (defn sample
   ([func val-range]
    (u/zip val-range (map func val-range)))

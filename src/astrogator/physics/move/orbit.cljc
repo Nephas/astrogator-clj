@@ -32,27 +32,14 @@
         (assoc-in [:mappos] mappos)
         (assoc-in [:orbit :cylpos] new-cylpos))))
 
-(defn place-in-orbit [ship parent-path]
-  (let [parent (get-in (s/get-expanded-refsystem) parent-path)
-        orbit-radius (* 10 (u/conv (:radius parent) :Re :AU))
+(defn place-in-orbit [ship system parent-path]
+  (let [parent (get-in system parent-path)
+        orbit-radius (* (r/uniform 0.2 0.8) (:rhill parent))
         unit (if (s/planet? parent) :Me :Msol)
         orbit (circular-orbit [(:mass parent) unit] [orbit-radius nil] parent-path)]
-    (do (log/info "placing ship in orbit around: " parent-path)
+    (do (log/info "placing ship " (:name ship) " in orbit around: " parent-path)
         (-> ship
             (assoc-in [:ai-mode] :orbit)
             (assoc-in [:orbit] orbit)
             (assoc-in [:swapsystem] nil)
             (assoc-in [:transit] nil)))))
-
-(defn leave-orbit [ship]
-  (-> ship
-      (assoc-in [:ai-mode] nil)
-      (assoc-in [:orbit] nil)))
-
-(defn toggle-orbit [ship camera]
-  (let [system (s/get-expanded-refsystem)
-        targetbody (s/get-targetbody camera system)
-        in-soi? (< (t/v-dist (:mappos ship) (:mappos targetbody)) (:rhill targetbody))]
-    (if (and (not (= :orbit (:ai-mode ship))) in-soi?)
-      (place-in-orbit ship (camera :targetbody))
-      (leave-orbit ship))))

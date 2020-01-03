@@ -1,5 +1,6 @@
 (ns astrogator.gui.selectors
-  (:require [astrogator.physics.trafo :as t]))
+  (:require [astrogator.physics.trafo :as t]
+            [astrogator.util.rand :as r]))
 
 (defn get-closest-system [sector mappos]
   (apply min-key #(t/v-dist mappos (:sectorpos %)) sector))
@@ -40,6 +41,14 @@
   (apply min-key #(t/v-dist mappos (:mappos %))
          (recur-planets-with-path system)))
 
+(defn get-random-planet [system]
+  (r/rand-coll (recur-planets-with-path system)))
+
 (defn get-closest-star [system mappos]
   (apply min-key #(t/v-dist mappos (:mappos %))
          (recur-stars-with-path system)))
+
+(defn get-parent-path [path]
+  (if (number? (last path))
+    (into [] (conj (pop (pop path)) :body))
+    (into [] (conj (pop path) :system))))

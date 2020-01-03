@@ -11,8 +11,7 @@
             [astrogator.gui.message :as m]))
 
 (def init-state
-  {:universe  {:reset     false
-               :refsystem nil
+  {:universe  {:refsystem nil
                :sector    []
                :clouds    []}
    :camera    {:mouse        {:screenpos [0 0]

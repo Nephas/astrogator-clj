@@ -46,7 +46,8 @@
         mapvel (t/scalar (/ 1 dt) (t/sub (:mappos moved-ship) (:mappos ship)))
         mapacc (t/scalar (/ 1 dt) (t/sub mapvel (:mapvel ship)))
         consumed (u/conv (consume-dv moved-ship dt) :AU/d :km/s)
-        out-of-fuel? (neg? (:dv ship))
+        ;out-of-fuel? (neg? (:dv ship))
+        out-of-fuel? false
         beta (min 1 (u/conv (t/norm mapvel) :AU/d :c))]
     (if (jumped-systems moved-ship ship)
       (-> moved-ship (update :time c/tick dt beta))

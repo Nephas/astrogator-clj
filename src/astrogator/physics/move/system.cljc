@@ -51,7 +51,7 @@
   (let [ship (sel/get-playership state)]
     (-> state
         (cam/change-refsystem distantsystem)
-        (assoc-in [:universe :refsystem :ships] [ship]))))
+        (update-in [:universe :refsystem :ships] #(cons ship %)))))
 
 (defn swap-refsystem [state]
   (let [ship (sel/get-playership state)
