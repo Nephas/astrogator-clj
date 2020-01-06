@@ -45,11 +45,9 @@
         origin (s/get-system-by-seed origin-seed)
         targetpos (t/sub (:sectorpos target) (:sectorpos origin))]
     (cond (< par (* 0.5 parlength)) (move-on-trajectory ship dt [0 0] targetpos offset)
-          (> par (* 1 parlength)) (let [targetplanet (sel/get-closest-planet system [0 0])]
+          (> par (* 1 parlength)) (let [targetplanet (sel/get-random-planet system)]
                                     (o/place-in-orbit ship system (:path targetplanet)))
-          true (-> ship
-                   (move-on-trajectory dt (t/neg targetpos) [0 0] offset)
-                   (assoc :swapsystem target-seed)))))
+          true (move-on-trajectory ship dt (t/neg targetpos) [0 0] offset))))
 
 (defn move-on-trajectory [ship dt origin-mappos target-mappos offset]
   (let [{par       :par

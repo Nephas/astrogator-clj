@@ -54,14 +54,19 @@
         (update-in [:universe :refsystem :ships] #(cons ship %)))))
 
 (defn swap-refsystem [state]
-  (let [ship (sel/get-playership state)
-        refsystem (sel/get-refsystem state)
-        targetsystem (sel/get-system-by-seed state (:swapsystem ship))
-        swap? (not (or (nil? targetsystem)
-                       (exp/same? refsystem targetsystem)))]
-    (if swap? (do (log/info "transitioning from system " (:seed refsystem) " to " (:seed targetsystem))
-                  (change-refsystem state targetsystem))
-              state)))
+  (let [ship (sel/get-playership state)]
+    (if (not= :interstellar (get-in ship [:transit :scope]))
+      (let [{target-seed :target
+             par         :par
+             parlength   :parlength} (:transit ship)
+            refsystem (sel/get-refsystem state)
+            targetsystem (sel/get-system-by-seed target-seed)
+            swap? (and (> par (* 0.5 parlength))
+                       (not (exp/same? refsystem targetsystem)))]
+        (if swap? (do (log/info "transitioning from system " (:seed refsystem) " to " (:seed targetsystem))
+                      (change-refsystem state targetsystem))
+                  state))
+      state)))
 
 (defn move-universe [state]
   (let [dt (float (/ (get-in state [:time :dps]) conf/frame-rate))]

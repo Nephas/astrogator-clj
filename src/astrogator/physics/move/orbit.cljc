@@ -41,5 +41,4 @@
         (-> ship
             (assoc-in [:ai-mode] :orbit)
             (assoc-in [:orbit] orbit)
-            (assoc-in [:swapsystem] nil)
             (assoc-in [:transit] nil)))))
