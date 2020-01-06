@@ -9,7 +9,8 @@
             [astrogator.util.log :as log]
             [astrogator.gui.camera :as cam]
             [astrogator.generation.expandable :as exp]
-            [astrogator.physics.trail :as trail]))
+            [astrogator.physics.trail :as trail]
+            [astrogator.physics.trafo :as t]))
 
 (defn move-planet [planet dt parent-mappos]
   (let [moved-planet (-> planet
@@ -22,6 +23,7 @@
   (-> system
       (u/update-all :planets move-planet dt parent-mappos)
       (u/update-all :asteroids o/orbit-move dt parent-mappos)))
+
 
 (defn move-system
   ([system dt cylpos mappos]
@@ -55,7 +57,7 @@
 
 (defn swap-refsystem [state]
   (let [ship (sel/get-playership state)]
-    (if (not= :interstellar (get-in ship [:transit :scope]))
+    (if (= :interstellar (get-in ship [:transit :scope]))
       (let [{target-seed :target
              par         :par
              parlength   :parlength} (:transit ship)
@@ -68,8 +70,16 @@
                   state))
       state)))
 
+(defn move-distantsystem [system dt]
+  (let [newpos (t/add (t/scalar dt (:sectorvel system)) (:sectorpos system))]
+    (assoc system :sectorpos newpos)))
+
+(defn move-sector [sector dt]
+  (mapv #(move-distantsystem % dt) sector))
+
 (defn move-universe [state]
   (let [dt (float (/ (get-in state [:time :dps]) conf/frame-rate))]
     (-> state
         (update-in [:time] c/tick dt)
+        (update-in [:universe :sector] move-sector dt)
         (update-in [:universe :refsystem] move-system dt))))

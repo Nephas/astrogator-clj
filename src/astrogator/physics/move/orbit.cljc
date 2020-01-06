@@ -3,8 +3,7 @@
             [astrogator.state.selectors :as s]
             [astrogator.physics.astro :as a]
             [astrogator.util.rand :as r]
-            [astrogator.util.log :as log]
-            [astrogator.physics.units :as u]))
+            [astrogator.util.log :as log]))
 
 (defprotocol Orbit
   (orbit-move [this dt parent-mappos]))

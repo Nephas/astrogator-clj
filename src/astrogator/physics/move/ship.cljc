@@ -4,13 +4,8 @@
             [astrogator.physics.move.orbit :as o]
             [astrogator.physics.move.transit :as tr]
             [astrogator.physics.units :as u]
-            [astrogator.util.log :as log]
             [astrogator.physics.move.clock :as c]
             [astrogator.physics.trail :as trail]))
-
-(defn shipacc [ship]
-  (let [thrust (* (:throttle ship) (:thrust ship))]
-    (t/scalar thrust (t/pol-to-cart 1 (:pointing ship)))))
 
 (defn acc-at-pos [mappos system]
   (let [gravacc (g/gravacc-at-pos mappos system)

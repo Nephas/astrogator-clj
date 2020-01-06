@@ -18,6 +18,10 @@
   ([state] (get-in state [:universe :sector]))
   ([] (get-sector @g/store)))
 
+(defn get-time
+  ([state] (get-in state [:time]))
+  ([] (get-time @g/store)))
+
 (defn get-targetsystem
   ([state] (get-system-by-seed state (get-in state [:camera :targetsystem])))
   ([] (get-targetsystem @g/store)))
@@ -44,8 +48,9 @@
 
 (def ships-path [:universe :refsystem :ships])
 
-(defn get-playership [state]
-  (get-in state playership-path))
+(defn get-playership
+  ([state] (get-in state playership-path))
+  ([] (get-playership @g/store)))
 
 (defn get-player-orbit-body [state]
   (let [path (get-in (get-playership state) [:orbit :parent])

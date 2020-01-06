@@ -22,13 +22,13 @@
   (if (some? mappos) (let [pos (t/map-to-screen mappos (state :camera))]
                        (q/with-translation pos (renderer)))))
 
-(defn render-clock [state]
-  (tab/render-framed-keymap (state :time) [(:left c/margin) (:top c/margin)]))
+(defn render-clock []
+  (tab/render-framed-keymap (s/get-time) [(:left c/margin) (:top c/margin)]))
 
-(defn render-binary-clock [state]
+(defn render-binary-clock []
   (let [binarify #(fmt/f-str "~20,'0',B" %)
         blockify (fn [bin-str] (us/join (map #(if (= \0 %) "= " "0 ") bin-str)))
-        text (-> (get-in state [:time :day]) (int)
+        text (-> (:day (s/get-time)) (int)
                  (binarify)
                  (blockify))
         offset (* 0.5 (q/text-width (blockify (binarify 0))))]
@@ -51,8 +51,8 @@
                           (q/rect 0 (- (/ line-height 2)) (* 0.33 (q/width)) (* height line-height))
                           ((tx/get-textbox-renderer text))))))
 
-(defn render-playerinfo [state]
-  (tab/render-framed-keymap (s/get-playership state) [(:left c/margin) (* (/ 2 3) (q/height))]))
+(defn render-playerinfo []
+  (tab/render-framed-keymap (s/get-playership) [(:left c/margin) (* (/ 2 3) (q/height))]))
 
 (defn render-targetinfo [state target-selector pos-selector]
   (let [target (target-selector state)]
@@ -121,15 +121,16 @@
                     (render-cursor % s/get-targetbody :mappos)
                     (render-ship-diamonds %))]
 
-    (col/fill c/gui-secondary)
-    (case (get-in state [:camera :scale])
-      :body (body-gui state)
-      :subsystem (system-gui state)
-      :system (system-gui state)
-      :sector (sector-gui state))
-    (render-clock state)
-    (render-binary-clock state)
-    (render-messages state)
-    (render-playerinfo state)
-    (render-fuel-bar state)
-    ))
+    (do (col/fill c/gui-secondary)
+        (render-clock)
+        (render-binary-clock)
+        (render-playerinfo)
+
+        (case (get-in state [:camera :scale])
+          :body (body-gui state)
+          :subsystem (system-gui state)
+          :system (system-gui state)
+          :sector (sector-gui state))
+
+        (render-messages state)
+        (render-fuel-bar state))))

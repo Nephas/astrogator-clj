@@ -34,9 +34,11 @@
       (assoc-in [:animation :target] 0)))
 
 (defn update-camera [state]
-  (let [refbody (s/get-refbody state)
-        refpos (get-in refbody [:mappos] [0 0])]
-    (assoc-in state [:camera :mappos] (t/neg refpos))))
+  (let [refpos (get-in (s/get-refbody state) [:mappos] [0 0])
+        sectorpos (get-in (s/get-refsystem) [:sectorpos] [0 0])]
+    (-> state
+        (assoc-in [:camera :mappos] (t/neg refpos))
+        (assoc-in [:camera :sectorpos] (t/neg sectorpos)))))
 
 (defn get-scale [camera]
   (let [scale-before (camera :scale)

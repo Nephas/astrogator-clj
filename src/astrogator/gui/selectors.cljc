@@ -9,6 +9,10 @@
   (let [indices (range (count planets))]
     (mapv #(assoc %1 :path (conj base-path :planets %2)) planets indices)))
 
+(defn get-ships-with-path [system]
+  (let [indices (range (count (:ships system)))]
+    (mapv #(assoc %1 :path [:ships %2]) (:ships system) indices)))
+
 (defn recur-planets-with-path
   ([system path]
    (if (nil? (get system :body))
@@ -29,10 +33,12 @@
 (defn get-closest-planet-or-star
   ([system mappos cutoff]
    (let [get-dist #(t/v-dist mappos (:mappos %))
+         ships (get-ships-with-path system)
          planets (recur-planets-with-path system)
          stars (recur-stars-with-path system)]
      (apply min-key #(:priority %)
-            (concat (map #(assoc % :priority (+ cutoff (get-dist %))) planets)
+            (concat (map #(assoc % :priority (+ cutoff (get-dist %))) ships)
+                    (map #(assoc % :priority (+ cutoff (get-dist %))) planets)
                     (map #(assoc % :priority (get-dist %)) stars)))))
   ([system mappos]
    (get-closest-planet-or-star system mappos 0)))

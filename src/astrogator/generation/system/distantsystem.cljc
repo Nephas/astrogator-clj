@@ -10,9 +10,9 @@
             [astrogator.physics.trafo :as t]
             [astrogator.render.draw.geometry :as geo]
             [astrogator.generation.body.ship :as pl]
-            [astrogator.physics.move.system :as p]))
+            [astrogator.physics.units :as u]))
 
-(defrecord DistantSystem [sectorpos seed mass luminosity color magnitude name]
+(defrecord DistantSystem [sectorpos sectorvel seed mass luminosity color magnitude name]
   trafo/Distance
   (dist [this other] (trafo/v-dist (:sectorpos this) (:sectorpos other)))
 
@@ -37,8 +37,9 @@
 
 (defn generate-distant-system [mass seed sectorpos]
   (let [system (sys/generate-system mass seed false)
+        sectorvel (r/rand-polar (u/conv 100 :km/s :AU/d))
         luminosity (sys/get-system-luminosity system)
         color (sys/get-system-color system)
         magnitude (a/get-magnitude luminosity)
         name (n/generate-name seed (r/rand-n 4 6))]
-    (->DistantSystem sectorpos seed mass luminosity color magnitude name)))
+    (->DistantSystem sectorpos sectorvel seed mass luminosity color magnitude name)))
