@@ -50,12 +50,13 @@
               (assoc :descriptors (surf/get-descriptors climate flux circumbinary))
               (assoc :surface (surf/planet-map (get-tilesize this) 0.45 4 8 0.2))
               (assoc :moons (l/generate-moon-system mass inner-orbit rhill))))))
+
   draw/Drawable
   (draw-distant [this camera]
     (let [pos (trafo/map-to-screen (:mappos this) camera)
           size (* 0.1 (Math/log (+ 1 (:radius this))) (camera :obj-zoom))
           phase (get-in this [:orbit :cylpos 1])
-          color (get-distant-color this)]
+          color (draw/main-color this)]
       (do (f/draw-soi this camera conf/gui-secondary)
           (doseq [moon (:moons this)]
             (draw/draw-distant moon camera))
@@ -74,10 +75,14 @@
             (geo/cast-shadow pos phase size (* 10 (q/width)))
             (geo/half-circle pos size phase conf/planet-night-color)))))
   (draw-trail [this camera]
-    (trail/draw-trail this camera (get-distant-color this)))
+    (trail/draw-trail this camera (draw/main-color this)))
   (draw-surface [this camera]
     (let [scale (* 0.01 (/ base-tilesize (get-tilesize this)) (:radius this) (camera :obj-zoom))]
-      (tm/draw-tilemap this scale))))
+      (tm/draw-tilemap this scale)))
+  (main-color [this] (let [{rock    :rock
+                            glacier :glacier
+                            ocean   :ocean} (:color this)]
+                       (col/blend-vec-color rock glacier))))
 
 (extend Planet orb/Orbit orb/orbit-impl)
 (extend Planet trafo/Distance trafo/distance-impl)

@@ -29,36 +29,37 @@
               tile-map (m/init-tiles m/star-tile 32)]
           (assoc this :surface (-> tile-map
                                    (m/init-map)
-                                   (u/update-values phase-seed))))))
-
-  draw/Drawable
-  (draw-distant [this camera]
-    (let [pos (t/map-to-screen (:mappos this) camera)
-          size (* 5 (camera :obj-zoom) (:radius this))
-          color (:color this)]
-      (col/fill color)
-      (if (< size conf/airy-threshold)
-        (geo/airy pos 2 color)
-        (do (col/fill color)
-            (q/with-stroke [(apply q/color (assoc color 2 0.66)) 256]
-                           (do (q/stroke-weight (* size 0.2))
-                               (geo/circle pos size)))))))
-  (draw-detail [this camera]
-    (let [pos (t/map-to-screen (:mappos this) camera)
-          size (* 5 (camera :obj-zoom) (:radius this))
-          color (:color this)]
-      (do (col/fill color)
-          (do (draw/draw-surface this camera)
-              (geo/ring pos (* 1.6 size) (assoc color 2 0.66) (* 0.2 size))))))
-  (draw-trail [this camera] nil)
-  (draw-surface [this camera]
-    (q/stroke-weight 1)
-    (let [scale (* 0.25 (camera :obj-zoom) (:radius this))]
-      (tm/draw-tilemap this scale))))
+                                   (u/update-values phase-seed)))))))
 
 (extend Star orb/Orbit orb/orbit-impl)
 (extend Star trafo/Distance trafo/distance-impl)
 (extend Star rot/Rot rot/rot-impl)
+(extend Star draw/Drawable
+  (merge draw/drawable-impl
+         {:draw-distant (fn [this camera]
+                          (let [pos (t/map-to-screen (:mappos this) camera)
+                                size (* 5 (camera :obj-zoom) (:radius this))
+                                color (:color this)]
+                            (col/fill color)
+                            (if (< size conf/airy-threshold)
+                              (geo/airy pos 2 color)
+                              (do (col/fill color)
+                                  (q/with-stroke [(apply q/color (assoc color 2 0.66)) 256]
+                                                 (do (q/stroke-weight (* size 0.2))
+                                                     (geo/circle pos size)))))))
+
+          :draw-surface (fn [this camera]
+                          (q/stroke-weight 1)
+                          (let [scale (* 0.25 (camera :obj-zoom) (:radius this))]
+                            (tm/draw-tilemap this scale)))
+
+          :draw-detail  (fn [this camera]
+                          (let [pos (t/map-to-screen (:mappos this) camera)
+                                size (* 5 (camera :obj-zoom) (:radius this))
+                                color (draw/main-color this)]
+                            (do (col/fill color)
+                                (do (draw/draw-surface this camera)
+                                    (geo/ring pos (* 1.6 size) (assoc color 2 0.66) (* 0.2 size))))))}))
 
 (defn generate-star [mass max-sc-orbit planets?]
   (let [radius (a/mass-radius mass)

@@ -1,9 +1,7 @@
 (ns astrogator.physics.move.orbit
   (:require [astrogator.physics.trafo :as t]
-            [astrogator.state.selectors :as s]
             [astrogator.physics.astro :as a]
-            [astrogator.util.rand :as r]
-            [astrogator.util.log :as log]))
+            [astrogator.util.rand :as r]))
 
 (defrecord Orbit-Elements [cylvel cylpos torbit parent])
 
@@ -29,13 +27,3 @@
 
 (defn cyl-to-map [parent-mappos cylpos]
   (t/add parent-mappos (t/pol-to-cart cylpos)))
-
-(defn place-in-orbit [ship system parent-path]
-  (let [parent (get-in system parent-path)
-        orbit-radius (* (r/uniform 0.2 0.8) (:rhill parent))
-        unit (if (s/planet? parent) :Me :Msol)]
-    (do (log/info "placing ship " (:name ship) " in orbit around: " parent-path)
-        (-> ship
-            (init-orbit [(:mass parent) unit] [orbit-radius nil] parent-path)
-            (assoc-in [:ai-mode] :orbit)
-            (assoc-in [:transit] nil)))))

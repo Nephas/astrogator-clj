@@ -23,17 +23,13 @@
         (let [system (sys/generate-system (:mass this) (:seed this) true)]
           (-> system
               (sys/initiate-positions)
-              (pl/init-npcs)))))
+              (pl/init-npcs))))))
 
-  draw/Drawable
-  (draw-distant [this camera]
-    (let [pos (t/map-to-screen (:sectorpos this) camera)
-          size (* -1 (camera :obj-zoom) (:magnitude this))]
-      (geo/airy pos size (:color this))))
-  (draw-surface [this camera] nil)
-  (draw-trail [this camera] nil)
-  (draw-detail [this camera]
-    (draw/draw-distant this camera)))
+(extend DistantSystem draw/Drawable
+  (merge draw/drawable-impl
+         {:draw-distant (fn [this camera] (let [pos (t/map-to-screen (:sectorpos this) camera)
+                                                size (* -1 (camera :obj-zoom) (:magnitude this))]
+                                            (geo/airy pos size (:color this))))}))
 
 (defn generate-distant-system [mass seed sectorpos]
   (let [system (sys/generate-system mass seed false)

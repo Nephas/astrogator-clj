@@ -24,7 +24,6 @@
       (u/update-all :planets move-planet dt parent-mappos)
       (u/update-all :asteroids o/orbit-move dt parent-mappos)))
 
-
 (defn move-system
   ([system dt cylpos mappos]
    (if (some? (system :system))

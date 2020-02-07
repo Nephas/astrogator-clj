@@ -19,14 +19,11 @@
                                                phase (:phase this)]
                                            (q/no-stroke)
                                            (geo/cast-shadow pos phase size (* 10 (q/width)))
-                                           (geo/circle pos size conf/moon-surface-color)
+                                           (geo/circle pos size (draw/main-color this))
                                            (geo/half-circle pos size phase conf/planet-night-color)))}))
-
 
 (defn generate-moon [parent-mass orbit-radius]
   (let [mass (* 0.5 (r/uniform) (Math/log (+ parent-mass 1)))
-        radius (a/planet-radius mass :Me)
-        mappos [0 0]
-        color [128 128 128]]
-    (-> (->Moon mass radius color mappos)
+        radius (a/planet-radius mass :Me)]
+    (-> (->Moon mass radius conf/moon-surface-color [0 0])
         (o/init-orbit [parent-mass :Me] [orbit-radius nil] nil))))

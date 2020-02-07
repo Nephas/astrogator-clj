@@ -28,7 +28,9 @@
 (defn init-playership [state]
   (let [system (sel/get-expanded-refsystem state)
         parent (gs/get-random-planet system)
-        ship (o/place-in-orbit (ship "You") system (:path parent))]
+        orbit-radius (* (r/uniform 0.2 0.8) (:rhill parent))
+        ship (-> (ship "You")
+                 (o/init-orbit [(:mass parent) :Me] [orbit-radius nil] (:path parent)))]
     (-> state
         (cam/change-refbody (gs/get-closest-planet-or-star system (:mappos parent)))
         (update-in sel/ships-path #(cons ship %)))))

@@ -6,7 +6,8 @@
             [astrogator.state.selectors :as s]
             [astrogator.gui.selectors :as sel]
             [astrogator.physics.trafo :as trafo]
-            [astrogator.util.math :as m]))
+            [astrogator.util.math :as m]
+            [astrogator.util.rand :as r]))
 
 (declare move-on-trajectory)
 
@@ -14,6 +15,16 @@
 
 (defn brachistochrone [g-acc length origin target offset scope]
   (->Trajectory 0 0 (u/conv g-acc :g :AU/d2) length origin target offset scope))
+
+(defn place-in-orbit [ship system parent-path]
+  (let [parent (get-in system parent-path)
+        orbit-radius (* (r/uniform 0.2 0.8) (:rhill parent))
+        unit (if (s/planet? parent) :Me :Msol)]
+    (do (log/info "placing ship " (:name ship) " in orbit around: " parent-path)
+        (-> ship
+            (o/init-orbit [(:mass parent) unit] [orbit-radius nil] parent-path)
+            (assoc-in [:ai-mode] :orbit)
+            (assoc-in [:transit] nil)))))
 
 (defn smoothed-pos [system ship path]
   (let [body (get-in system path)
@@ -33,7 +44,7 @@
         targetpos (smoothed-pos system ship target-path)]
     (if (< par parlength)
       (move-on-trajectory ship dt originpos targetpos offset)
-      (o/place-in-orbit ship system target-path))))
+      (place-in-orbit ship system target-path))))
 
 (defn move-interstellar [ship dt system]
   (let [{par         :par
@@ -46,7 +57,7 @@
         targetpos (t/sub (:sectorpos target) (:sectorpos origin))]
     (cond (< par (* 0.5 parlength)) (move-on-trajectory ship dt [0 0] targetpos offset)
           (> par (* 1 parlength)) (let [targetplanet (sel/get-random-planet system)]
-                                    (o/place-in-orbit ship system (:path targetplanet)))
+                                    (place-in-orbit ship system (:path targetplanet)))
           true (move-on-trajectory ship dt (t/neg targetpos) [0 0] offset))))
 
 (defn move-on-trajectory [ship dt origin-mappos target-mappos offset]
@@ -70,4 +81,3 @@
   (let [scope (get-in ship [:transit :scope])]
     (cond (= :interplanetary scope) (move-interplanetary ship dt system)
           (= :interstellar scope) (move-interstellar ship dt system))))
-

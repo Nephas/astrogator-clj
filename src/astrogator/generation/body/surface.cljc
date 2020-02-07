@@ -58,8 +58,8 @@
         (noisify-height noise-range))))
 
 (defn get-descriptors [climate base-flux circumbinary]
-  (let [{base-temp    :base-temp
-         sea-level    :sea-level} climate
+  (let [{base-temp :base-temp
+         sea-level :sea-level} climate
         frozen (< base-temp 223)
         molten (> base-temp 473)
         dark (< base-flux 10)
@@ -72,7 +72,6 @@
                                (if dark :dark)
                                (if bright :bright)
                                (if frozen :frozen) (if molten :molten)
-                               (if wet :wet) (if dry :dry)
-                               ]))]
+                               (if wet :wet) (if dry :dry)]))]
     {:tags tags
      :poem (h/generate-haiku tags)}))
