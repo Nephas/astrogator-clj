@@ -35,15 +35,18 @@
       (m/push-message state "There is no appropriate fuel source nearby."))))
 
 (defn start-transit [state target origin offset dist scope]
-  (if (= target origin) state
-                        (let [transit (t/brachistochrone 0.1 dist origin target offset scope)]
-                          (do (log/info "ship on transit to: " target)
-                              (-> state
-                                  (m/push-message (scope m/transit-msg))
-                                  (update-in s/playership-path #(-> %
-                                                                    (assoc-in [:orbit] nil)
-                                                                    (assoc-in [:ai-mode] scope)
-                                                                    (assoc-in [:transit] transit))))))))
+  (let [target-body  (s/get-body-by-path target (s/get-expanded-refsystem))]
+    (if (or (not (s/planet? target-body)) (= target origin))
+      (do (log/info "invalid transit target: " target)
+          state)
+      (let [transit (t/brachistochrone 0.1 dist origin target offset scope)]
+        (do (log/info "ship on transit to: " target)
+            (-> state
+                (m/push-message (scope m/transit-msg))
+                (update-in s/playership-path #(-> %
+                                                  (assoc-in [:orbit] nil)
+                                                  (assoc-in [:ai-mode] scope)
+                                                  (assoc-in [:transit] transit)))))))))
 
 (defn transit [state]
   (let [camera (:camera state)
