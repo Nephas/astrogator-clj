@@ -37,7 +37,7 @@
          planets (recur-planets-with-path system)
          stars (recur-stars-with-path system)]
      (apply min-key #(:priority %)
-            (concat (map #(assoc % :priority (+ cutoff (get-dist %))) ships)
+            (concat (map #(assoc % :priority (+ (* 2 cutoff) (get-dist %))) ships)
                     (map #(assoc % :priority (+ cutoff (get-dist %))) planets)
                     (map #(assoc % :priority (get-dist %)) stars)))))
   ([system mappos]

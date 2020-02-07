@@ -31,7 +31,7 @@
   (draw-distant [this camera]
     (geo/particle (trafo/map-to-screen (:mappos this) camera) conf/particle-color)
     (let [size (Math/log (max 1 (- (:thrust this) 10)))]
-      (geo/circle (trafo/map-to-screen (:mappos this) camera) size (col/with-alpha conf/particle-color 128))))
+      (geo/circle (trafo/map-to-screen (:mappos this) camera) size (col/with-alpha conf/particle-color 64))))
   (draw-surface [this camera] nil)
   (draw-detail [this camera]
     (draw/draw-distant this camera))

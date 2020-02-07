@@ -82,8 +82,11 @@
 
 (defn render-ship-diamonds [state]
   (doseq [ship (get-in state s/ships-path)]
-    (render-at-mappos state (:mappos ship) (tx/get-textbox-renderer (:name ship) [-15 -10]))
     (render-at-mappos state (:mappos ship) e/diamond)))
+
+(defn render-ship-labels [state]
+  (doseq [ship (get-in state s/ships-path)]
+    (render-at-mappos state (:mappos ship) (tx/get-textbox-renderer (:name ship) [-15 20]))))
 
 (defn render-course [state]
   (when (and (some? (s/get-targetbody state))
@@ -114,12 +117,13 @@
         system-gui #(do (render-targetinfo % s/get-targetbody :mappos)
                         (render-crosshair % s/get-refbody :mappos)
                         (render-cursor % s/get-targetbody :mappos)
-                        (render-ship-diamonds %)
+                        ;(render-ship-diamonds %)
                         (render-course %))
         body-gui #(do
                     (render-targetinfo % s/get-targetbody :mappos)
                     (render-cursor % s/get-targetbody :mappos)
-                    (render-ship-diamonds %))]
+                    (render-ship-diamonds %)
+                    (render-ship-labels %))]
 
     (do (col/fill c/gui-secondary)
         (render-clock)
