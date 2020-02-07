@@ -47,7 +47,7 @@
     (if (jumped-systems moved-ship ship)
       (-> moved-ship (update :time c/tick dt beta))
       (-> moved-ship
-          (trail/extend dt)
+          (trail/update-step dt)
           (assoc :mapvel mapvel)
           (assoc :mapacc mapacc)
           (assoc :beta beta)

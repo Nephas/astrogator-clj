@@ -9,7 +9,7 @@
   (map vector (range) s))
 
 (defprotocol Trail
-  (extend [this t] "Update map-positions in the Trail list"))
+  (update-step [this t] "Update map-positions in the Trail list"))
 
 (defn update-trail [body dt]
   (update-in body [:trail :pos] #(take trail-length (cons (:mappos body) %))))

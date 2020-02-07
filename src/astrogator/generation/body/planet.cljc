@@ -40,10 +40,10 @@
   (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
 
   trail/Trail
-  (extend [this t] (trail/update-trail this t))
+  (update-step [this t] (trail/update-trail this t))
 
   rot/Rot
-  (rotate [this dt] (rot/rotate this dt))
+  (rotate [this dt] (rot/rotate-step this dt))
 
   exp/Seed
   (same? [this other] (exp/equal-by-seed this other))

@@ -25,7 +25,7 @@
   (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
 
   trail/Trail
-  (extend [this t] (trail/update-trail this t))
+  (update-step [this t] (trail/update-trail this t))
 
   draw/Drawable
   (draw-distant [this camera]

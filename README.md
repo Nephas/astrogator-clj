@@ -1,11 +1,11 @@
 # astrogator
 
-A Quil sketch designed to ... well, that part is up to you.
-
-## Build
+## Build & Deploy
 
 clj: `lein with-profile corejar uberjar`
 cljs: `lein cljsbuild once`
+
+
 
 ## License
 

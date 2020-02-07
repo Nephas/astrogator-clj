@@ -9,7 +9,7 @@
   ([angle angvel] (->Rotation angle angvel))
   ([angvel] (rotation (r/phase) angvel)))
 
-(defn rotate [body dt]
+(defn rotate-step [body dt]
   (let [{angle  :angle
          angvel :angvel} (:rotation body)]
     (assoc-in body [:rotation :angle] (mod (+ angle (* dt angvel)) (* 2 Math/PI)))))

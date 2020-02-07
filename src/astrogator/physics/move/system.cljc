@@ -14,7 +14,7 @@
 
 (defn move-planet [planet dt parent-mappos]
   (let [moved-planet (-> planet
-                         (rot/rotate dt)
+                         (rot/rotate-step dt)
                          (o/orbit-move dt parent-mappos)
                          (trail/update-trail dt))]
     (u/update-all moved-planet :moons o/orbit-move dt (:mappos moved-planet))))
@@ -44,7 +44,7 @@
      (-> system
          (assoc-in [:body :cylpos] cylpos)
          (assoc-in [:body :mappos] mappos)
-         (update-in [:body] rot/rotate dt)
+         (update-in [:body] rot/rotate-step dt)
          (move-children dt mappos))))
   ([system dt] (let [moved-system (move-system system dt [0 0] [0 0])]
                  (u/update-all moved-system :ships s/move-ship dt moved-system))))
