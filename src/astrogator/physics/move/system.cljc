@@ -16,7 +16,7 @@
   (let [moved-planet (-> planet
                          (rot/rotate-step dt)
                          (o/orbit-move dt parent-mappos)
-                         (trail/update-trail dt))]
+                         (trail/update-step dt))]
     (u/update-all moved-planet :moons o/orbit-move dt (:mappos moved-planet))))
 
 (defn move-children [system dt parent-mappos]

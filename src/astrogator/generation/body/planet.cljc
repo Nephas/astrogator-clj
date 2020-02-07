@@ -19,7 +19,8 @@
             [astrogator.render.draw.geometry :as geo]
             [quil.core :as q]
             [astrogator.render.tilemap :as tm]
-            [astrogator.physics.trail :as trail]))
+            [astrogator.physics.trail :as trail]
+            [astrogator.physics.move.orbit :as o]))
 
 (def base-tilesize 12)
 
@@ -32,18 +33,7 @@
 (defn get-tilesize [planet]
   (+ base-tilesize (int (:radius planet))))
 
-(defrecord Planet [mass radius seed name rhill orbit climate rotation mappos color circumbinary type]
-  trafo/Distance
-  (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
-
-  orb/Orbit
-  (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
-
-  trail/Trail
-  (update-step [this t] (trail/update-trail this t))
-
-  rot/Rot
-  (rotate [this dt] (rot/rotate-step this dt))
+(defrecord Planet [mass radius seed name rhill climate mappos color circumbinary type]
 
   exp/Seed
   (same? [this other] (exp/equal-by-seed this other))
@@ -89,12 +79,15 @@
     (let [scale (* 0.01 (/ base-tilesize (get-tilesize this)) (:radius this) (camera :obj-zoom))]
       (tm/draw-tilemap this scale))))
 
+(extend Planet orb/Orbit orb/orbit-impl)
+(extend Planet trafo/Distance trafo/distance-impl)
+(extend Planet trail/Trail trail/trail-impl)
+(extend Planet rot/Rot rot/rot-impl)
+
 (defn generate-planet [parent-mass seed orbit-radius circumbinary]
   (let [mass (r/planetary-imf)
         radius (a/planet-radius mass :Me)
-        orbit (orb/circular-orbit parent-mass [orbit-radius nil])
         climate (c/generate-climate mass)
-        rotation (rot/rotation (+ (r/uniform) (r/poisson 2)))
         rhill (a/hill-sphere orbit-radius (unit/conv mass :Me :Msol) parent-mass)
         color {:rock    [(r/uniform 0.0 0.25) 0.6 0.6]
                :ocean   [(r/uniform 0.5 0.75) 0.6 0.6]
@@ -102,4 +95,6 @@
         mappos [0 0]
         name (n/generate-name seed (r/rand-n 5 7))
         type (if (< mass 10) :rock :gas)]
-    (->Planet mass radius seed name rhill orbit climate rotation mappos color circumbinary type)))
+    (-> (->Planet mass radius seed name rhill climate mappos color circumbinary type)
+        (rot/init-at (+ (r/uniform) (r/poisson 2)))
+        (o/init-orbit [parent-mass :Msol] [orbit-radius nil] nil))))

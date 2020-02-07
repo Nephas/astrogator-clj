@@ -1,8 +1,12 @@
 (ns astrogator.physics.trafo
   (:require [astrogator.util.env :as env]))
 
+(declare v-dist)
+
 (defprotocol Distance
   (dist [this other] "Euclidian distance between two similar objects"))
+
+(def distance-impl {:dist (fn [this other] (v-dist (:mappos this) (:mappos other)))})
 
 (defn pol-to-cart
   ([r phi] [(* r (Math/cos phi))

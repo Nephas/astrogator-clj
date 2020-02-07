@@ -17,21 +17,9 @@
             [astrogator.render.conf :as conf]
             [astrogator.render.draw.geometry :as geo]
             [quil.core :as q]
-            [astrogator.util.hex :as h]
             [astrogator.render.tilemap :as tm]))
 
-(defn true-colors [tile color]
-  (assoc color 2 (:temp tile)))
-
-(defrecord Star [mass radius rhill rotation luminosity temp class color name]
-  trafo/Distance
-  (dist [this other] (trafo/v-dist (:mappos this) (:mappos other)))
-
-  orb/Orbit
-  (orbit-move [this dt parent-mappos] (orb/move-around-parent this dt parent-mappos))
-
-  rot/Rot
-  (rotate [this dt] (rot/rotate-step this dt))
+(defrecord Star [mass radius rhill luminosity temp class color name]
 
   exp/Seed
   (same? [this other] (exp/equal-by-seed this other))
@@ -68,6 +56,9 @@
     (let [scale (* 0.25 (camera :obj-zoom) (:radius this))]
       (tm/draw-tilemap this scale))))
 
+(extend Star orb/Orbit orb/orbit-impl)
+(extend Star trafo/Distance trafo/distance-impl)
+(extend Star rot/Rot rot/rot-impl)
 
 (defn generate-star [mass max-sc-orbit planets?]
   (let [radius (a/mass-radius mass)
@@ -76,7 +67,7 @@
         temp (a/stefan-boltzmann luminosity :Lsol radius :Rsol)
         class (a/spectral-class temp)
         color (a/COLOR class)
-        name (n/generate-name (r/rand-n 3 4))
-        rotation (rot/rotation (r/uniform 0.01 0.5))]
-    (conj {:body (->Star mass radius max-sc-orbit rotation luminosity temp class color name)}
+        name (n/generate-name (r/rand-n 3 4))]
+    (conj {:body (-> (->Star mass radius max-sc-orbit luminosity temp class color name)
+                     (rot/init-at (r/uniform 0.01 0.5)))}
           (if planets? (ps/generate-planet-system mass min-sc-orbit max-sc-orbit false)))))

@@ -42,7 +42,7 @@
 (defn -main [& args]
   (q/defsketch astrogator
                :title "Astrogator"
-               :size [1280 960]
+               :size [1360 800]
                :setup setup
 
                :update update-state
@@ -53,4 +53,5 @@
                :mouse-wheel mouse/handle-wheel
                :mouse-moved mouse/handle-move
 
-               :middleware [m/fun-mode]))
+               :middleware [m/fun-mode]
+               :features [:global-key-events :resizable :exit-on-close]))

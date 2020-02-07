@@ -11,8 +11,7 @@
 (defprotocol Trail
   (update-step [this t] "Update map-positions in the Trail list"))
 
-(defn update-trail [body dt]
-  (update-in body [:trail :pos] #(take trail-length (cons (:mappos body) %))))
+(def trail-impl {:update-step (fn [this t] (update-in this [:trail :pos] #(take trail-length (cons (:mappos this) %))))})
 
 (defn draw-trail [body camera color]
   (let [alpha-max 128

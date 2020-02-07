@@ -1,15 +1,14 @@
 (ns astrogator.physics.move.rotate
   (:require [astrogator.util.rand :as r]))
 
-(defprotocol Rot (rotate [this dt]))
-
 (defrecord Rotation [angle angvel])
 
-(defn rotation
-  ([angle angvel] (->Rotation angle angvel))
-  ([angvel] (rotation (r/phase) angvel)))
+(defprotocol Rot
+  (init-at [this angvel] "initiate a rotation variables")
+  (rotate-step [this dt] "increase rotation angle at fixed velocity for dt"))
 
-(defn rotate-step [body dt]
-  (let [{angle  :angle
-         angvel :angvel} (:rotation body)]
-    (assoc-in body [:rotation :angle] (mod (+ angle (* dt angvel)) (* 2 Math/PI)))))
+(def rot-impl {:init-at (fn [this angvel] (assoc this :rotation (->Rotation (r/phase) angvel)))
+               :rotate-step (fn [this dt]
+                              (let [{angle  :angle
+                                     angvel :angvel} (:rotation this)]
+                                (assoc-in this [:rotation :angle] (mod (+ angle (* dt angvel)) (* 2 Math/PI)))))})
