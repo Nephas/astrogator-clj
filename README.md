@@ -2,10 +2,9 @@
 
 ## Build & Deploy
 
-clj: `lein with-profile corejar uberjar`
-cljs: `lein cljsbuild once`
-
-
+* build server: `lein with-profile corejar uberjar`
+* build cljs-resources: `lein cljsbuild once`
+* deploy: `git push heroku master`
 
 ## License
 
